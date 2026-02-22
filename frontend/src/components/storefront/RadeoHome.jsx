@@ -113,6 +113,9 @@ export default function RadeoHome() {
   }
 
   /* ── Scroll Reveals ── */
+  const observerRef = useRef(null);
+
+  // Create a stable observer once
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -129,7 +132,8 @@ export default function RadeoHome() {
         if (el.classList.contains(s.revealFeature)) anime({ targets: el, opacity: [0, 1], translateY: [20, 0], duration: 600, easing: 'easeOutExpo', delay });
         if (el.classList.contains(s.revealQuote)) anime({ targets: el, opacity: [0, 1], translateY: [24, 0], duration: 900, easing: 'easeOutExpo' });
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.05 });
+    observerRef.current = observer;
 
     const timer = setTimeout(() => {
       const root = rootRef.current;
@@ -137,8 +141,25 @@ export default function RadeoHome() {
       const cls = [s.revealLabel, s.revealHead, s.revealCard, s.revealImg, s.revealSplitL, s.revealSplitR, s.revealFeature, s.revealQuote].map(c => `.${c}`).join(', ');
       root.querySelectorAll(cls).forEach(el => { if (!el.closest(`.${s.hero}`)) observer.observe(el); });
     }, 100);
-    return () => { clearTimeout(timer); observer.disconnect(); };
-  }, [products]); // Re-run when products load so new .revealCard elements get observed
+    return () => { clearTimeout(timer); observer.disconnect(); observerRef.current = null; };
+  }, []);
+
+  // When products load, observe newly rendered .revealCard elements
+  useEffect(() => {
+    if (!products.length || !observerRef.current) return;
+    const root = rootRef.current;
+    if (!root) return;
+    // Wait a frame for React to flush the DOM
+    const raf = requestAnimationFrame(() => {
+      root.querySelectorAll(`.${s.revealCard}`).forEach(el => {
+        // Only observe elements still at opacity 0 (not yet revealed)
+        if (getComputedStyle(el).opacity === '0') {
+          observerRef.current?.observe(el);
+        }
+      });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [products]);
 
   /* ── Parallax ── */
   useEffect(() => {
