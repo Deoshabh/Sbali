@@ -32,12 +32,7 @@ export default function MaintenanceModeGate({ children }) {
   const isAdminUser = user?.role === 'admin';
 
   if (loading) {
-    return (
-      <MaintenanceScreen
-        title="Checking site status"
-        message="Please wait while we verify availability."
-      />
-    );
+    return children;
   }
 
   if (error && !isAdminRoute && !isAdminUser) {
