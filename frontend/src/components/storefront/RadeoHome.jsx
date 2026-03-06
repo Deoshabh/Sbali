@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo, lazy, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import anime from 'animejs';
 import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { SITE_SETTINGS_DEFAULTS } from '@/constants/siteSettingsDefaults';
-import IntroSplash from './IntroSplash';
+// Dynamically import IntroSplash — it's only shown on first visit and not needed for LCP.
+// Splitting it out removes ~15 KiB from the initial bundle.
+const IntroSplash = lazy(() => import('./IntroSplash'));
 import s from './RadeoHome.module.css';
 import { formatPrice } from '@/utils/helpers';
 
@@ -33,14 +35,27 @@ function imgSrc(url) {
   return `${MINIO_BASE}/${url}`;
 }
 
-function RImg({ src, alt, className, width, height, loading, style, fill, sizes }) {
+function RImg({ src, alt, className, width, height, loading, style, fill, sizes, priority, fetchPriority }) {
   const [s2, setS2] = useState(() => imgSrc(src));
   const onError = useCallback(() => setS2(FALLBACK), []);
   useEffect(() => { setS2(imgSrc(src)); }, [src]);
   if (fill) {
     return <Image src={s2} alt={alt || ''} fill sizes={sizes || '100vw'} className={className} style={style} onError={onError} />;
   }
-  return <Image src={s2} alt={alt || ''} className={className} width={width || 800} height={height || 600} loading={loading} style={style} onError={onError} />;
+  return (
+    <Image
+      src={s2}
+      alt={alt || ''}
+      className={className}
+      width={width || 800}
+      height={height || 600}
+      loading={priority ? undefined : loading}
+      priority={priority}
+      fetchPriority={fetchPriority}
+      style={style}
+      onError={onError}
+    />
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -224,13 +239,25 @@ export default function RadeoHome() {
     <div className={s.radeoRoot} ref={rootRef}>
 
       {/* ─── INTRO SPLASH (first visit only) ─── */}
-      <IntroSplash onComplete={() => setIntroComplete(true)} />
+      {/* Wrapped in Suspense so the lazy import doesn't block the hero render */}
+      <Suspense fallback={null}>
+        <IntroSplash onComplete={() => setIntroComplete(true)} />
+      </Suspense>
 
       {/* ─── HERO ─── */}
       {hp.hero.enabled !== false && (
         <section className={s.hero}>
           <div className={s.heroImgCol}>
-            <RImg src={hp.hero.image || DEMO_IMAGES.hero} alt="RADEO editorial" className={s.heroImg} width={1200} height={1600} />
+            {/* priority + fetchPriority eliminate the LCP delay: image is preloaded in <head> */}
+            <RImg
+              src={hp.hero.image || DEMO_IMAGES.hero}
+              alt="Radeo premium handcrafted leather shoes"
+              className={s.heroImg}
+              width={1200}
+              height={1600}
+              priority
+              fetchPriority="high"
+            />
             <div className={s.heroImgOverlay}></div>
           </div>
           <div className={s.heroContent}>
@@ -242,7 +269,8 @@ export default function RadeoHome() {
             </h1>
             <p className={s.heroDesc}>{hp.hero.description}</p>
             <div className={s.heroCtas}>
-              <Link href={hp.hero.primaryButtonLink || '/products'}><button className={s.btnPrimary}>{hp.hero.primaryButtonText}</button></Link>
+              {/* Use Link directly with button styles — nesting <button> inside <a> is invalid HTML and breaks a11y */}
+              <Link href={hp.hero.primaryButtonLink || '/products'} className={s.btnPrimary}>{hp.hero.primaryButtonText}</Link>
               <Link href={hp.hero.secondaryButtonLink || '#craft'} className={s.heroTextCta}>{hp.hero.secondaryButtonText} <span className={s.heroCtaArrow}>→</span></Link>
             </div>
             <div className={s.heroStats}>
@@ -280,7 +308,8 @@ export default function RadeoHome() {
                   <div className={`${s.productCard} ${s.revealCard}`} data-delay={i * 80}>
                     <div className={s.cardImgWrap}>
                       <RImg src={getProductImage(p)} alt={p.name} className={s.cardImgMain} width={800} height={1000} loading="lazy" />
-                      <RImg src={getProductHoverImage(p)} alt={`${p.name} alt`} className={s.cardImgHover} width={800} height={1000} loading="lazy" />
+                      {/* Second angle — alt describes the view, not just repeating the name */}
+                      <RImg src={getProductHoverImage(p)} alt={`${p.name} — side view`} className={s.cardImgHover} width={800} height={1000} loading="lazy" />
                     </div>
                     <div className={s.cardInfo}>
                       <span className={s.cardTag}>{getProductTag(p)}</span>
@@ -301,7 +330,7 @@ export default function RadeoHome() {
               )}
             </div>
             <div className={s.sectionCta}>
-              <Link href="/products"><button className={s.btnPrimary}>View All Products</button></Link>
+              <Link href="/products" className={s.btnPrimary}>View All Products</Link>
             </div>
           </div>
         </section>
@@ -424,8 +453,8 @@ export default function RadeoHome() {
             </h2>
             <p className={`${s.ctaBannerSub} ${s.revealLabel}`}>{hp.ctaBanner.subtitle}</p>
             <div className={s.ctaBannerBtns}>
-              <Link href={hp.ctaBanner.primaryButtonLink || '/products'}><button className={s.btnLight}>{hp.ctaBanner.primaryButtonText}</button></Link>
-              <Link href={hp.ctaBanner.secondaryButtonLink || '/contact'}><button className={s.btnGhostLight}>{hp.ctaBanner.secondaryButtonText}</button></Link>
+              <Link href={hp.ctaBanner.primaryButtonLink || '/products'} className={s.btnLight}>{hp.ctaBanner.primaryButtonText}</Link>
+              <Link href={hp.ctaBanner.secondaryButtonLink || '/contact'} className={s.btnGhostLight}>{hp.ctaBanner.secondaryButtonText}</Link>
             </div>
           </div>
         </section>

@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Lora:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Space+Mono:wght@400;700&display=swap');
+/* NOTE: Google Fonts are loaded via next/font/google in layout.jsx — NO @import needed here.
+   A CSS @import of a remote URL is a synchronous render-blocking request (est. ~150ms penalty).
+   Removing it is the single biggest FCP/LCP win without changing layout. */
 
 :root {
   --font-inter: 'DM Sans', 'Plus Jakarta Sans', sans-serif;

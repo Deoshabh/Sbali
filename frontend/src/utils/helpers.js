@@ -222,25 +222,19 @@ export const isValidIndianPhone = (phone) => {
 };
 
 /**
- * Copy text to clipboard
+ * Copy text to clipboard.
+ * Uses the modern Clipboard API (supported in all evergreen browsers on HTTPS).
+ * The deprecated document.execCommand("copy") fallback has been removed —
+ * navigator.clipboard is available in Chrome 66+, Firefox 63+, Safari 13.1+.
  */
 export const copyToClipboard = async (text) => {
   try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(text);
-      return true;
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      // Clipboard API unavailable (e.g. non-secure context). Silently fail.
+      return false;
     }
-    // Fallback for older browsers
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.left = "-999999px";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    const successful = document.execCommand("copy");
-    document.body.removeChild(textArea);
-    return successful;
+    await navigator.clipboard.writeText(text);
+    return true;
   } catch (err) {
     console.error("Failed to copy text:", err);
     return false;

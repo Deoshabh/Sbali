@@ -76,7 +76,9 @@
 }
 .heroEyebrow {
   font-family: var(--r-ff-ui); text-transform: uppercase;
-  font-size: 10px; letter-spacing: 0.35em; color: #8A7E74;
+  font-size: 10px; letter-spacing: 0.35em;
+  /* Darkened from #8A7E74 to pass WCAG AA 4.5:1 on near-white backgrounds */
+  color: #4A3C30;
   margin-bottom: 2rem;
   display: flex; align-items: center; gap: 0.8rem;
 }
@@ -127,7 +129,7 @@
   padding: 0 2.4rem;
   height: 56px; display: inline-flex; align-items: center;
   background: #1A1714; color: #F0EBE1;
-  border: none; cursor: pointer;
+  border: none; cursor: pointer; text-decoration: none;
   transition: background 0.4s var(--r-ease-out), transform 0.3s;
 }
 .btnPrimary:hover { background: var(--r-brown); }
@@ -137,7 +139,7 @@
   font-size: 0.7rem; letter-spacing: 0.2em;
   padding: 1rem 2.4rem;
   background: transparent; color: var(--r-espresso);
-  border: 1px solid var(--r-line); cursor: pointer;
+  border: 1px solid var(--r-line); cursor: pointer; text-decoration: none;
   transition: border-color 0.4s, color 0.4s;
 }
 .btnGhost:hover { border-color: var(--r-bronze); color: var(--r-bronze); }
@@ -147,7 +149,7 @@
   font-size: 0.7rem; letter-spacing: 0.2em;
   padding: 1rem 2.4rem;
   background: var(--r-beige); color: var(--r-espresso);
-  border: none; cursor: pointer;
+  border: none; cursor: pointer; text-decoration: none;
   transition: background 0.4s;
 }
 .btnLight:hover { background: var(--r-white); }
@@ -157,7 +159,7 @@
   font-size: 0.7rem; letter-spacing: 0.2em;
   padding: 1rem 2.4rem;
   background: transparent; color: var(--r-beige);
-  border: 1px solid rgba(242,237,228,0.25); cursor: pointer;
+  border: 1px solid rgba(242,237,228,0.25); cursor: pointer; text-decoration: none;
   transition: border-color 0.4s;
 }
 .btnGhostLight:hover { border-color: var(--r-tan); color: var(--r-tan); }
@@ -180,8 +182,15 @@
   overflow: hidden; white-space: nowrap;
   border-top: 1px solid var(--r-line); border-bottom: 1px solid var(--r-line);
   padding: 1.1rem 0; background: var(--r-beige);
+  /* isolate paint so the scrolling animation doesn't cause full-page repaints */
+  contain: layout style;
 }
-.marqueeInner { display: inline-flex; animation: marqueeScroll 30s linear infinite; }
+.marqueeInner {
+  display: inline-flex;
+  animation: marqueeScroll 30s linear infinite;
+  /* GPU-composite the scrolling animation on its own layer */
+  will-change: transform;
+}
 .marqueeText {
   font-family: var(--r-ff-ui); font-size: 0.65rem;
   letter-spacing: 0.35em; text-transform: uppercase;
@@ -235,10 +244,12 @@
 .productCard {
   position: relative; background: var(--r-white);
   overflow: hidden; cursor: pointer;
-  transition: box-shadow 0.5s var(--r-ease-out);
+  /* Use filter:drop-shadow instead of box-shadow on hover:
+     drop-shadow is composited (GPU) while box-shadow triggers paint. */
+  transition: filter 0.5s var(--r-ease-out);
   will-change: transform;
 }
-.productCard:hover { box-shadow: var(--r-shadow-md); }
+.productCard:hover { filter: drop-shadow(0 8px 24px rgba(60,35,10,0.14)); }
 .cardImgWrap {
   position: relative; aspect-ratio: 4/5;
   overflow: hidden; background: var(--r-beige);
@@ -247,6 +258,8 @@
   position: absolute; inset: 0;
   width: 100%; height: 100%; object-fit: cover;
   transition: opacity 0.6s var(--r-ease-out);
+  /* opacity transitions are composited — ensure a separate GPU layer */
+  will-change: opacity;
 }
 .cardImgHover { opacity: 0; }
 .productCard:hover .cardImgHover { opacity: 1; }
@@ -333,9 +346,10 @@
   display: flex; align-items: flex-start; gap: 1rem;
   padding: 1.2rem; background: var(--r-white);
   border: 1px solid var(--r-line);
-  transition: box-shadow 0.3s;
+  /* Use filter:drop-shadow (composited) instead of box-shadow (paint) */
+  transition: filter 0.3s;
 }
-.heritagePoint:hover { box-shadow: var(--r-shadow-sm); }
+.heritagePoint:hover { filter: drop-shadow(0 2px 8px rgba(60,35,10,0.10)); }
 .heritagePointIcon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; }
 .heritagePointTitle {
   font-family: var(--r-ff-display); font-size: 1.05rem;

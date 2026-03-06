@@ -301,8 +301,8 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* â”€â”€ Center: Logo â”€â”€ */}
-          <Link href="/" className="flex items-center justify-center shrink-0">
+          {/* ── Center: Logo ── */}
+          <Link href="/" aria-label="Radeo — Home" className="flex items-center justify-center shrink-0">
             {settings?.branding?.logo?.url ? (
               <div className="relative" style={{ width: `${logoWidth}px`, height: `${logoHeight}px` }}>
                 <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Radeo'} fill className="object-contain object-center" priority />

@@ -70,11 +70,16 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Static security headers applied to every response.
+        // NOTE: Content-Security-Policy is intentionally omitted here.
+        //       A nonce-based CSP (required for Lighthouse XSS + Trusted Types audits)
+        //       is injected per-request by src/middleware.ts.
         source: "/(.*)",
         headers: [
           {
+            // X-Frame-Options: legacy clickjacking protection (keep alongside CSP frame-ancestors)
             key: "X-Frame-Options",
-            value: "DENY",
+            value: "SAMEORIGIN",
           },
           {
             key: "X-Content-Type-Options",
@@ -97,19 +102,49 @@ const nextConfig = {
             value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
           },
           {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://checkout.razorpay.com https://apis.google.com https://*.firebaseio.com https://challenges.cloudflare.com https://static.cloudflareinsights.com",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://cdn.radeo.in https://minio.radeo.in https://images.unsplash.com https://*.googleusercontent.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://api.radeo.in https://cdn.radeo.in https://minio.radeo.in https://*.firebaseio.com https://*.googleapis.com https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.razorpay.com wss://*.radeo.in https://api.honeybadger.io https://challenges.cloudflare.com",
-              "frame-src https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com https://*.firebaseapp.com",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self'",
-            ].join("; "),
+            // Cross-Origin-Opener-Policy: prevents cross-origin windows from retaining
+            // a reference to this page. "same-origin-allow-popups" is used instead of
+            // "same-origin" so Razorpay and Firebase popup flows continue to work.
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+          {
+            // Cross-Origin-Resource-Policy: prevents other origins from no-cors fetching
+            // our resources (images, scripts, etc.).
+            key: "Cross-Origin-Resource-Policy",
+            value: "same-site",
+          },
+        ],
+      },
+      {
+        // Next.js content-hashed static bundles: safe to cache for 1 year.
+        // This resolves Lighthouse "Use efficient cache lifetimes" for JS/CSS assets.
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        // Public folder static assets: images, fonts, icons.
+        // Content-addressed via filename hash in production builds.
+        source: "/(.*)\\.(ico|png|jpg|jpeg|svg|webp|avif|woff|woff2|ttf|eot|otf)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        // robots.txt and sitemap.xml: cache for 1 day — frequently read by crawlers.
+        source: "/(robots\\.txt|sitemap\\.xml)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, s-maxage=86400",
           },
         ],
       },

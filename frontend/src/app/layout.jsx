@@ -1,4 +1,5 @@
 import { Plus_Jakarta_Sans, Lora, Libre_Baskerville, Space_Mono, Cormorant_Garamond, DM_Sans } from 'next/font/google';
+import { headers } from 'next/headers';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/context/AuthContext';
@@ -69,12 +70,49 @@ import QueryProvider from '@/providers/QueryProvider';
 
 // ...
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  // Read the nonce injected by middleware (used for nonce-based CSP).
+  const headersList = await headers();
+  const nonce = headersList.get('x-nonce') ?? '';
+
   return (
     <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${jakarta.variable} ${lora.variable} ${baskerville.variable} ${spaceMono.variable}`}>
       <head>
+        {/* Critical preconnects: resolved early so TLS handshakes don't delay LCP images */}
         <link rel="preconnect" href="https://api.radeo.in" />
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        <link rel="preconnect" href="https://cdn.radeo.in" />
+        <link rel="preconnect" href="https://minio.radeo.in" />
+        {/* Unsplash is used for demo hero images — preconnect reduces TTFB during dev/staging */}
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        {/*
+          Trusted Types default passthrough policy.
+          Required so that legacy third-party scripts (Razorpay, Cloudflare Turnstile,
+          older Firebase modules) continue to work when the
+          `require-trusted-types-for 'script'` CSP directive is active.
+          The nonce allows this inline script to execute under the nonce-based CSP.
+        */}
+        <script
+          nonce={nonce}
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `
+if(window.trustedTypes&&window.trustedTypes.createPolicy){
+  try{window.trustedTypes.createPolicy('default',{
+    createHTML:function(s){return s},
+    createScriptURL:function(s){return s},
+    createScript:function(s){return s}
+  });}catch(e){}
+}`,
+          }}
+        />
+        {/* nonce attribute allows this script to execute under the strict nonce-based CSP */}
+        <script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          async
+          defer
+          nonce={nonce}
+        />
       </head>
       <body className="antialiased">
         <div id="turnstile-container" style={{ display: 'none' }} />

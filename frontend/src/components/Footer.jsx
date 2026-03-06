@@ -29,11 +29,13 @@ const getFooterVar = (name, fallback) => typeof window !== 'undefined'
 const FOOTER_BG_DEFAULT = '#1A1714';
 const FOOTER_CREAM_DEFAULT = '#F0EBE1';
 const FOOTER_GOLD_DEFAULT = '#B8973A';
-const FOOTER_MUTED_DEFAULT = '#6B6560';
+// Lightened from #6B6560 → #9A948E: WCAG AA (4.5:1) on dark footer bg #1A1714
+const FOOTER_MUTED_DEFAULT = '#9A948E';
 const FOOTER_COL_HEADER_DEFAULT = '#9A8E84';
 const FOOTER_BORDER_DEFAULT = '#3A3530';
 const FOOTER_LEGAL_BORDER_DEFAULT = '#2A2520';
-const FOOTER_LEGAL_TEXT_DEFAULT = '#4A4540';
+// Lightened from #4A4540 → #8A8480: WCAG AA on dark footer bg #1A1714
+const FOOTER_LEGAL_TEXT_DEFAULT = '#8A8480';
 
 // CSS-variable-backed getters (fall back to hardcoded constants)
 const useFooterColors = () => {
@@ -54,8 +56,7 @@ const useFooterColors = () => {
     setColors({
       bg: get('--color-footer-bg', FOOTER_BG_DEFAULT),
       cream: get('--color-footer-text', FOOTER_CREAM_DEFAULT),
-      gold: get('--color-footer-accent', FOOTER_GOLD_DEFAULT),
-      muted: get('--color-footer-muted', FOOTER_MUTED_DEFAULT),
+      gold: get('--color-footer-accent', FOOTER_GOLD_DEFAULT),        // Use lighter muted values so they pass contrast on the dark bg at runtime too      muted: get('--color-footer-muted', FOOTER_MUTED_DEFAULT),
       colHeader: get('--color-footer-muted', FOOTER_COL_HEADER_DEFAULT),
       border: get('--color-footer-border', FOOTER_BORDER_DEFAULT),
       legalBorder: get('--color-footer-border', FOOTER_LEGAL_BORDER_DEFAULT),
@@ -188,6 +189,8 @@ export default function Footer() {
                       href={social.url || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
+                      // aria-label is required for icon-only links (Lighthouse: Links do not have a discernible name)
+                      aria-label={`Follow us on ${social.platform.charAt(0).toUpperCase() + social.platform.slice(1)}`}
                       style={{
                         width: '32px',
                         height: '32px',
