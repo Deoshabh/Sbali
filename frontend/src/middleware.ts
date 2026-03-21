@@ -34,6 +34,9 @@ export function middleware(request: NextRequest) {
     // 'unsafe-inline' kept as fallback for browsers without strict-dynamic support.
     // 'unsafe-eval' removed — Firebase 12+ and React 18 do not require it.
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
+    // script-src-elem is set explicitly so parser-inserted third-party scripts
+    // (e.g. Cloudflare email-decode) are still allowed when strict-dynamic is active.
+    `script-src-elem 'self' 'nonce-${nonce}' 'unsafe-inline' https://radeo.in https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https://cdn.radeo.in https://minio.radeo.in https://images.unsplash.com https://*.googleusercontent.com",
     "font-src 'self' https://fonts.gstatic.com",
@@ -44,7 +47,7 @@ export function middleware(request: NextRequest) {
     "form-action 'self'",
     // Trusted Types: mitigate DOM-based XSS by enforcing typed DOM APIs.
     // 'allow-duplicates' lets third-party scripts (Firebase, Razorpay) register their own policies.
-    "trusted-types nextjs goog#html firebase default 'allow-duplicates'",
+    "trusted-types nextjs nextjs#bundler goog#html firebase default 'allow-duplicates'",
     "require-trusted-types-for 'script'",
   ].join('; ');
 
