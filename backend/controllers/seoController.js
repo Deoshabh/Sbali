@@ -7,10 +7,10 @@ const { log } = require('../utils/logger');
  * Can be called on product create/update to pre-fill SEO fields.
  */
 function generateProductSeo(product) {
-  const title = `${product.name} | Buy ${product.category || 'Shoes'} Online - Radeo`;
+  const title = `${product.name} | Buy ${product.category || 'Shoes'} Online - Sbali`;
   const description = product.description
     ? product.description.substring(0, 155).replace(/\s+/g, ' ').trim() + '...'
-    : `Shop ${product.name} - premium handcrafted ${product.category || 'shoes'} at Radeo. Free shipping on orders above â‚¹999.`;
+    : `Shop ${product.name} - premium handcrafted ${product.category || 'shoes'} at Sbali. Free shipping on orders above â‚¹999.`;
 
   const keywords = [
     product.name,
@@ -38,10 +38,10 @@ function generateProductSeo(product) {
  * Auto-generate SEO metadata for a category.
  */
 function generateCategorySeo(category) {
-  const title = `${category.name} - Handcrafted Shoes Collection | Radeo`;
+  const title = `${category.name} - Handcrafted Shoes Collection | Sbali`;
   const description = category.description
     ? category.description.substring(0, 155).trim()
-    : `Browse our ${category.name} collection - premium handcrafted footwear at Radeo.`;
+    : `Browse our ${category.name} collection - premium handcrafted footwear at Sbali.`;
 
   return {
     title: title.substring(0, 60),

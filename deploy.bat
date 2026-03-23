@@ -7,7 +7,7 @@ REM This script sets up your entire stack with Traefik
 setlocal enabledelayedexpansion
 
 echo.
-echo 🚀 Starting Radeo Stack with Traefik...
+echo 🚀 Starting Sbali Stack with Traefik...
 echo.
 
 REM Check if .env file exists
@@ -78,15 +78,15 @@ echo ✅ Stack is running!
 echo.
 echo 📍 Access Points:
 echo =================
-echo 🌐 Frontend:        https://radeo.in
-echo 🌐 Frontend (www):  https://www.radeo.in
-echo 🔌 Backend API:     https://api.radeo.in
+echo 🌐 Frontend:        https://sbali.in
+echo 🌐 Frontend (www):  https://www.sbali.in
+echo 🔌 Backend API:     https://api.sbali.in
 echo 📊 Traefik:         http://localhost:8080 (Dashboard)
 echo.
 echo 🔗 Test CORS:
 echo ============
-echo curl -X OPTIONS https://api.radeo.in/api/v1/auth/login ^
-echo   -H "Origin: https://radeo.in" ^
+echo curl -X OPTIONS https://api.sbali.in/api/v1/auth/login ^
+echo   -H "Origin: https://sbali.in" ^
 echo   -H "Access-Control-Request-Method: POST" ^
 echo   -v
 echo.

@@ -3,8 +3,8 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
   title: 'Shipping Information',
-  description: 'Learn about Radeo shipping policies, delivery times, shipping costs, and delivery zones across India.',
-  url: 'https://radeo.in/shipping',
+  description: 'Learn about Sbali shipping policies, delivery times, shipping costs, and delivery zones across India.',
+  url: 'https://sbali.in/shipping',
   keywords: ['shipping policy', 'delivery times', 'shipping costs India', 'free shipping shoes'],
 };
 

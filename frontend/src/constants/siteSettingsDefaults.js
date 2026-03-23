@@ -57,7 +57,7 @@ export const SITE_SETTINGS_DEFAULTS = {
       label: 'Our Heritage',
       titleLine1: 'Crafted in',
       titleLine2: 'Agra',
-      description: 'From the city of the Taj Mahal — Agra has been the heart of India\'s leather craft for centuries. RADEO continues this tradition, blending Mughal-era artisanship with contemporary design in every pair we create.',
+      description: 'From the city of the Taj Mahal — Agra has been the heart of India\'s leather craft for centuries. SBALI continues this tradition, blending Mughal-era artisanship with contemporary design in every pair we create.',
       image: 'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=1200&h=900&fit=crop&q=80',
       points: [
         { icon: '🏛️', title: 'Heritage City', desc: 'Agra\'s leather craft tradition spans over 400 years, rooted in Mughal artisanship.' },
@@ -71,8 +71,8 @@ export const SITE_SETTINGS_DEFAULTS = {
       titleLine1: 'Born From',
       titleLine2: 'Passion',
       paragraphs: [
-        'Founded in 2008, RADEO started as a small atelier in Agra with a singular vision — to create leather shoes that rival the finest European makers, rooted in Indian craftsmanship.',
-        'Today, our twelve artisans continue that tradition. Every pair passes through over 200 hand operations before it earns the RADEO name.',
+        'Founded in 2008, SBALI started as a small atelier in Agra with a singular vision — to create leather shoes that rival the finest European makers, rooted in Indian craftsmanship.',
+        'Today, our twelve artisans continue that tradition. Every pair passes through over 200 hand operations before it earns the SBALI name.',
       ],
       quote: 'A great shoe isn\'t made — it\'s born. Every cut, every stitch, every burnish is a conversation between the artisan and the leather.',
       image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1200&h=900&fit=crop&q=80',
@@ -90,7 +90,7 @@ export const SITE_SETTINGS_DEFAULTS = {
         },
         {
           id: 'testimonial-2',
-          text: 'I\'ve worn bespoke from London and Florence. RADEO stands shoulder to shoulder with the best — at a fraction of the price. Truly remarkable craftsmanship.',
+          text: 'I\'ve worn bespoke from London and Florence. SBALI stands shoulder to shoulder with the best — at a fraction of the price. Truly remarkable craftsmanship.',
           author: 'Vikram Singh, New Delhi',
           rating: 5,
         },
@@ -155,7 +155,7 @@ export const SITE_SETTINGS_DEFAULTS = {
     testimonials: {
       enabled: true,
       title: 'What Our Customers Say',
-      description: 'Real feedback from customers who wear Radeo every day.',
+      description: 'Real feedback from customers who wear Sbali every day.',
       items: [
         {
           id: 'testimonial-1',
@@ -182,7 +182,7 @@ export const SITE_SETTINGS_DEFAULTS = {
       title: 'Trusted Brand Partners',
       description: 'We collaborate with quality-focused partners and manufacturers.',
       items: [
-        { id: 'brand-1', name: 'Radeo Atelier', logoText: 'RA' },
+        { id: 'brand-1', name: 'Sbali Atelier', logoText: 'RA' },
         { id: 'brand-2', name: 'Heritage Line', logoText: 'HL' },
         { id: 'brand-3', name: 'Prime Leather Co.', logoText: 'PL' },
         { id: 'brand-4', name: 'Urban Classics', logoText: 'UC' },
@@ -254,7 +254,7 @@ export const SITE_SETTINGS_DEFAULTS = {
   contactInfo: {
     address: '123 Shoe Street, Fashion District, Mumbai 400001',
     phone: '+91 123 456 7890',
-    email: 'support@radeo.in',
+    email: 'support@sbali.in',
     showAddress: true,
     showPhone: true,
     showEmail: true,
@@ -283,7 +283,7 @@ export const SITE_SETTINGS_DEFAULTS = {
   },
   faqPage: {
     title: 'Frequently Asked Questions',
-    subtitle: 'Find answers to common questions about Radeo',
+    subtitle: 'Find answers to common questions about Sbali',
     categories: [
       {
         id: 'faq-orders',
@@ -330,11 +330,11 @@ export const SITE_SETTINGS_DEFAULTS = {
     supportPrimaryText: 'Contact Support',
     supportPrimaryLink: '/contact',
     supportSecondaryText: 'Email Us',
-    supportSecondaryLink: 'mailto:support@radeo.in',
+    supportSecondaryLink: 'mailto:support@sbali.in',
   },
   footerContent: {
     brand: {
-      name: 'Radeo',
+      name: 'Sbali',
       description:
         'Premium handcrafted shoes made with timeless craftsmanship and finest materials.',
       logo: '',
@@ -379,13 +379,13 @@ export const SITE_SETTINGS_DEFAULTS = {
     },
   },
   aboutPage: {
-    title: 'About Radeo',
+    title: 'About Sbali',
     subtitle: 'Your trusted destination for premium footwear since 2026',
     heroImage: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=1600&h=600&fit=crop&q=80',
     storyImage: 'https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=800&h=600&fit=crop&q=80',
     storyTitle: 'Our Story',
     storyParagraphs: [
-      'Radeo was born from a simple belief: everyone deserves access to quality footwear that combines style, comfort, and durability.',
+      'Sbali was born from a simple belief: everyone deserves access to quality footwear that combines style, comfort, and durability.',
       'We curate products that match modern lifestyles while maintaining quality and comfort standards.',
       'We partner with trusted manufacturers and brands to bring authentic products at fair prices.',
     ],
@@ -554,7 +554,7 @@ export const SITE_SETTINGS_DEFAULTS = {
       primaryText: 'Contact Support',
       primaryLink: '/contact',
       secondaryText: 'Email Us',
-      secondaryLink: 'mailto:support@radeo.in',
+      secondaryLink: 'mailto:support@sbali.in',
     },
   },
   maintenanceMode: {

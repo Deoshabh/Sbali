@@ -22,7 +22,7 @@ export function useSettingsData() {
   const [saving, setSaving] = useState(false);
 
   // State
-  const [branding, setBranding] = useState({ logo: { url: '', alt: 'Logo' }, favicon: { url: '' }, siteName: 'Radeo' });
+  const [branding, setBranding] = useState({ logo: { url: '', alt: 'Logo' }, favicon: { url: '' }, siteName: 'Sbali' });
   const [banners, setBanners] = useState([]);
   const [announcementBar, setAnnouncementBar] = useState({ enabled: true, text: '', link: '', backgroundColor: '#10b981', textColor: '#ffffff', dismissible: true });
   const [homePage, setHomePage] = useState(SITE_SETTINGS_DEFAULTS.homePage);

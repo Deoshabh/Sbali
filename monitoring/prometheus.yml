@@ -1,5 +1,5 @@
 # ============================================
-# Prometheus Configuration — RADEO Platform
+# Prometheus Configuration — SBALI Platform
 # ============================================
 global:
   scrape_interval: 15s

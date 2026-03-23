@@ -49,7 +49,7 @@ const files = [
   'frontend/src/components/UserHistoryModal.jsx',
   'frontend/src/components/viewer/ProductViewer360.jsx',
   'frontend/src/components/viewer/HotspotAnnotationEditor.jsx',
-  'frontend/src/components/storefront/RadeoHome.jsx',
+  'frontend/src/components/storefront/SbaliHome.jsx',
   'frontend/src/components/storefront/CmsPageRenderer.jsx',
   'frontend/src/components/auth/EmailAuth.jsx',
   'frontend/src/components/auth/PhoneAuth.jsx',

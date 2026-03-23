@@ -30,7 +30,7 @@ export async function generateMetadata({ params }) {
 
   if (!product) {
     return {
-      title: 'Product Not Found | Radeo',
+      title: 'Product Not Found | Sbali',
       robots: { index: false },
     };
   }

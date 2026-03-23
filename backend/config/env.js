@@ -35,7 +35,7 @@ const envSchema = z.object({
   MINIO_BUCKET: z.string().min(1, "MINIO_BUCKET is required"),
   MINIO_REGION: z.string().default("us-east-1"),
   MINIO_PUBLIC_URL: z.string().optional(),
-  MINIO_CDN_URL: z.string().optional(), // e.g. https://cdn.radeo.in
+  MINIO_CDN_URL: z.string().optional(), // e.g. https://cdn.sbali.in
 
   // Payment
   RAZORPAY_KEY_ID: z.string().min(1, "RAZORPAY_KEY_ID is required"),
@@ -47,7 +47,7 @@ const envSchema = z.object({
   SHIPROCKET_PASSWORD: z.string().min(1, "SHIPROCKET_PASSWORD is required"),
 
   // Firebase
-  FIREBASE_PROJECT_ID: z.string().default("radeo-2026"),
+  FIREBASE_PROJECT_ID: z.string().default("sbali-2026"),
   FIREBASE_SERVICE_ACCOUNT_PATH: z.string().optional(),
   FIREBASE_PRIVATE_KEY: z.string().optional(),
   FIREBASE_CLIENT_EMAIL: z.string().email().optional(),

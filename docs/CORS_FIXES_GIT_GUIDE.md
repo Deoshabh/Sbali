@@ -128,9 +128,9 @@ git push origin main
 # ✅ Backend port 5000
 
 # 3. Manual tests
-curl https://api.radeo.in/health
-curl -X OPTIONS https://api.radeo.in/api/v1/auth/login \
-  -H 'Origin: https://radeo.in' \
+curl https://api.sbali.in/health
+curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
+  -H 'Origin: https://sbali.in' \
   -H 'Access-Control-Request-Method: POST'
 ```
 
@@ -222,8 +222,8 @@ fix: bypass auth middleware for OPTIONS preflight requests
 ./verify-cors-fixes.sh
 
 # Test preflight
-curl -X OPTIONS https://api.radeo.in/api/v1/auth/login \
-  -H 'Origin: https://radeo.in' \
+curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
+  -H 'Origin: https://sbali.in' \
   -H 'Access-Control-Request-Method: POST' \
   -i
 

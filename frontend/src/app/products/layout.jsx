@@ -4,7 +4,7 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 const FALLBACK = {
   title: 'Shop Premium Shoes',
   description: 'Browse our complete collection of premium handcrafted shoes. Filter by category, material, color and price. Free shipping on orders across India.',
-  url: 'https://radeo.in/products',
+  url: 'https://sbali.in/products',
   keywords: ['buy shoes online', 'premium shoes collection', 'leather shoes India', 'shop footwear', 'handcrafted shoes online'],
 };
 

@@ -4,12 +4,12 @@
  *
  * CLIENT-SIDE (browser):
  *   Returns "/api/v1"
- *   → browser makes same-origin request to radeo.in/api/v1/…
+ *   → browser makes same-origin request to sbali.in/api/v1/…
  *   → Next.js rewrites it to BACKEND_INTERNAL_URL/api/v1/… (see next.config.mjs)
  *   → Zero CORS, zero preflight, works even when Traefik returns 502
  *
  * SERVER-SIDE (SSR / ISR / sitemap):
- *   Returns the full backend URL (e.g. https://api.radeo.in/api/v1)
+ *   Returns the full backend URL (e.g. https://api.sbali.in/api/v1)
  *   so server-to-server fetches reach the backend directly.
  */
 export function getApiUrl() {

@@ -23,7 +23,7 @@ const setRefreshCookie = (res, token) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    domain: process.env.NODE_ENV === "production" ? ".radeo.in" : undefined,
+    domain: process.env.NODE_ENV === "production" ? ".sbali.in" : undefined,
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 };
@@ -33,7 +33,7 @@ const clearRefreshCookie = (res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    domain: process.env.NODE_ENV === "production" ? ".radeo.in" : undefined,
+    domain: process.env.NODE_ENV === "production" ? ".sbali.in" : undefined,
   });
 };
 

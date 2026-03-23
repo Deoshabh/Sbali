@@ -84,7 +84,7 @@ export default function BrandingSettings() {
             />
             <div className="flex-1 space-y-2">
               <TextInput value={branding.logo?.url} onChange={(v) => setBranding(prev => ({ ...prev, logo: { ...prev.logo, url: v } }))} placeholder="Or paste logo URL" />
-              <TextInput value={branding.logo?.alt} onChange={(v) => setBranding(prev => ({ ...prev, logo: { ...prev.logo, alt: v } }))} placeholder="Alt text (e.g. Radeo Logo)" />
+              <TextInput value={branding.logo?.alt} onChange={(v) => setBranding(prev => ({ ...prev, logo: { ...prev.logo, alt: v } }))} placeholder="Alt text (e.g. Sbali Logo)" />
             </div>
           </div>
         </div>

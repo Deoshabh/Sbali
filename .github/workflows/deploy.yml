@@ -63,7 +63,7 @@ jobs:
       - name: Run tests
         env:
           NODE_ENV: test
-          MONGO_URI: mongodb://localhost:27017/radeo-test
+          MONGO_URI: mongodb://localhost:27017/sbali-test
           JWT_SECRET: ci-test-secret-must-be-at-least-32-characters-long
           REDIS_HOST: localhost
           REDIS_PORT: 6379
@@ -71,7 +71,7 @@ jobs:
           MINIO_PORT: 9000
           MINIO_ACCESS_KEY: minioadmin
           MINIO_SECRET_KEY: minioadmin
-          MINIO_BUCKET: radeo-test
+          MINIO_BUCKET: sbali-test
           RAZORPAY_KEY_ID: rzp_test_dummy
           RAZORPAY_KEY_SECRET: dummy_secret
           SHIPROCKET_EMAIL: test@test.com
@@ -103,7 +103,7 @@ jobs:
 
       - name: Build Next.js
         env:
-          NEXT_PUBLIC_API_URL: https://api.radeo.in
+          NEXT_PUBLIC_API_URL: https://api.sbali.in
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: placeholder
         run: npm run build
 
@@ -146,7 +146,7 @@ jobs:
         run: |
           for i in {1..10}; do
             status=$(curl -s -o /dev/null -w "%{http_code}" \
-              "https://api.radeo.in/api/health/live" \
+              "https://api.sbali.in/api/health/live" \
               --connect-timeout 5 --max-time 10) || true
             echo "Attempt $i: HTTP $status"
             if [ "$status" = "200" ]; then
@@ -162,7 +162,7 @@ jobs:
         run: |
           for i in {1..10}; do
             status=$(curl -s -o /dev/null -w "%{http_code}" \
-              "https://radeo.in" \
+              "https://sbali.in" \
               --connect-timeout 5 --max-time 10) || true
             echo "Attempt $i: HTTP $status"
             if [ "$status" = "200" ]; then

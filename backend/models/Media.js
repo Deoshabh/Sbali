@@ -161,12 +161,12 @@ mediaSchema.pre("save", function () {
   // Generate CDN URL if not set
   if (!this.cdnUrl && this.storageUrl) {
     // Convert MinIO URL to CDN URL
-    // Example: http://minio:9000/cms-media/filename.jpg → https://cdn.radeo.in/cms-media/filename.jpg
+    // Example: http://minio:9000/cms-media/filename.jpg → https://cdn.sbali.in/cms-media/filename.jpg
     const url = new URL(this.storageUrl);
     if (url.hostname === "minio" || url.hostname.includes("minio")) {
       this.cdnUrl = this.storageUrl.replace(
         url.origin,
-        "https://cdn.radeo.in"
+        "https://cdn.sbali.in"
       );
     } else {
       this.cdnUrl = this.storageUrl;

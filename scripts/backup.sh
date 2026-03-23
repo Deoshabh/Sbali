@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # ============================================
-# RADEO — Automated Backup Script
+# SBALI — Automated Backup Script
 # Backs up MongoDB, uploads to MinIO, verifies,
 # and rotates old backups.
 # ============================================
 set -euo pipefail
 
 # ---------- Configuration ----------
-BACKUP_DIR="${BACKUP_DIR:-/tmp/radeo-backups}"
+BACKUP_DIR="${BACKUP_DIR:-/tmp/sbali-backups}"
 MONGO_URI="${MONGO_URI:?MONGO_URI env var is required}"
-MINIO_ALIAS="${MINIO_ALIAS:-radeo}"
+MINIO_ALIAS="${MINIO_ALIAS:-sbali}"
 MINIO_BUCKET="${MINIO_BUCKET:-backups}"
 MINIO_ENDPOINT="${MINIO_ENDPOINT:?MINIO_ENDPOINT env var is required}"
 MINIO_ACCESS_KEY="${MINIO_ACCESS_KEY:?MINIO_ACCESS_KEY env var is required}"
@@ -17,7 +17,7 @@ MINIO_SECRET_KEY="${MINIO_SECRET_KEY:?MINIO_SECRET_KEY env var is required}"
 RETENTION_DAYS="${RETENTION_DAYS:-30}"
 
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-DUMP_NAME="radeo_${TIMESTAMP}"
+DUMP_NAME="sbali_${TIMESTAMP}"
 DUMP_PATH="${BACKUP_DIR}/${DUMP_NAME}"
 ARCHIVE="${DUMP_PATH}.tar.gz"
 

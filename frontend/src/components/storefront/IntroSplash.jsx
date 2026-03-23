@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 import anime from 'animejs';
 import s from './IntroSplash.module.css';
 
-const SESSION_KEY = 'radeo_intro_seen';
+const SESSION_KEY = 'sbali_intro_seen';
 
 /**
  * IntroSplash — Route-aware first-visit gate.
- * Shows a dark overlay with RADEO wordmark, gold progress bar,
+ * Shows a dark overlay with SBALI wordmark, gold progress bar,
  * and counter on the user's first visit per browser session.
  * Controlled via sessionStorage so it never replays mid-session.
  *
@@ -124,7 +124,7 @@ export default function IntroSplash({ onComplete }) {
       <div className={s.splashGrain} />
 
       <div className={s.splashWord}>
-        {'RADEO'.split('').map((ch, i) => (
+        {'SBALI'.split('').map((ch, i) => (
           <span key={i} className={s.splashLetter}>{ch}</span>
         ))}
       </div>

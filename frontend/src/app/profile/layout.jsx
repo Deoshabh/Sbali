@@ -2,7 +2,7 @@ import { generateMetadata as generateSEOMetadata } from '@/utils/seo';
 
 export const metadata = generateSEOMetadata({
   title: 'My Profile',
-  description: 'Manage your Radeo account and profile settings.',
+  description: 'Manage your Sbali account and profile settings.',
   noindex: true,
   nofollow: true,
 });

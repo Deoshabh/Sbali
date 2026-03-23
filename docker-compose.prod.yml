@@ -1,5 +1,5 @@
 # ============================================
-# RADEO Production Docker Compose
+# SBALI Production Docker Compose
 # For Dokploy deployment with Traefik
 # ============================================
 
@@ -27,10 +27,10 @@ services:
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=radeo-internal"
+      - "--providers.docker.network=sbali-internal"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=admin@radeo.in"
+      - "--certificatesresolvers.letsencrypt.acme.email=admin@sbali.in"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--ping=true"
       - "--metrics.prometheus=true"
@@ -48,7 +48,7 @@ services:
       retries: 3
       start_period: 10s
     networks:
-      - radeo-internal
+      - sbali-internal
     labels:
       # Security headers middleware (applied to all routers)
       - "traefik.enable=true"
@@ -95,17 +95,17 @@ services:
       minio:
         condition: service_healthy
     networks:
-      - radeo-internal
+      - sbali-internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`api.radeo.in`)"
+      - "traefik.http.routers.backend.rule=Host(`api.sbali.in`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls=true"
       - "traefik.http.routers.backend.tls.certresolver=letsencrypt"
       - "traefik.http.routers.backend.middlewares=security-headers,rate-limit,cors-headers"
       - "traefik.http.services.backend.loadbalancer.server.port=5000"
       # CORS
-      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=https://radeo.in,https://www.radeo.in"
+      - "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=https://sbali.in,https://www.sbali.in"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowmethods=GET,POST,PUT,PATCH,DELETE,OPTIONS"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowheaders=Authorization,Content-Type,X-Requested-With,x-api-key"
       - "traefik.http.middlewares.cors-headers.headers.accesscontrolallowcredentials=true"
@@ -126,7 +126,7 @@ services:
           cpus: "0.75"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=https://api.radeo.in/api/v1
+      - NEXT_PUBLIC_API_URL=https://api.sbali.in/api/v1
     env_file:
       - .env.prod
     expose:
@@ -141,10 +141,10 @@ services:
       backend:
         condition: service_healthy
     networks:
-      - radeo-internal
+      - sbali-internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`radeo.in`) || Host(`www.radeo.in`)"
+      - "traefik.http.routers.frontend.rule=Host(`sbali.in`) || Host(`www.sbali.in`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls=true"
       - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
@@ -178,7 +178,7 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - radeo-internal
+      - sbali-internal
 
   # ============================================
   # MINIO OBJECT STORAGE
@@ -192,8 +192,8 @@ services:
     environment:
       - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
       - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
-      - MINIO_BROWSER_REDIRECT_URL=https://minio-console.radeo.in
-      - MINIO_SERVER_URL=https://minio.radeo.in
+      - MINIO_BROWSER_REDIRECT_URL=https://minio-console.sbali.in
+      - MINIO_SERVER_URL=https://minio.sbali.in
       - MINIO_PROMETHEUS_AUTH_TYPE=public
     expose:
       - "9000"
@@ -205,18 +205,18 @@ services:
       retries: 3
       start_period: 15s
     networks:
-      - radeo-internal
+      - sbali-internal
     labels:
       - "traefik.enable=true"
-      # MinIO API (cdn.radeo.in)
-      - "traefik.http.routers.minio-api.rule=Host(`cdn.radeo.in`) || Host(`minio.radeo.in`)"
+      # MinIO API (cdn.sbali.in)
+      - "traefik.http.routers.minio-api.rule=Host(`cdn.sbali.in`) || Host(`minio.sbali.in`)"
       - "traefik.http.routers.minio-api.entrypoints=websecure"
       - "traefik.http.routers.minio-api.tls=true"
       - "traefik.http.routers.minio-api.tls.certresolver=letsencrypt"
       - "traefik.http.routers.minio-api.service=minio-api"
       - "traefik.http.services.minio-api.loadbalancer.server.port=9000"
       # MinIO Console
-      - "traefik.http.routers.minio-console.rule=Host(`minio-console.radeo.in`)"
+      - "traefik.http.routers.minio-console.rule=Host(`minio-console.sbali.in`)"
       - "traefik.http.routers.minio-console.entrypoints=websecure"
       - "traefik.http.routers.minio-console.tls=true"
       - "traefik.http.routers.minio-console.tls.certresolver=letsencrypt"
@@ -243,7 +243,7 @@ services:
       minio:
         condition: service_healthy
     networks:
-      - radeo-internal
+      - sbali-internal
     labels:
       # Ofelia (or host cron) triggers this container daily
       - "ofelia.enabled=true"
@@ -274,10 +274,10 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - radeo-internal
+      - sbali-internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.radeo.in`)"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.sbali.in`)"
       - "traefik.http.routers.prometheus.entrypoints=websecure"
       - "traefik.http.routers.prometheus.tls=true"
       - "traefik.http.routers.prometheus.tls.certresolver=letsencrypt"
@@ -304,7 +304,7 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - radeo-internal
+      - sbali-internal
     profiles:
       - monitoring
 
@@ -317,7 +317,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-changeme}
-      - GF_SERVER_ROOT_URL=https://grafana.radeo.in
+      - GF_SERVER_ROOT_URL=https://grafana.sbali.in
       - GF_USERS_ALLOW_SIGN_UP=false
     volumes:
       - grafana-data:/var/lib/grafana
@@ -335,10 +335,10 @@ services:
       timeout: 5s
       retries: 3
     networks:
-      - radeo-internal
+      - sbali-internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.grafana.rule=Host(`grafana.radeo.in`)"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.sbali.in`)"
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.tls=true"
       - "traefik.http.routers.grafana.tls.certresolver=letsencrypt"
@@ -348,7 +348,7 @@ services:
       - monitoring
 
 networks:
-  radeo-internal:
+  sbali-internal:
     driver: bridge
 
 volumes:

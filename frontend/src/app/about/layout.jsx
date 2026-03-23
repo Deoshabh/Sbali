@@ -3,9 +3,9 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
   title: 'About Us',
-  description: 'Learn about Radeo — our passion for premium handcrafted shoes, our story, values, and commitment to quality craftsmanship and sustainable practices.',
-  url: 'https://radeo.in/about',
-  keywords: ['about Radeo', 'handcrafted shoes brand', 'premium shoe maker India', 'luxury footwear craftsmanship'],
+  description: 'Learn about Sbali — our passion for premium handcrafted shoes, our story, values, and commitment to quality craftsmanship and sustainable practices.',
+  url: 'https://sbali.in/about',
+  keywords: ['about Sbali', 'handcrafted shoes brand', 'premium shoe maker India', 'luxury footwear craftsmanship'],
 };
 
 export async function generateMetadata() {

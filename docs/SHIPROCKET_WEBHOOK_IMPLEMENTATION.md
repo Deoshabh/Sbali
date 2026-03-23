@@ -106,7 +106,7 @@ NEXT_PUBLIC_SOKETI_CLUSTER=mt1
 2. **Navigate to**: Settings → API → Webhooks
 3. **Add Webhook URL**:
    ```
-   https://api.radeo.in/api/webhooks/shiprocket
+   https://api.sbali.in/api/webhooks/shiprocket
    ```
 4. **Add Security Header**:
    - Header Name: `x-api-key`
@@ -144,7 +144,7 @@ services:
       - traefik-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.soketi.rule=Host(`ws.radeo.in`)"
+      - "traefik.http.routers.soketi.rule=Host(`ws.sbali.in`)"
       - "traefik.http.routers.soketi.entrypoints=websecure"
       - "traefik.http.routers.soketi.tls=true"
       - "traefik.http.services.soketi.loadbalancer.server.port=6001"
@@ -187,7 +187,7 @@ $body = @{
     location = "Mumbai Hub"
 } | ConvertTo-Json
 
-Invoke-WebRequest -Uri https://api.radeo.in/api/webhooks/shiprocket `
+Invoke-WebRequest -Uri https://api.sbali.in/api/webhooks/shiprocket `
   -Method POST `
   -Headers $headers `
   -Body $body `
@@ -198,13 +198,13 @@ Invoke-WebRequest -Uri https://api.radeo.in/api/webhooks/shiprocket `
 
 ```bash
 # Get recent webhook logs
-GET https://api.radeo.in/api/webhooks/logs?page=1&limit=20
+GET https://api.sbali.in/api/webhooks/logs?page=1&limit=20
 
 # Filter by status
-GET https://api.radeo.in/api/webhooks/logs?status=failed
+GET https://api.sbali.in/api/webhooks/logs?status=failed
 
 # Retry failed webhook
-POST https://api.radeo.in/api/webhooks/retry/:logId
+POST https://api.sbali.in/api/webhooks/retry/:logId
 ```
 
 ---
@@ -273,7 +273,7 @@ The middleware checks these Shiprocket IPs:
 ## 🔄 Event Flow
 
 ```
-1. Shiprocket sends webhook → https://api.radeo.in/api/webhooks/shiprocket
+1. Shiprocket sends webhook → https://api.sbali.in/api/webhooks/shiprocket
 2. Middleware validates IP + signature
 3. Generate eventId, check for duplicates
 4. Save WebhookLog (status: pending)

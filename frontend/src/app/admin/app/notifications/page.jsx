@@ -307,7 +307,7 @@ export default function PushNotificationsPage() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
-                      <span className="text-[10px] text-gray-400">Radeo</span>
+                      <span className="text-[10px] text-gray-400">Sbali</span>
                       <span className="text-[10px] text-gray-400">now</span>
                     </div>
                   </div>

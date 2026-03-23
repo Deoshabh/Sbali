@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 /* eslint-disable @next/next/no-img-element */
 
 import { useState, useEffect, useRef } from 'react';
@@ -15,7 +15,7 @@ import { productAPI, categoryAPI } from '@/utils/api';
 import { formatPrice } from '@/utils/helpers';
 
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-   RADEO NAVBAR â€” Luxury Minimal Navigation
+   SBALI NAVBAR â€” Luxury Minimal Navigation
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
 export default function Navbar() {
   const router = useRouter();
@@ -302,17 +302,17 @@ export default function Navbar() {
           </div>
 
           {/* ── Center: Logo ── */}
-          <Link href="/" aria-label="Radeo — Home" className="flex items-center justify-center shrink-0">
+          <Link href="/" aria-label="Sbali — Home" className="flex items-center justify-center shrink-0">
             {settings?.branding?.logo?.url ? (
               <div className="relative" style={{ width: `${logoWidth}px`, height: `${logoHeight}px` }}>
-                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Radeo'} fill className="object-contain object-center" priority />
+                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Sbali'} fill className="object-contain object-center" priority />
               </div>
             ) : (
               <span
                 className="text-2xl font-bold text-[color:var(--color-heading)] hover:text-[color:var(--color-muted)] transition-colors tracking-[0.15em]"
                 style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}
               >
-                RADEO
+                SBALI
               </span>
             )}
           </Link>
@@ -493,14 +493,14 @@ export default function Navbar() {
           <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
             {settings?.branding?.logo?.url ? (
               <div className="relative" style={{ width: `${Math.min(logoWidth, 100)}px`, height: `${Math.min(logoHeight, 32)}px` }}>
-                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Radeo'} fill className="object-contain object-left" />
+                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Sbali'} fill className="object-contain object-left" />
               </div>
             ) : (
               <span
                 className="text-xl font-bold tracking-[0.15em]"
                 style={{ fontFamily: "var(--font-cormorant, 'Cormorant Garamond', serif)", color: '#1A1208' }}
               >
-                RADEO
+                SBALI
               </span>
             )}
           </Link>

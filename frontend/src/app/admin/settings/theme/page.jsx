@@ -167,7 +167,7 @@ export default function ThemeSettings() {
         {/* Navbar Preview */}
         <div style={{ backgroundColor: navbarBg, borderBottom: `1px solid ${borderColor}` }} className="px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <span className="text-sm font-bold tracking-wider" style={{ color: navbarText }}>RADEO</span>
+            <span className="text-sm font-bold tracking-wider" style={{ color: navbarText }}>SBALI</span>
             <span className="text-xs" style={{ color: navbarText, opacity: 0.7 }}>Home</span>
             <span className="text-xs" style={{ color: navbarText, opacity: 0.7 }}>Products</span>
             <span className="text-xs font-medium" style={{ color: accentColor }}>Sale</span>
@@ -229,7 +229,7 @@ export default function ThemeSettings() {
         <div style={{ backgroundColor: footerBg, padding: '1rem 1.5rem' }}>
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold tracking-wider" style={{ color: footerText }}>RADEO</span>
+              <span className="text-xs font-bold tracking-wider" style={{ color: footerText }}>SBALI</span>
               <p className="text-[10px] mt-0.5" style={{ color: footerMuted }}>Premium footwear since 2024</p>
             </div>
             <div className="flex gap-4">
@@ -239,7 +239,7 @@ export default function ThemeSettings() {
             </div>
           </div>
           <div style={{ height: '1px', backgroundColor: footerBorder, margin: '0.5rem 0' }} />
-          <p className="text-[9px]" style={{ color: footerMuted }}>© 2026 Radeo. All rights reserved.</p>
+          <p className="text-[9px]" style={{ color: footerMuted }}>© 2026 Sbali. All rights reserved.</p>
         </div>
       </div>
 

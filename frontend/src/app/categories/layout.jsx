@@ -4,7 +4,7 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 const FALLBACK = {
   title: 'Shop by Category',
   description: 'Explore our premium shoe categories — oxfords, derbys, brogues, loafers, boots and more. Find the perfect handcrafted pair for every occasion.',
-  url: 'https://radeo.in/categories',
+  url: 'https://sbali.in/categories',
   keywords: ['shoe categories', 'types of shoes', 'oxford shoes', 'derby shoes', 'brogue shoes', 'loafers', 'boots'],
 };
 

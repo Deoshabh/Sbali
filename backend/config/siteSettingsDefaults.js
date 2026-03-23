@@ -102,7 +102,7 @@ const SITE_SETTINGS_DEFAULTS = {
   contactInfo: {
     address: '123 Shoe Street, Fashion District, Mumbai 400001',
     phone: '+91 123 456 7890',
-    email: 'support@radeo.in',
+    email: 'support@sbali.in',
     showAddress: true,
     showPhone: true,
     showEmail: true,
@@ -131,7 +131,7 @@ const SITE_SETTINGS_DEFAULTS = {
   },
   faqPage: {
     title: 'Frequently Asked Questions',
-    subtitle: 'Find answers to common questions about Radeo',
+    subtitle: 'Find answers to common questions about Sbali',
     categories: [
       {
         id: 'faq-orders',
@@ -187,11 +187,11 @@ const SITE_SETTINGS_DEFAULTS = {
     supportPrimaryText: 'Contact Support',
     supportPrimaryLink: '/contact',
     supportSecondaryText: 'Email Us',
-    supportSecondaryLink: 'mailto:support@radeo.in',
+    supportSecondaryLink: 'mailto:support@sbali.in',
   },
   footerContent: {
     brand: {
-      name: 'Radeo',
+      name: 'Sbali',
       description:
         'Premium handcrafted shoes made with timeless craftsmanship and finest materials.',
       logo: '',
@@ -236,11 +236,11 @@ const SITE_SETTINGS_DEFAULTS = {
     },
   },
   aboutPage: {
-    title: 'About Radeo',
+    title: 'About Sbali',
     subtitle: 'Your trusted destination for premium footwear since 2026',
     storyTitle: 'Our Story',
     storyParagraphs: [
-      'Radeo was born from a simple belief: everyone deserves access to quality footwear that combines style, comfort, and durability.',
+      'Sbali was born from a simple belief: everyone deserves access to quality footwear that combines style, comfort, and durability.',
       'We curate products that match modern lifestyles while maintaining quality and comfort standards.',
       'We partner with trusted manufacturers and brands to bring authentic products at fair prices.',
     ],
@@ -504,7 +504,7 @@ const SITE_SETTINGS_DEFAULTS = {
       primaryText: 'Contact Support',
       primaryLink: '/contact',
       secondaryText: 'Email Us',
-      secondaryLink: 'mailto:support@radeo.in',
+      secondaryLink: 'mailto:support@sbali.in',
     },
   },
   maintenanceMode: {
@@ -534,17 +534,17 @@ const SITE_SETTINGS_DEFAULTS = {
   },
   seoSettings: {
     global: {
-      siteName: 'Radeo',
-      siteUrl: 'https://radeo.in',
+      siteName: 'Sbali',
+      siteUrl: 'https://sbali.in',
       defaultOgImage: '/og-image.jpg',
-      twitterHandle: '@radeo_in',
+      twitterHandle: '@sbali_in',
       googleVerification: '',
       yandexVerification: '',
     },
     pages: {
       home: {
-        title: 'Radeo - Premium Handcrafted Shoes | Luxury Footwear Online',
-        description: 'Shop premium handcrafted leather shoes at Radeo. Explore our exquisite collection of oxfords, derbys, brogues, loafers and more. Free shipping across India.',
+        title: 'Sbali - Premium Handcrafted Shoes | Luxury Footwear Online',
+        description: 'Shop premium handcrafted leather shoes at Sbali. Explore our exquisite collection of oxfords, derbys, brogues, loafers and more. Free shipping across India.',
         keywords: 'premium shoes, handcrafted leather shoes, luxury footwear India, buy shoes online',
         ogImage: '',
         noindex: false,
@@ -565,49 +565,49 @@ const SITE_SETTINGS_DEFAULTS = {
       },
       about: {
         title: 'About Us',
-        description: 'Learn about Radeo — our passion for premium handcrafted shoes, our story, values, and commitment to quality craftsmanship.',
-        keywords: 'about Radeo, handcrafted shoes brand, premium shoe maker India',
+        description: 'Learn about Sbali — our passion for premium handcrafted shoes, our story, values, and commitment to quality craftsmanship.',
+        keywords: 'about Sbali, handcrafted shoes brand, premium shoe maker India',
         ogImage: '',
         noindex: false,
       },
       contact: {
         title: 'Contact Us',
-        description: 'Get in touch with Radeo. Reach out for questions about orders, products, returns or anything else.',
-        keywords: 'contact Radeo, customer support, shoe store contact',
+        description: 'Get in touch with Sbali. Reach out for questions about orders, products, returns or anything else.',
+        keywords: 'contact Sbali, customer support, shoe store contact',
         ogImage: '',
         noindex: false,
       },
       faq: {
         title: 'Frequently Asked Questions',
-        description: 'Find answers to common questions about Radeo — orders, shipping, returns, sizing and more.',
+        description: 'Find answers to common questions about Sbali — orders, shipping, returns, sizing and more.',
         keywords: 'FAQ, frequently asked questions, shoe sizing help, shipping questions',
         ogImage: '',
         noindex: false,
       },
       shipping: {
         title: 'Shipping Information',
-        description: 'Learn about Radeo shipping policies, delivery times, shipping costs, and delivery zones across India.',
+        description: 'Learn about Sbali shipping policies, delivery times, shipping costs, and delivery zones across India.',
         keywords: 'shipping policy, delivery times, shipping costs India, free shipping shoes',
         ogImage: '',
         noindex: false,
       },
       returns: {
         title: 'Return & Refund Policy',
-        description: 'Learn about the Radeo return and refund policy. Easy returns, hassle-free refunds, and our satisfaction guarantee.',
+        description: 'Learn about the Sbali return and refund policy. Easy returns, hassle-free refunds, and our satisfaction guarantee.',
         keywords: 'return policy, refund policy, easy returns, exchange shoes',
         ogImage: '',
         noindex: false,
       },
       privacy: {
         title: 'Privacy Policy',
-        description: 'Read the Radeo privacy policy. Learn how we collect, use, and protect your personal information.',
+        description: 'Read the Sbali privacy policy. Learn how we collect, use, and protect your personal information.',
         keywords: 'privacy policy, data protection, personal information',
         ogImage: '',
         noindex: false,
       },
       terms: {
         title: 'Terms of Service',
-        description: 'Read the Radeo terms of service. Understand the terms and conditions governing the use of our website.',
+        description: 'Read the Sbali terms of service. Understand the terms and conditions governing the use of our website.',
         keywords: 'terms of service, terms and conditions, user agreement',
         ogImage: '',
         noindex: false,

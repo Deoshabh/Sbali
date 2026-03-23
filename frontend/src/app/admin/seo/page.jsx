@@ -33,10 +33,10 @@ const PAGE_CONFIGS = [
 
 const DEFAULTS = {
   global: {
-    siteName: 'Radeo',
-    siteUrl: 'https://radeo.in',
+    siteName: 'Sbali',
+    siteUrl: 'https://sbali.in',
     defaultOgImage: '/og-image.jpg',
-    twitterHandle: '@radeo_in',
+    twitterHandle: '@sbali_in',
     googleVerification: '',
     yandexVerification: '',
   },
@@ -58,21 +58,21 @@ PAGE_CONFIGS.forEach(p => {
 const SEO_TEMPLATES = {
   ecommerce: {
     label: '🛒 E-Commerce',
-    title: 'Shop [Category] - Premium Handcrafted Shoes | Radeo',
-    description: 'Discover our premium collection of [category] shoes. Handcrafted with finest materials. Free shipping across India. Shop now at Radeo.',
-    keywords: 'buy [category] online, premium [category] shoes, handcrafted [category], Radeo shoes',
+    title: 'Shop [Category] - Premium Handcrafted Shoes | Sbali',
+    description: 'Discover our premium collection of [category] shoes. Handcrafted with finest materials. Free shipping across India. Shop now at Sbali.',
+    keywords: 'buy [category] online, premium [category] shoes, handcrafted [category], Sbali shoes',
   },
   info: {
     label: '📄 Info Page',
-    title: '[Page Name] - Radeo',
-    description: 'Learn about Radeo\'s [page topic]. We are committed to transparency and customer satisfaction.',
-    keywords: 'Radeo [page topic], shoe store [page topic]',
+    title: '[Page Name] - Sbali',
+    description: 'Learn about Sbali\'s [page topic]. We are committed to transparency and customer satisfaction.',
+    keywords: 'Sbali [page topic], shoe store [page topic]',
   },
   landing: {
     label: '🎯 Landing',
-    title: '[Offer/Feature] - Premium Shoes | Radeo',
-    description: 'Exclusive [offer/feature] at Radeo. Shop premium handcrafted shoes with [benefit]. Limited time offer.',
-    keywords: '[offer] shoes, premium footwear deals, Radeo sale, handcrafted shoes offer',
+    title: '[Offer/Feature] - Premium Shoes | Sbali',
+    description: 'Exclusive [offer/feature] at Sbali. Shop premium handcrafted shoes with [benefit]. Limited time offer.',
+    keywords: '[offer] shoes, premium footwear deals, Sbali sale, handcrafted shoes offer',
   },
 };
 
@@ -245,7 +245,7 @@ function OgImageUploader({ value, onChange }) {
           type="text"
           value={value || ''}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="https://radeo.in/og-image.jpg or upload"
+          placeholder="https://sbali.in/og-image.jpg or upload"
           className="flex-1 px-3 py-2.5 border border-primary-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-brown/20 focus:border-brand-brown transition-colors"
         />
         <button
@@ -297,7 +297,7 @@ function OgImageUploader({ value, onChange }) {
 // ───────────────────────────────────────────────────
 function SocialPreview({ title, description, url, ogImage, defaultOgImage, siteUrl }) {
   const [tab, setTab] = useState('google');
-  const fullTitle = title ? `${title} | Radeo` : 'Radeo - Premium Handcrafted Shoes';
+  const fullTitle = title ? `${title} | Sbali` : 'Sbali - Premium Handcrafted Shoes';
   const displayUrl = url;
   const resolvedImage = ogImage || (defaultOgImage?.startsWith('http') ? defaultOgImage : `${siteUrl}${defaultOgImage || '/og-image.jpg'}`);
   const desc = description || 'No description set — search engines will auto-generate a snippet';
@@ -348,7 +348,7 @@ function SocialPreview({ title, description, url, ogImage, defaultOgImage, siteU
               </div>
             )}
             <div className="p-3">
-              <p className="text-[11px] text-primary-400 uppercase tracking-wide">{(siteUrl || 'radeo.in').replace(/^https?:\/\//, '')}</p>
+              <p className="text-[11px] text-primary-400 uppercase tracking-wide">{(siteUrl || 'sbali.in').replace(/^https?:\/\//, '')}</p>
               <p className="text-sm font-semibold text-primary-900 mt-0.5 line-clamp-2">{fullTitle}</p>
               <p className="text-xs text-primary-500 mt-1 line-clamp-2">{desc}</p>
             </div>
@@ -370,7 +370,7 @@ function SocialPreview({ title, description, url, ogImage, defaultOgImage, siteU
               <p className="text-sm font-semibold text-primary-900 line-clamp-1">{fullTitle}</p>
               <p className="text-xs text-primary-500 mt-0.5 line-clamp-2">{desc}</p>
               <p className="text-xs text-primary-400 mt-1 flex items-center gap-1">
-                <FiLink className="w-3 h-3" /> {(siteUrl || 'radeo.in').replace(/^https?:\/\//, '')}
+                <FiLink className="w-3 h-3" /> {(siteUrl || 'sbali.in').replace(/^https?:\/\//, '')}
               </p>
             </div>
           </div>
@@ -399,7 +399,7 @@ function PageSeoCard({ config, data, globalData, onChange, siteUrl, forceExpande
     onToggleExpand?.(config.key, next);
   };
   const { score, issues, tips } = getSeoScore(data);
-  const displayUrl = `${siteUrl || 'https://radeo.in'}${config.path}`;
+  const displayUrl = `${siteUrl || 'https://sbali.in'}${config.path}`;
 
   const applyTemplate = (templateKey) => {
     const t = SEO_TEMPLATES[templateKey];
@@ -411,7 +411,7 @@ function PageSeoCard({ config, data, globalData, onChange, siteUrl, forceExpande
   };
 
   const copyMetaTags = () => {
-    const fullTitle = data.title ? `${data.title} | Radeo` : '';
+    const fullTitle = data.title ? `${data.title} | Sbali` : '';
     const tags = [
       `<title>${fullTitle}</title>`,
       data.description ? `<meta name="description" content="${data.description}" />` : '',
@@ -554,7 +554,7 @@ function PageSeoCard({ config, data, globalData, onChange, siteUrl, forceExpande
                   style={{ width: `${Math.min(((data.title?.length || 0) / 60) * 100, 100)}%` }}
                 />
               </div>
-              <p className="text-xs text-primary-400 mt-1">Appears as &quot;{data.title || 'Your Title'} | Radeo&quot; in search results</p>
+              <p className="text-xs text-primary-400 mt-1">Appears as &quot;{data.title || 'Your Title'} | Sbali&quot; in search results</p>
             </div>
 
             {/* Description */}
@@ -640,7 +640,7 @@ function PageSeoCard({ config, data, globalData, onChange, siteUrl, forceExpande
                 type="text"
                 value={data.canonicalUrl || ''}
                 onChange={(e) => onChange(config.key, 'canonicalUrl', e.target.value)}
-                placeholder={`${siteUrl || 'https://radeo.in'}${config.path} (leave empty for auto)`}
+                placeholder={`${siteUrl || 'https://sbali.in'}${config.path} (leave empty for auto)`}
                 className="w-full px-3 py-2.5 border border-primary-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-brown/20 focus:border-brand-brown transition-colors"
               />
               <p className="text-xs text-primary-400 mt-1">Override the canonical URL if this page has duplicate content elsewhere</p>
@@ -1248,7 +1248,7 @@ export default function AdminSeoPage() {
                   type="text"
                   value={seoSettings.global.twitterHandle}
                   onChange={(e) => handleGlobalChange('twitterHandle', e.target.value)}
-                  placeholder="@radeo_in"
+                  placeholder="@sbali_in"
                   className="w-full px-3 py-2.5 border border-primary-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-brown/20 focus:border-brand-brown"
                 />
               </div>
@@ -1380,7 +1380,7 @@ export default function AdminSeoPage() {
               How It Works
             </h3>
             <ul className="space-y-1.5 text-sm text-blue-800">
-              <li>• <strong>Title:</strong> Appears in browser tab and search results as &quot;Your Title | Radeo&quot;</li>
+              <li>• <strong>Title:</strong> Appears in browser tab and search results as &quot;Your Title | Sbali&quot;</li>
               <li>• <strong>Meta Description:</strong> The snippet shown below your link in search results (50-160 chars ideal)</li>
               <li>• <strong>Keywords:</strong> Comma-separated terms relevant to the page content</li>
               <li>• <strong>OG Image:</strong> The image shown when your page is shared on social media (1200×630px recommended)</li>

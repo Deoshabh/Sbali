@@ -27,13 +27,13 @@ export async function generateMetadata({ params }) {
   const page = await getCmsPage(params.slug);
 
   if (!page) {
-    return { title: 'Page Not Found | Radeo', robots: { index: false } };
+    return { title: 'Page Not Found | Sbali', robots: { index: false } };
   }
 
   return generateSEOMetadata({
     title: page.title || page.name,
-    description: page.metaDescription || page.description || `${page.title || page.name} - Radeo`,
-    url: `https://radeo.in/pages/${params.slug}`,
+    description: page.metaDescription || page.description || `${page.title || page.name} - Sbali`,
+    url: `https://sbali.in/pages/${params.slug}`,
     keywords: page.metaKeywords || [],
   });
 }

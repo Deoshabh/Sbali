@@ -1,5 +1,5 @@
 # ============================================
-# RADEO Backend — Production Multi-Stage Build
+# SBALI Backend — Production Multi-Stage Build
 # ============================================
 
 # Stage 1: Install ALL deps and run tests

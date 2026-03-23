@@ -1,6 +1,6 @@
-# Cloudflare Configuration for RADEO
+# Cloudflare Configuration for SBALI
 
-Apply these rules in the Cloudflare dashboard for `radeo.in`.
+Apply these rules in the Cloudflare dashboard for `sbali.in`.
 
 ## Cache Rules
 
@@ -20,7 +20,7 @@ Apply these rules in the Cloudflare dashboard for `radeo.in`.
 - **Then**: Cache eligible, Edge TTL = 7 days
 
 ### Rule 4: MinIO/CDN Images
-- **When**: Hostname equals `cdn.radeo.in`
+- **When**: Hostname equals `cdn.sbali.in`
 - **AND**: Request Method equals `GET`
 - **Then**: Cache eligible, Edge TTL = 7 days
 
@@ -55,19 +55,19 @@ Action: Block for 60 seconds
 ## Turnstile Setup
 
 1. Go to Cloudflare Dashboard → Turnstile
-2. Add site: `radeo.in`
+2. Add site: `sbali.in`
 3. Widget type: **Managed** (invisible for most users)
 4. Copy Site Key → set as `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in frontend env
 5. Copy Secret Key → set as `TURNSTILE_SECRET_KEY` in backend env
 
 ## R2 / MinIO CDN
 
-If keeping MinIO, point `cdn.radeo.in` CNAME to MinIO's public endpoint.
+If keeping MinIO, point `cdn.sbali.in` CNAME to MinIO's public endpoint.
 Cloudflare will cache all GET requests per Rule 4 above.
 
 If migrating to R2:
-1. Create R2 buckets: `radeo-products`, `radeo-media`, `radeo-reviews`, `radeo-temp`
-2. Enable public access on `radeo-products` and `radeo-media`
-3. Connect custom domain `cdn.radeo.in` to R2 bucket
+1. Create R2 buckets: `sbali-products`, `sbali-media`, `sbali-reviews`, `sbali-temp`
+2. Enable public access on `sbali-products` and `sbali-media`
+3. Connect custom domain `cdn.sbali.in` to R2 bucket
 4. Update `MINIO_ENDPOINT` and credentials to R2's S3-compatible API
 5. Zero egress fees, built-in Cloudflare CDN

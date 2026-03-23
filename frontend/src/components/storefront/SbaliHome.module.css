@@ -1,10 +1,10 @@
 /* ════════════════════════════════════════════════════════════
-   RADEO — Clean White & Beige Minimal-Modern Theme
-   Premium Leather Footwear – radeo.in
+   SBALI — Clean White & Beige Minimal-Modern Theme
+   Premium Leather Footwear – sbali.in
    ════════════════════════════════════════════════════════════ */
 
 /* ── CSS Variables (theme-aware) ── */
-.radeoRoot {
+.sbaliRoot {
   --r-white:      var(--color-card-bg, #ffffff);
   --r-paper:      var(--color-page-bg, #faf8f4);
   --r-beige:      var(--color-subtle-bg, #f2ede4);
@@ -480,7 +480,7 @@
   .storyContent { padding-left: 0; }
 }
 @media (max-width: 600px) {
-  .radeoRoot { margin-top: calc(-1 * var(--navbar-offset, 60px)); }
+  .sbaliRoot { margin-top: calc(-1 * var(--navbar-offset, 60px)); }
   .heroContent { padding: 2rem 1.2rem; }
   .heroTitle { font-size: 2.4rem; }
   .sectionHead { font-size: 2rem; }

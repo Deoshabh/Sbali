@@ -68,12 +68,12 @@ export async function buildPageMetadata(pageKey, pagePath) {
   if (!seoData || !seoData.page?.title) return null;
 
   const { global: g, page: p } = seoData;
-  const siteName = g.siteName || 'Radeo';
-  const siteUrl = g.siteUrl || 'https://radeo.in';
+  const siteName = g.siteName || 'Sbali';
+  const siteUrl = g.siteUrl || 'https://sbali.in';
   const fullTitle = `${p.title} | ${siteName}`;
   const url = `${siteUrl}${pagePath}`;
   const ogImage = p.ogImage || (g.defaultOgImage ? `${siteUrl}${g.defaultOgImage}` : `${siteUrl}/og-image.jpg`);
-  const twitterHandle = g.twitterHandle || '@radeo_in';
+  const twitterHandle = g.twitterHandle || '@sbali_in';
 
   const metadata = {
     title: fullTitle,

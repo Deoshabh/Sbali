@@ -32,7 +32,7 @@ export default function AboutPage() {
       <div className="relative h-[360px] md:h-[440px] overflow-hidden">
         <Image
           src={heroImage}
-          alt={about.title || 'About Radeo'}
+          alt={about.title || 'About Sbali'}
           fill
           className="object-cover"
           priority
@@ -64,7 +64,7 @@ export default function AboutPage() {
                 color: '#F0EBE1',
               }}
             >
-              {about.title || 'About Radeo'}
+              {about.title || 'About Sbali'}
             </h1>
             <p
               className="max-w-xl"

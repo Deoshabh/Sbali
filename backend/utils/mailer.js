@@ -4,7 +4,7 @@
  * Requires env vars:
  *   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
  *   ADMIN_NOTIFICATION_EMAIL (recipient for admin alerts)
- *   ADMIN_URL (base URL of the admin panel, e.g. https://radeo.in)
+ *   ADMIN_URL (base URL of the admin panel, e.g. https://sbali.in)
  *
  * All functions are non-blocking — callers should .catch() errors
  * rather than awaiting if the email is non-critical.
@@ -55,10 +55,10 @@ async function sendAdminContactNotification(message) {
   const transport = getTransporter();
   if (!transport) return;
 
-  const adminUrl = process.env.ADMIN_URL || 'https://radeo.in';
+  const adminUrl = process.env.ADMIN_URL || 'https://sbali.in';
 
   await transport.sendMail({
-    from: `"RADEO Store" <${process.env.SMTP_USER}>`,
+    from: `"SBALI Store" <${process.env.SMTP_USER}>`,
     to: adminEmail,
     subject: `New Contact Message: ${message.subject || '(no subject)'}`,
     html: `

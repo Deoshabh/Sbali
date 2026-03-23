@@ -11,7 +11,7 @@ const { createAssessment } = require("./middleware/recaptcha");
  */
 async function exampleBasicUsage() {
   const score = await createAssessment({
-    projectID: "radeo-2026",
+    projectID: "sbali-2026",
     recaptchaKey: "6LcbjmUsAAAAAHVeGta063p2ii-OlYGQqOBPfmQl",
     token: "token-received-from-client",
     recaptchaAction: "LOGIN",

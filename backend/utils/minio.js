@@ -8,10 +8,10 @@ const { log } = require("./logger");
  * Supports: RustFS, MinIO, AWS S3, Cloudflare R2, or any S3-compatible storage
  *
  * Bucket structure:
- *   radeo-products  — product images (public read, versioned)
- *   radeo-media     — CMS media uploads (public read, versioned)
- *   radeo-reviews   — customer review photos (private)
- *   radeo-temp      — pre-signed upload staging (auto-deleted after 24h)
+ *   sbali-products  — product images (public read, versioned)
+ *   sbali-media     — CMS media uploads (public read, versioned)
+ *   sbali-reviews   — customer review photos (private)
+ *   sbali-temp      — pre-signed upload staging (auto-deleted after 24h)
  */
 const {
   MINIO_ENDPOINT,
@@ -39,15 +39,15 @@ if (
 
 /** Bucket name constants */
 const BUCKETS = {
-  PRODUCTS: process.env.MINIO_BUCKET_PRODUCTS || "radeo-products",
-  MEDIA: process.env.MINIO_BUCKET_MEDIA || "radeo-media",
-  REVIEWS: process.env.MINIO_BUCKET_REVIEWS || "radeo-reviews",
-  TEMP: process.env.MINIO_BUCKET_TEMP || "radeo-temp",
+  PRODUCTS: process.env.MINIO_BUCKET_PRODUCTS || "sbali-products",
+  MEDIA: process.env.MINIO_BUCKET_MEDIA || "sbali-media",
+  REVIEWS: process.env.MINIO_BUCKET_REVIEWS || "sbali-reviews",
+  TEMP: process.env.MINIO_BUCKET_TEMP || "sbali-temp",
   /** Legacy default bucket — for backward compatibility */
   DEFAULT: MINIO_BUCKET,
 };
 
-/** CDN base URL — serves images via Cloudflare edge cache (e.g. https://cdn.radeo.in) */
+/** CDN base URL — serves images via Cloudflare edge cache (e.g. https://cdn.sbali.in) */
 const CDN_BASE_URL = (MINIO_CDN_URL || MINIO_PUBLIC_URL || "").replace(/\/$/, "");
 
 const REGION = MINIO_REGION || "us-east-1";

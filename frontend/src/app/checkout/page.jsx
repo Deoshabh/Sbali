@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -234,7 +234,7 @@ export default function CheckoutPage() {
           key: key, // Use key from backend API
           amount: amount,
           currency: currency,
-          name: 'Radeo',
+          name: 'Sbali',
           description: `Order ${order.displayOrderId || order.orderId}`,
           order_id: razorpayOrderId,
           handler: async (response) => {

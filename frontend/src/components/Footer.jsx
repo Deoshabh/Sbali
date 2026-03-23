@@ -160,7 +160,7 @@ export default function Footer() {
                 letterSpacing: '0.08em',
               }}
             >
-              {footerContent.brand?.name || 'RADEO'}
+              {footerContent.brand?.name || 'SBALI'}
             </h3>
             <p
               style={{
@@ -443,7 +443,7 @@ export default function Footer() {
           }}
         >
           <p style={{ fontSize: '12px', color: FOOTER_LEGAL_TEXT, margin: 0 }}>
-            &copy; {currentYear} {footerContent.brand?.name || 'Radeo'}. {footerContent.legal?.copyrightText || 'All rights reserved.'}
+            &copy; {currentYear} {footerContent.brand?.name || 'Sbali'}. {footerContent.legal?.copyrightText || 'All rights reserved.'}
           </p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem' }}>
             {legalLinks.map((link) => (

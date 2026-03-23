@@ -3,8 +3,8 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
   title: 'Return & Refund Policy',
-  description: 'Learn about the Radeo return and refund policy. Easy returns, hassle-free refunds, and our satisfaction guarantee.',
-  url: 'https://radeo.in/returns',
+  description: 'Learn about the Sbali return and refund policy. Easy returns, hassle-free refunds, and our satisfaction guarantee.',
+  url: 'https://sbali.in/returns',
   keywords: ['return policy', 'refund policy', 'easy returns', 'exchange shoes'],
 };
 

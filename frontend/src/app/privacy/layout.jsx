@@ -3,8 +3,8 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
   title: 'Privacy Policy',
-  description: 'Read the Radeo privacy policy. Learn how we collect, use, and protect your personal information when you shop with us.',
-  url: 'https://radeo.in/privacy',
+  description: 'Read the Sbali privacy policy. Learn how we collect, use, and protect your personal information when you shop with us.',
+  url: 'https://sbali.in/privacy',
   keywords: ['privacy policy', 'data protection', 'personal information'],
 };
 

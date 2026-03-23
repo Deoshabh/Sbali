@@ -3,8 +3,8 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
   title: 'Frequently Asked Questions',
-  description: 'Find answers to common questions about Radeo — orders, shipping, returns, sizing, product care and more.',
-  url: 'https://radeo.in/faq',
+  description: 'Find answers to common questions about Sbali — orders, shipping, returns, sizing, product care and more.',
+  url: 'https://sbali.in/faq',
   keywords: ['FAQ', 'frequently asked questions', 'shoe sizing help', 'shipping questions', 'returns policy'],
 };
 

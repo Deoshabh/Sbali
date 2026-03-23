@@ -175,7 +175,7 @@ export default function FirebaseLoginPage() {
       <div className="hidden lg:flex lg:w-[48%] relative overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=1200&h=1600&fit=crop&q=80"
-          alt="Radeo handcrafted leather"
+          alt="Sbali handcrafted leather"
           fill
           className="object-cover"
           priority
@@ -185,7 +185,7 @@ export default function FirebaseLoginPage() {
         {/* Brand content */}
         <div className="absolute inset-0 flex flex-col justify-between p-12">
           <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Cormorant Garamond', serif)", fontSize: '1.6rem', fontWeight: 400, letterSpacing: '0.18em', color: '#F0EBE1', textDecoration: 'none' }}>
-            RADEO
+            SBALI
           </Link>
           <div>
             <p style={{ fontFamily: "var(--font-playfair, 'Cormorant Garamond', serif)", fontStyle: 'italic', fontSize: 'clamp(1.4rem, 2.5vw, 1.8rem)', lineHeight: 1.5, color: '#E8E0D0', maxWidth: '380px' }}>
@@ -202,7 +202,7 @@ export default function FirebaseLoginPage() {
           {/* Mobile brand */}
           <div className="lg:hidden mb-10 text-center">
             <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Cormorant Garamond', serif)", fontSize: '1.6rem', fontWeight: 400, letterSpacing: '0.18em', color: '#1A1714', textDecoration: 'none' }}>
-              RADEO
+              SBALI
             </Link>
           </div>
 

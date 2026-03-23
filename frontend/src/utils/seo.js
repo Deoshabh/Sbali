@@ -10,7 +10,7 @@ import {
 } from '@/lib/constants';
 
 const SITE_DESCRIPTION =
-  "Discover exquisite handcrafted shoes made with premium materials and timeless craftsmanship. Shop the finest collection of luxury footwear at Radeo.";
+  "Discover exquisite handcrafted shoes made with premium materials and timeless craftsmanship. Shop the finest collection of luxury footwear at Sbali.";
 const SITE_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 /**
@@ -146,7 +146,7 @@ export const generateCategoryMetadata = (category) => {
     title: category.name,
     description:
       category.description ||
-      `Shop ${category.name} at Radeo. Discover our premium collection of ${category.name.toLowerCase()}.`,
+      `Shop ${category.name} at Sbali. Discover our premium collection of ${category.name.toLowerCase()}.`,
     image: category.image || SITE_IMAGE,
     url: `${SITE_URL}/categories/${category.slug}`,
     keywords: [category.name, "shoes", "footwear", "buy online"],

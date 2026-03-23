@@ -674,7 +674,7 @@ exports.resetStorefrontDefaults = async (req, res, next) => {
     settings.branding = {
       logo: { url: '', alt: 'Logo' },
       favicon: { url: '' },
-      siteName: 'Radeo',
+      siteName: 'Sbali',
     };
     settings.banners = [];
     settings.announcementBar = SITE_SETTINGS_DEFAULTS.announcementBar;

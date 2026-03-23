@@ -9,12 +9,12 @@ import { SITE_SETTINGS_DEFAULTS } from '@/constants/siteSettingsDefaults';
 // Dynamically import IntroSplash — it's only shown on first visit and not needed for LCP.
 // Splitting it out removes ~15 KiB from the initial bundle.
 const IntroSplash = lazy(() => import('./IntroSplash'));
-import s from './RadeoHome.module.css';
+import s from './SbaliHome.module.css';
 import { formatPrice } from '@/utils/helpers';
 
 /* ── Helpers ── */
 const MINIO_BASE = process.env.NEXT_PUBLIC_MINIO_URL || '';
-const FALLBACK = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect fill='%23f2ede4' width='800' height='600'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a96e'%3ERADEO%3C/text%3E%3C/svg%3E`;
+const FALLBACK = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600' viewBox='0 0 800 600'%3E%3Crect fill='%23f2ede4' width='800' height='600'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia' font-size='18' fill='%23c9a96e'%3ESBALI%3C/text%3E%3C/svg%3E`;
 
 /* Unsplash demo images for leather shoes */
 const DEMO_IMAGES = {
@@ -59,9 +59,9 @@ function RImg({ src, alt, className, width, height, loading, style, fill, sizes,
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RADEO HOME — Admin-controlled luxury landing page
+   SBALI HOME — Admin-controlled luxury landing page
    ═══════════════════════════════════════════════════════════ */
-export default function RadeoHome() {
+export default function SbaliHome() {
   const { settings } = useSiteSettings();
   const hp = useMemo(() => {
     const def = SITE_SETTINGS_DEFAULTS.homePage;
@@ -103,7 +103,7 @@ export default function RadeoHome() {
   useEffect(() => {
     if (hasAnimated.current) return;
     // Check if intro was already seen (revisit)
-    const alreadySeen = typeof window !== 'undefined' && sessionStorage.getItem('radeo_intro_seen');
+    const alreadySeen = typeof window !== 'undefined' && sessionStorage.getItem('sbali_intro_seen');
     if (alreadySeen || introComplete) {
       hasAnimated.current = true;
       runHeroEntrance();
@@ -236,7 +236,7 @@ export default function RadeoHome() {
 
   /* ═══════════════════════ RENDER ═══════════════════════ */
   return (
-    <div className={s.radeoRoot} ref={rootRef}>
+    <div className={s.sbaliRoot} ref={rootRef}>
 
       {/* ─── INTRO SPLASH (first visit only) ─── */}
       {/* Wrapped in Suspense so the lazy import doesn't block the hero render */}
@@ -251,7 +251,7 @@ export default function RadeoHome() {
             {/* priority + fetchPriority eliminate the LCP delay: image is preloaded in <head> */}
             <RImg
               src={hp.hero.image || DEMO_IMAGES.hero}
-              alt="Radeo premium handcrafted leather shoes"
+              alt="Sbali premium handcrafted leather shoes"
               className={s.heroImg}
               width={1200}
               height={1600}
@@ -390,7 +390,7 @@ export default function RadeoHome() {
                 </div>
               </div>
               <div className={`${s.heritageImgWrap} ${s.revealSplitR}`}>
-                <RImg src={hp.heritage.image || DEMO_IMAGES.heritage} alt="RADEO atelier in Agra" width={1200} height={900} loading="lazy" />
+                <RImg src={hp.heritage.image || DEMO_IMAGES.heritage} alt="SBALI atelier in Agra" width={1200} height={900} loading="lazy" />
                 <div className={s.heritageImgBadge}>
                   <span>🇮🇳</span>
                   <span>Made in India</span>
@@ -407,7 +407,7 @@ export default function RadeoHome() {
           <div className={s.container}>
             <div className={s.storyGrid}>
               <div className={`${s.storyImgWrap} ${s.revealSplitL}`}>
-                <RImg src={hp.story.image || DEMO_IMAGES.story} alt="RADEO founder" width={1200} height={900} loading="lazy" />
+                <RImg src={hp.story.image || DEMO_IMAGES.story} alt="SBALI founder" width={1200} height={900} loading="lazy" />
               </div>
               <div className={`${s.storyContent} ${s.revealSplitR}`}>
                 <div className={s.sectionLabel}>{hp.story.label}</div>

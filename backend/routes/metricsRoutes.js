@@ -20,26 +20,26 @@ try {
 
   // Collect default Node.js metrics (CPU, memory, event loop, GC)
   client.collectDefaultMetrics({
-    prefix: "radeo_",
+    prefix: "sbali_",
     gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
   });
 
   // Custom metrics
   httpRequestDuration = new client.Histogram({
-    name: "radeo_http_request_duration_seconds",
+    name: "sbali_http_request_duration_seconds",
     help: "HTTP request duration in seconds",
     labelNames: ["method", "route", "status_code"],
     buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],
   });
 
   httpRequestTotal = new client.Counter({
-    name: "radeo_http_requests_total",
+    name: "sbali_http_requests_total",
     help: "Total HTTP requests",
     labelNames: ["method", "route", "status_code"],
   });
 
   activeConnections = new client.Gauge({
-    name: "radeo_active_connections",
+    name: "sbali_active_connections",
     help: "Number of active HTTP connections",
   });
 } catch {

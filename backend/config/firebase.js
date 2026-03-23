@@ -17,7 +17,7 @@ if (!getApps().length) {
     ) {
       initializeApp({
         credential: cert({
-          projectId: process.env.FIREBASE_PROJECT_ID || "radeo-2026",
+          projectId: process.env.FIREBASE_PROJECT_ID || "sbali-2026",
           clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
           privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
         }),
@@ -25,7 +25,7 @@ if (!getApps().length) {
       log.success("Firebase Admin initialized with environment variables");
     } else {
       initializeApp({
-        projectId: process.env.FIREBASE_PROJECT_ID || "radeo-2026",
+        projectId: process.env.FIREBASE_PROJECT_ID || "sbali-2026",
       });
       log.warn(
         "Firebase Admin initialized without credentials (limited functionality)",

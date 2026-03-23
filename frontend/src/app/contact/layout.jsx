@@ -3,9 +3,9 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
   title: 'Contact Us',
-  description: 'Get in touch with Radeo. Reach out for questions about orders, products, returns or anything else. We are here to help.',
-  url: 'https://radeo.in/contact',
-  keywords: ['contact Radeo', 'customer support', 'shoe store contact', 'help'],
+  description: 'Get in touch with Sbali. Reach out for questions about orders, products, returns or anything else. We are here to help.',
+  url: 'https://sbali.in/contact',
+  keywords: ['contact Sbali', 'customer support', 'shoe store contact', 'help'],
 };
 
 export async function generateMetadata() {

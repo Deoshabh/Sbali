@@ -5,7 +5,7 @@ import ProductsContent from './ProductsContent';
 export const revalidate = 60; // ISR: regenerate every 60 seconds
 
 export const metadata = {
-  title: 'Our Collection | RADEO',
+  title: 'Our Collection | SBALI',
   description: 'Browse our curated collection of premium shoes. Filter by category, price, material, color, and size.',
 };
 

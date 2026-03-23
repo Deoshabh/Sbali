@@ -10,7 +10,7 @@ const siteSettingsSchema = new mongoose.Schema(
       favicon: {
         url: { type: String, default: '' },
       },
-      siteName: { type: String, default: 'Radeo' },
+      siteName: { type: String, default: 'Sbali' },
     },
     banners: [
       {
@@ -67,7 +67,7 @@ const siteSettingsSchema = new mongoose.Schema(
         buttonText: { type: String, default: 'Subscribe' },
       },
     },
-    // Homepage CMS data (RadeoHome component)
+    // Homepage CMS data (SbaliHome component)
     homePage: {
       type: mongoose.Schema.Types.Mixed,
       default: {},

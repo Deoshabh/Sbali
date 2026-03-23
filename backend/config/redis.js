@@ -20,7 +20,7 @@ const getBaseConfig = () => {
   };
 
   if (process.env.REDIS_URL) {
-    return { ...base, connectionName: "radeo" };
+    return { ...base, connectionName: "sbali" };
   }
 
   return {
@@ -28,7 +28,7 @@ const getBaseConfig = () => {
     host: process.env.REDIS_HOST || "localhost",
     port: parseInt(process.env.REDIS_PORT || "6379"),
     password: process.env.REDIS_PASSWORD || undefined,
-    connectionName: "radeo",
+    connectionName: "sbali",
   };
 };
 

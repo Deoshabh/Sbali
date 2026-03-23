@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
         {/* Brand */}
         <div className="text-center mb-10">
           <Link href="/" style={{ fontFamily: "var(--font-playfair, 'Cormorant Garamond', serif)", fontSize: '1.6rem', fontWeight: 400, letterSpacing: '0.18em', color: '#1A1714', textDecoration: 'none' }}>
-            RADEO
+            SBALI
           </Link>
         </div>
 

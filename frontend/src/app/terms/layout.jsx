@@ -3,8 +3,8 @@ import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
   title: 'Terms of Service',
-  description: 'Read the Radeo terms of service. Understand the terms and conditions governing the use of our website and purchase of products.',
-  url: 'https://radeo.in/terms',
+  description: 'Read the Sbali terms of service. Understand the terms and conditions governing the use of our website and purchase of products.',
+  url: 'https://sbali.in/terms',
   keywords: ['terms of service', 'terms and conditions', 'user agreement'],
 };
 

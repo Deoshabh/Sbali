@@ -1,5 +1,5 @@
 # ============================================
-# RADEO Frontend — Production Multi-Stage Build
+# SBALI Frontend — Production Multi-Stage Build
 # ============================================
 
 # Stage 1: Build Next.js
@@ -12,7 +12,7 @@ RUN npm ci
 COPY . .
 
 # Build arguments for public env vars
-ARG NEXT_PUBLIC_API_URL=https://api.radeo.in/api/v1
+ARG NEXT_PUBLIC_API_URL=https://api.sbali.in/api/v1
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY

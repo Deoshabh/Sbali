@@ -23,8 +23,8 @@ const errorHandler = (err, req, res, next) => {
   if (origin && !res.headersSent) {
     // Mirror the origin if it was allowed (simple check)
     const allowed = [
-      'https://radeo.in',
-      'https://www.radeo.in',
+      'https://sbali.in',
+      'https://www.sbali.in',
       process.env.FRONTEND_URL,
       ...(process.env.CORS_ALLOWED_ORIGINS ? process.env.CORS_ALLOWED_ORIGINS.split(',') : []),
     ].filter(Boolean);

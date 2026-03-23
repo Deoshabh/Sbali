@@ -2,7 +2,7 @@ import { generateMetadata as generateSEOMetadata } from '@/utils/seo';
 
 export const metadata = generateSEOMetadata({
   title: 'Shopping Cart',
-  description: 'Review items in your shopping cart at Radeo.',
+  description: 'Review items in your shopping cart at Sbali.',
   noindex: true,
   nofollow: true,
 });

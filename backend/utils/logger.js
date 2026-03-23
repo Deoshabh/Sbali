@@ -18,7 +18,7 @@ if (process.env.LOKI_HOST) {
       const entries = batch.splice(0, batch.length);
       const payload = JSON.stringify({
         streams: [{
-          stream: { app: "radeo-backend", env: process.env.NODE_ENV || "development" },
+          stream: { app: "sbali-backend", env: process.env.NODE_ENV || "development" },
           values: entries.map(e => [String(e.ts * 1_000_000), e.line]),
         }],
       });

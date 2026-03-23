@@ -36,11 +36,11 @@ export function middleware(request: NextRequest) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
     // script-src-elem is set explicitly so parser-inserted third-party scripts
     // (e.g. Cloudflare email-decode) are still allowed when strict-dynamic is active.
-    `script-src-elem 'self' 'nonce-${nonce}' 'unsafe-inline' https://radeo.in https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
+    `script-src-elem 'self' 'nonce-${nonce}' 'unsafe-inline' https://sbali.in https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://cdn.radeo.in https://minio.radeo.in https://images.unsplash.com https://*.googleusercontent.com",
+    "img-src 'self' data: blob: https://cdn.sbali.in https://minio.sbali.in https://images.unsplash.com https://*.googleusercontent.com",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.radeo.in https://cdn.radeo.in https://minio.radeo.in https://*.firebaseio.com https://*.googleapis.com https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.razorpay.com wss://*.radeo.in https://api.honeybadger.io https://challenges.cloudflare.com",
+    "connect-src 'self' https://api.sbali.in https://cdn.sbali.in https://minio.sbali.in https://*.firebaseio.com https://*.googleapis.com https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.razorpay.com wss://*.sbali.in https://api.honeybadger.io https://challenges.cloudflare.com",
     "frame-src https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com https://*.firebaseapp.com",
     "object-src 'none'",
     "base-uri 'self'",

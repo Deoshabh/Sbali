@@ -61,8 +61,8 @@ export const viewport = {
 };
 
 export const metadata = generateSEOMetadata({
-  title: 'Radeo - Premium Handcrafted Shoes',
-  description: 'Discover exquisite handcrafted shoes made with premium materials and timeless craftsmanship. Shop the finest collection of luxury footwear at Radeo.',
+  title: 'Sbali - Premium Handcrafted Shoes',
+  description: 'Discover exquisite handcrafted shoes made with premium materials and timeless craftsmanship. Shop the finest collection of luxury footwear at Sbali.',
   keywords: ['shoes', 'handcrafted', 'premium', 'leather', 'oxford', 'derby', 'brogue', 'loafer', 'luxury footwear', 'online shoe store India'],
 });
 
@@ -79,9 +79,9 @@ export default async function RootLayout({ children }) {
     <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${jakarta.variable} ${lora.variable} ${baskerville.variable} ${spaceMono.variable}`}>
       <head>
         {/* Critical preconnects: resolved early so TLS handshakes don't delay LCP images */}
-        <link rel="preconnect" href="https://api.radeo.in" />
-        <link rel="preconnect" href="https://cdn.radeo.in" />
-        <link rel="preconnect" href="https://minio.radeo.in" />
+        <link rel="preconnect" href="https://api.sbali.in" />
+        <link rel="preconnect" href="https://cdn.sbali.in" />
+        <link rel="preconnect" href="https://minio.sbali.in" />
         {/* Unsplash is used for demo hero images — preconnect reduces TTFB during dev/staging */}
         <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
