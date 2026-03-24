@@ -7,7 +7,7 @@ import { getAuth } from "firebase/auth";
 const firebaseConfig = {
   apiKey:
     process.env.NEXT_PUBLIC_FIREBASE_API_KEY ||
-    "AIzaSyCeJlh4NvXuFFAt_rpgdYnRpqLeE-LznNk",
+    "",
   authDomain:
     process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ||
     "sbali-46feb.firebaseapp.com",
