@@ -1,0 +1,10 @@
+diff a/docs/DEBUGGING_STEPS.md b/docs/DEBUGGING_STEPS.md	(rejected hunks)
+@@ -82,1 +82,1 @@
+-### If you see the â creation message BUT products still don't appear:
++### If you see the â creation message BUT products still don't appear
+@@ -93,1 +93,1 @@
+-### If you DON'T see the â creation message:
++### If you DON'T see the â creation message
+@@ -104,1 +104,1 @@
+-### If fetch logs show "Found 0 products" but you created some:
++### If fetch logs show "Found 0 products" but you created some

@@ -73,7 +73,7 @@ Request Flow:
 ```yaml
 traefik.http.routers.backend.entrypoints=websecure  # ← No HTTP redirect!
 traefik.http.routers.backend.middlewares=cors-headers  # ← CORS at proxy level
-traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=https://sbali.in
+traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=<https://sbali.in>
 ```
 
 ---
@@ -107,8 +107,8 @@ docker-compose -f docker-compose.traefik.yml up -d
 docker-compose -f docker-compose.traefik.yml ps
 
 # Test CORS
-curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
-  -H 'Origin: https://sbali.in' \
+curl -X OPTIONS <https://api.sbali.in/api/v1/auth/login> \
+  -H 'Origin: <https://sbali.in'> \
   -H 'Access-Control-Request-Method: POST' \
   -i
 ```
@@ -117,7 +117,7 @@ Expected Response:
 
 ```
 HTTP/2 204
-Access-Control-Allow-Origin: https://sbali.in
+Access-Control-Allow-Origin: <https://sbali.in>
 Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 Access-Control-Allow-Credentials: true
 ```
@@ -178,14 +178,14 @@ Internet (HTTPS)
 Before going live, verify:
 
 ```
-☐ Frontend loads at https://sbali.in
-☐ Backend health check: curl https://api.sbali.in/health
-☐ OPTIONS preflight returns 204: curl -X OPTIONS https://api.sbali.in/api/v1/auth/login ...
+☐ Frontend loads at <https://sbali.in>
+☐ Backend health check: curl <https://api.sbali.in/health>
+☐ OPTIONS preflight returns 204: curl -X OPTIONS <https://api.sbali.in/api/v1/auth/login> ...
 ☐ Login works: Frontend can POST to /api/v1/auth/login
 ☐ Register works: Frontend can POST to /api/v1/auth/register
 ☐ Cookies sent: Credentials included in requests
 ☐ No CORS errors: Browser console is clean
-☐ Traefik dashboard: http://localhost:8080 shows all routes
+☐ Traefik dashboard: <http://localhost:8080> shows all routes
 ☐ SSL certificate: Valid in browser (no warnings)
 ☐ Logs clean: docker logs sbali-backend shows no errors
 ```
@@ -199,8 +199,8 @@ Before going live, verify:
 | **View all logs**   | `docker-compose -f docker-compose.traefik.yml logs -f`         |
 | **Restart backend** | `docker-compose -f docker-compose.traefik.yml restart backend` |
 | **Stop everything** | `docker-compose -f docker-compose.traefik.yml down`            |
-| **Check health**    | `curl https://api.sbali.in/health`                             |
-| **View Traefik**    | http://localhost:8080                                          |
+| **Check health**    | `curl <https://api.sbali.in/health`>                             |
+| **View Traefik**    | <http://localhost:8080>                                          |
 | **Debug CORS**      | Check Traefik logs for middleware                              |
 
 ---
@@ -291,3 +291,4 @@ Your setup is:
 - Production-ready configuration
 
 **Next: Follow TRAEFIK_QUICK_REFERENCE.md for 3-minute setup!**
+

@@ -32,7 +32,7 @@ This guide covers the complete Firebase authentication implementation supporting
 
 #### Enable Authentication Methods
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
+1. Go to [Firebase Console](<https://console.firebase.google.com/>)
 2. Select your project: **sbali-2026**
 3. Navigate to **Authentication** → **Sign-in method**
 4. Enable the following:
@@ -179,10 +179,10 @@ Added fields to `backend/models/User.js`:
 ```json
 {
   "firebaseToken": "eyJhbGciOiJSUzI1...",
-  "email": "user@example.com",
+  "email": "<user@example.com>",
   "phoneNumber": "+919876543210",
   "displayName": "John Doe",
-  "photoURL": "https://...",
+  "photoURL": "<https://...",>
   "uid": "firebase_uid_here"
 }
 ```
@@ -196,10 +196,10 @@ Added fields to `backend/models/User.js`:
   "user": {
     "id": "user_mongodb_id",
     "name": "John Doe",
-    "email": "user@example.com",
+    "email": "<user@example.com>",
     "phone": "+919876543210",
     "role": "customer",
-    "profilePicture": "https://...",
+    "profilePicture": "<https://...",>
     "emailVerified": true,
     "phoneVerified": true
   }
@@ -374,7 +374,7 @@ Add to `.env`:
 FIREBASE_PROJECT_ID=sbali-2026
 
 # Optional: For production
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@sbali-2026.iam.gserviceaccount.com
+FIREBASE_CLIENT_EMAIL=<firebase<-adminsdk-xxxxx@sbali-2026.iam.gserviceaccount>.com>
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
@@ -398,7 +398,7 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
 3. Click "Sign Up" to create account
 4. Enter:
    - Name: Test User
-   - Email: test@example.com
+   - Email: <test@example.com>
    - Password: test123
    - Confirm: test123
 5. Click "Create Account"
@@ -500,7 +500,7 @@ All errors are automatically shown via `react-hot-toast`:
 {
   _id: ObjectId("..."),
   name: "John Doe",
-  email: "john@example.com",
+  email: "<john@example.com>",
   phone: "+919876543210",
 
   // Traditional auth
@@ -511,7 +511,7 @@ All errors are automatically shown via `react-hot-toast`:
   authProvider: "phone",
   emailVerified: true,
   phoneVerified: true,
-  profilePicture: "https://...",
+  profilePicture: "<https://...",>
 
   // Other fields
   role: "customer",
@@ -703,10 +703,10 @@ logEvent(analytics, "sign_up", {
 
 ## 📚 Resources
 
-- [Firebase Auth Docs](https://firebase.google.com/docs/auth)
-- [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup)
-- [Phone Auth Guide](https://firebase.google.com/docs/auth/web/phone-auth)
-- [reCAPTCHA v2](https://developers.google.com/recaptcha/docs/display)
+- [Firebase Auth Docs](<https://firebase.google.com/docs/auth>)
+- [Firebase Admin SDK](<https://firebase.google.com/docs/admin/setup>)
+- [Phone Auth Guide](<https://firebase.google.com/docs/auth/web/phone-auth>)
+- [reCAPTCHA v2](<https://developers.google.com/recaptcha/docs/display>)
 
 ---
 
@@ -743,3 +743,5 @@ You now have a complete Firebase authentication system with:
 **Access Firebase Auth:** Navigate to `/auth/firebase-login`
 
 **Test the system** and let me know if you need any adjustments! 🚀
+
+

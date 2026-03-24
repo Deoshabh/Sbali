@@ -1,0 +1,19 @@
+diff a/docs/COMPLETE_BUG_FIX_REPORT.md b/docs/COMPLETE_BUG_FIX_REPORT.md	(rejected hunks)
+@@ -150,1 +150,1 @@
+-### Returns **Direct Array**:
++### Returns **Direct Array**
+@@ -156,1 +156,1 @@
+-### Returns **Wrapped Object**:
++### Returns **Wrapped Object**
+@@ -200,1 +200,1 @@
+-### Frontend Context Files:
++### Frontend Context Files
+@@ -205,1 +205,1 @@
+-### Frontend Page Files:
++### Frontend Page Files
+@@ -221,1 +221,1 @@
+-### Frontend Component Files:
++### Frontend Component Files
+@@ -229,1 +229,1 @@
+-### Before:
++### Before

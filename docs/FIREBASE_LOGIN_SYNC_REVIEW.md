@@ -120,9 +120,7 @@ Verify error messages are more descriptive:
 
 ## Debugging Workflow
 
-### If you see `hasToken: false` on frontend:
-
-1. **Token Retrieval Failed**
+### If you see `hasToken: false` on frontend`r`n`r`n1. **Token Retrieval Failed**
 
    ```
    Check: Is user actually signed in?
@@ -150,9 +148,7 @@ Verify error messages are more descriptive:
    - [ ] No errors in console on page load
    ```
 
-### If you see `hasToken: true` on frontend but 400 on backend:
-
-1. **Request Not Being Sent**
+### If you see `hasToken: true` on frontend but 400 on backend`r`n`r`n1. **Request Not Being Sent**
 
    ```
    Check: Browser Network tab
@@ -181,9 +177,7 @@ Verify error messages are more descriptive:
    - [ ] `bodyKeys` array contains `firebaseToken`
    ```
 
-### If token is being sent but still 400:
-
-1. **Empty Token String**
+### If token is being sent but still 400`r`n`r`n1. **Empty Token String**
 
    ```
    Check: Token length in logs
@@ -243,7 +237,7 @@ Ensure these are properly set:
 **Frontend** (`.env.local`):
 
 ```
-NEXT_PUBLIC_API_URL=https://api.sbali.in/api/v1
+NEXT_PUBLIC_API_URL=<https://api.sbali.in/api/v1>
 NEXT_PUBLIC_FIREBASE_API_KEY=<your-api-key>
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=sbali-2026.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=sbali-2026
@@ -297,3 +291,4 @@ The enhanced logging will provide more insights but shouldn't significantly impa
 **Last Updated**: 2026-02-09  
 **Status**: Debugging enhancements deployed  
 **Next Phase**: Waiting for test results with new logging enabled
+

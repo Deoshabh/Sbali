@@ -23,12 +23,7 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-5PR3Z8K7YT
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LcbjmUsAAAAAHVeGta063p2ii-OlYGQqOBPfmQl
 ```
 
-### Steps in Dokploy:
-
-1. Go to your **frontend service** in Dokploy
-2. Navigate to **Environment Variables**
-3. Add each variable above
-4. Save and **redeploy** the frontend service
+### Steps in Dokploy`r`n`r`n1. Go to your **frontend service** in Dokploy`r`n`r`n2. Navigate to **Environment Variables**`r`n`r`n3. Add each variable above`r`n`r`n4. Save and **redeploy** the frontend service
 
 ---
 
@@ -37,11 +32,7 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY=6LcbjmUsAAAAAHVeGta063p2ii-OlYGQqOBPfmQl
 The default fallback password has been removed from `docker-compose.dokploy.yml`.
 You **MUST** ensure the `VALKEY_PASSWORD` environment variable is set.
 
-### Steps in Dokploy:
-
-1. Go to your **Valkey service** in Dokploy
-2. Navigate to **Environment Variables**
-3. Ensure `VALKEY_PASSWORD` is set to a strong random string:
+### Steps in Dokploy`r`n`r`n1. Go to your **Valkey service** in Dokploy`r`n`r`n2. Navigate to **Environment Variables**`r`n`r`n3. Ensure `VALKEY_PASSWORD` is set to a strong random string
    ```
    VALKEY_PASSWORD=<your-existing-strong-password>
    ```
@@ -91,14 +82,9 @@ Since the project uses **Nixpacks** build type (not Dockerfiles), the Node.js ve
 }
 ```
 
-### Steps in Dokploy:
+### Steps in Dokploy`r`n`r`n1. Push the code — Nixpacks will read `engines` and use Node 20+`r`n`r`n2. Redeploy both frontend and backend services`r`n`r`n3. No additional configuration needed
 
-1. Push the code — Nixpacks will read `engines` and use Node 20+
-2. Redeploy both frontend and backend services
-3. No additional configuration needed
-
-### Verify after deploy:
-
+### Verify after deploy
 ```bash
 # SSH into VPS and check
 docker exec <backend-container> node --version
@@ -113,9 +99,7 @@ docker exec <backend-container> node --version
 
 The CORS configuration in `nginx.conf` has been fixed. If you use Nginx directly (not Traefik):
 
-### Steps:
-
-1. Copy the updated `nginx.conf` to your server:
+### Steps`r`n`r`n1. Copy the updated `nginx.conf` to your server
    ```bash
    scp nginx.conf user@your-vps:/etc/nginx/sites-available/sbali.in
    ```
@@ -136,8 +120,7 @@ The CORS configuration in `nginx.conf` has been fixed. If you use Nginx directly
 
 Log rotation has been added to `docker-compose.dokploy.yml`. This applies automatically on next deploy.
 
-### Verify:
-
+### Verify
 ```bash
 # Check Docker log file sizes after a few days
 docker inspect --format='{{.LogPath}}' <container-name>
@@ -167,16 +150,16 @@ After deploying all changes, verify everything works:
 
 ```bash
 # 1. Health check
-curl https://api.sbali.in/api/health
+curl <https://api.sbali.in/api/health>
 
 # 2. Check security headers (should show helmet headers)
-curl -I https://api.sbali.in/api/health
+curl -I <https://api.sbali.in/api/health>
 
 # 3. Test CORS
 curl -I -X OPTIONS \
-  -H "Origin: https://sbali.in" \
+  -H "Origin: <https://sbali.in"> \
   -H "Access-Control-Request-Method: GET" \
-  https://api.sbali.in/api/v1/products
+  <https://api.sbali.in/api/v1/products>
 
 # 4. Verify Node version
 docker exec <backend-container> node --version
@@ -184,13 +167,13 @@ docker exec <backend-container> node --version
 # 5. Test rate limiting on auth (should get 429 after 10 request)
 for i in $(seq 1 15); do
   curl -s -o /dev/null -w "%{http_code}\n" \
-    -X POST https://api.sbali.in/api/v1/auth/login \
+    -X POST <https://api.sbali.in/api/v1/auth/login> \
     -H "Content-Type: application/json" \
-    -d '{"email":"test@test.com","password":"wrong"}'
+    -d '{"email":"<test@test.com>","password":"wrong"}'
 done
 
 # 6. Test frontend Firebase auth still works
-# Open https://sbali.in and try login with Google
+# Open <https://sbali.in> and try login with Google
 ```
 
 ---
@@ -210,3 +193,5 @@ If anything breaks after deployment:
    sudo cp /etc/nginx/sites-available/sbali.in.backup /etc/nginx/sites-available/sbali.in
    sudo systemctl reload nginx
    ```
+
+

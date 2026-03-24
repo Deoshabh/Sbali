@@ -1,0 +1,4 @@
+diff a/docs/FIREBASE_AUTHENTICATION_GUIDE.md b/docs/FIREBASE_AUTHENTICATION_GUIDE.md	(rejected hunks)
+@@ -401,1 +401,1 @@
+-   - Email: test@example.com
++   - Email: <test@example.com>

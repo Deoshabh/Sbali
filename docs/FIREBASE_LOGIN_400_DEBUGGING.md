@@ -13,12 +13,7 @@ Backend sync error: AxiosError: Request failed with status code 400
 
 The 400 error indicates that `firebaseToken` is missing or undefined in the request body being sent to the backend.
 
-### Possible Causes:
-
-1. **Token Not Retrieved**: The Firebase ID token wasn't successfully obtained from the Firebase SDK
-2. **Token Null/Undefined**: The token exists but is somehow null or undefined when the request is made
-3. **Async Timing Issue**: The token promise didn't resolve before the request was sent
-4. **Payload Structure Issue**: The request payload is malformed or not properly serialized
+### Possible Causes`r`n`r`n1. **Token Not Retrieved**: The Firebase ID token wasn't successfully obtained from the Firebase SDK`r`n`r`n2. **Token Null/Undefined**: The token exists but is somehow null or undefined when the request is made`r`n`r`n3. **Async Timing Issue**: The token promise didn't resolve before the request was sent`r`n`r`n4. **Payload Structure Issue**: The request payload is malformed or not properly serialized
 
 ## Changes Made
 
@@ -168,17 +163,9 @@ Firebase token verification error: {
 
 ## Next Steps
 
-### For Immediate Testing:
+### For Immediate Testing`r`n`r`n1. Enable browser DevTools`r`n`r`n2. Open Console and Network tabs`r`n`r`n3. Attempt Firebase login (Google, Email, or Phone)`r`n`r`n4. Check console logs for the new debugging output`r`n`r`n5. Share the exact logs from both frontend console and backend logs
 
-1. Enable browser DevTools
-2. Open Console and Network tabs
-3. Attempt Firebase login (Google, Email, or Phone)
-4. Check console logs for the new debugging output
-5. Share the exact logs from both frontend console and backend logs
-
-### For Verification:
-
-1. Test each auth method separately:
+### For Verification`r`n`r`n1. Test each auth method separately
    - [ ] Google Sign-In
    - [ ] Email/Password Login
    - [ ] Phone OTP Login
@@ -208,3 +195,5 @@ Firebase token verification error: {
 
 **Last Updated**: 2026-02-09
 **Status**: Debugging improvements deployed - waiting for error reproduction to verify
+
+

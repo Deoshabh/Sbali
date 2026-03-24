@@ -1,0 +1,4 @@
+diff a/docs/FIREBASE_GOOGLE_SIGNIN_SECURITY_GUIDE.md b/docs/FIREBASE_GOOGLE_SIGNIN_SECURITY_GUIDE.md	(rejected hunks)
+@@ -193,1 +193,1 @@
+-4. **Expected:** Signed in as Account B (Gagan211105@akgec.ac.in)
++4. **Expected:** Signed in as Account B (<Gagan211105@akgec.ac.in>)

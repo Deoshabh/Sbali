@@ -8,7 +8,7 @@ I've added the necessary configuration to your environment files:
 
 ```env
 # Shiprocket
-SHIPROCKET_EMAIL=your-shiprocket-email@example.com
+SHIPROCKET_EMAIL=<your-shiprocket-email@example.com>
 SHIPROCKET_PASSWORD=your-shiprocket-password
 SHIPROCKET_WEBHOOK_TOKEN=48f6cc854c7a94beb4ea1144ca8242ba7e78a0f5a07127364250cade5083f7a2
 
@@ -49,8 +49,7 @@ Since you mentioned Soketi is already running on your VPS via Dokploy:
 
 3. **Update both environment files** with your actual values:
 
-#### Backend `.env`:
-
+#### Backend `.env`
 ```env
 SOKETI_APP_ID=your-actual-app-id
 SOKETI_APP_KEY=your-actual-app-key
@@ -60,8 +59,7 @@ SOKETI_PORT=6001
 SOKETI_USE_TLS=true
 ```
 
-#### Frontend `.env.production`:
-
+#### Frontend `.env.production`
 ```env
 NEXT_PUBLIC_SOKETI_KEY=your-actual-app-key  # Same as SOKETI_APP_KEY
 NEXT_PUBLIC_SOKETI_HOST=ws.sbali.in  # Same as SOKETI_HOST
@@ -83,7 +81,7 @@ SHIPROCKET_PASSWORD=your-actual-shiprocket-password
 1. **Login to Shiprocket Dashboard**
 2. **Go to**: Settings → API → Webhooks
 3. **Add New Webhook**:
-   - **URL**: `https://api.sbali.in/api/webhooks/shiprocket`
+   - **URL**: `<https://api.sbali.in/api/webhooks/shiprocket`>
    - **Method**: POST
    - **Custom Headers**: Add header
      - Name: `x-api-key`
@@ -113,7 +111,7 @@ git add .
 git commit -m "Add Soketi and Shiprocket webhook integration"
 git push
 
-# Dokploy will automatically:
+# Dokploy will automatically
 # 1. Detect changes
 # 2. Build with Nixpack
 # 3. Deploy both frontend and backend
@@ -139,13 +137,13 @@ git push
 ### 1. Test Backend is Running
 
 ```bash
-curl https://api.sbali.in/api/health
+curl <https://api.sbali.in/api/health>
 ```
 
 ### 2. Test Webhook Endpoint
 
 ```bash
-curl -X POST https://api.sbali.in/api/webhooks/shiprocket \
+curl -X POST <https://api.sbali.in/api/webhooks/shiprocket> \
   -H "Content-Type: application/json" \
   -H "x-api-key: 48f6cc854c7a94beb4ea1144ca8242ba7e78a0f5a07127364250cade5083f7a2" \
   -d '{
@@ -202,7 +200,7 @@ Open browser console on your frontend:
 1. **Check Soketi is running**:
 
    ```bash
-   curl http://your-soketi-host:9601/metrics
+   curl <http://your-soketi-host:9601/metrics>
    ```
 
 2. **Verify WebSocket port (6001) is open**:
@@ -229,7 +227,7 @@ Open browser console on your frontend:
 
 ```bash
 # Via API (needs admin auth)
-curl https://api.sbali.in/api/webhooks/logs?page=1&limit=20 \
+curl <https://api.sbali.in/api/webhooks/logs?page=1&limit=20> \
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN"
 ```
 
@@ -264,22 +262,15 @@ db.orders.find({"shipping.awb_code": {$exists: true}})
 
 ## 📝 Important Notes
 
-### For Nixpack Build:
+### For Nixpack Build`r`n`r`n- ✅ No Dockerfile needed (Nixpack auto-detects)`r`n`r`n- ✅ Environment variables set via Dokploy`r`n`r`n- ✅ Automatic builds on git push`r`n`r`n- ✅ Zero-downtime deployments
 
-- ✅ No Dockerfile needed (Nixpack auto-detects)
-- ✅ Environment variables set via Dokploy
-- ✅ Automatic builds on git push
-- ✅ Zero-downtime deployments
-
-### Webhook URL:
-
+### Webhook URL
 ```
-Production: https://api.sbali.in/api/webhooks/shiprocket
+Production: <https://api.sbali.in/api/webhooks/shiprocket>
 NOT using: ngrok (since you're on VPS)
 ```
 
-### Soketi:
-
+### Soketi
 ```
 Already running in Dokploy
 Just need credentials from your instance
@@ -300,3 +291,4 @@ Just need credentials from your instance
 **Ready for production!** 🚀
 
 All code is deployed, just need to configure the credentials.
+

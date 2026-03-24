@@ -81,15 +81,14 @@ setProducts(productsData);
 2. **Dokploy will auto-deploy the frontend**
 
 3. **Test immediately:**
-   - Go to: `https://sbali.in/admin/products`
+   - Go to: `<https://sbali.in/admin/products`>
    - You should now see your product(s)!
-   - Go to: `https://sbali.in/products`
+   - Go to: `<https://sbali.in/products`>
    - Products should appear there too!
 
 ## 🔍 How to Verify It's Working
 
-### In Browser Console (F12):
-
+### In Browser Console (F12)
 You should now see:
 
 ```
@@ -104,8 +103,7 @@ Or for admin:
 ✅ Admin loaded 1 products
 ```
 
-### In Dokploy Backend Logs:
-
+### In Dokploy Backend Logs
 ```
 📦 Fetching products with query: { isActive: true }
 ✅ Found 1 products
@@ -158,3 +156,4 @@ If you still don't see products after deployment, check:
 
 - Browser console for the new debug messages
 - Whether the product was actually saved to database (check backend logs for "✅ Product created successfully")
+

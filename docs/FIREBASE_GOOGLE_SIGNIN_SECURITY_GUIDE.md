@@ -2,7 +2,7 @@
 
 ## 🔴 Problem: Wrong Account Login Issue
 
-**Symptom:** When attempting to sign in with `Gagan211105@akgec.ac.in`, the application logs in as `gagandev.001@gmail.com` (admin account) instead.
+**Symptom:** When attempting to sign in with `<Gagan211105@akgec.ac.in>`, the application logs in as `<gagandev.001@gmail.com>` (admin account) instead.
 
 **Root Causes:**
 
@@ -187,10 +187,10 @@ console.log("📊 Google Sign-In Details:", {
 
 ### Test Case 1: Account Switching
 
-1. Log in with Account A: `gagandev.001@gmail.com`
+1. Log in with Account A: `<gagandev.001@gmail.com>`
 2. Log out completely
-3. Attempt login with Account B: `Gagan211105@akgec.ac.in`
-4. **Expected:** Signed in as Account B (Gagan211105@akgec.ac.in)
+3. Attempt login with Account B: `<Gagan211105@akgec.ac.in>`
+4. **Expected:** Signed in as Account B (<Gagan211105@akgec.ac.in>)
 5. **Check Browser Console:** Should see sign-out log before new sign-in
 
 ### Test Case 2: Incognito Window (Fresh Session)
@@ -198,8 +198,8 @@ console.log("📊 Google Sign-In Details:", {
 1. Open incognito window
 2. Visit `/auth/firebase-login`
 3. Click "Continue with Google"
-4. Select `Gagan211105@akgec.ac.in`
-5. **Expected:** Should log in as `Gagan211105@akgec.ac.in` without confusion
+4. Select `<Gagan211105@akgec.ac.in>`
+5. **Expected:** Should log in as `<Gagan211105@akgec.ac.in>` without confusion
 6. **Check MongoDB:** User record should have correct UID and email
 
 ### Test Case 3: Email Mismatch Detection
@@ -215,11 +215,11 @@ console.log("📊 Google Sign-In Details:", {
 // Browser Console Logs to Look For:
 
 // ✅ CORRECT FLOW:
-// ⚠️  Clearing existing Firebase session for: gagandev.001@gmail.com
-// ✅ Successfully signed in as: Gagan211105@akgec.ac.in
-// 📱 Firebase user authenticated: Gagan211105@akgec.ac.in
-// 🔐 Backend returned user: Gagan211105@akgec.ac.in
-// ✅ Logged in as Gagan211105@akgec.ac.in
+// ⚠️  Clearing existing Firebase session for: <gagandev.001@gmail.com>
+// ✅ Successfully signed in as: <Gagan211105@akgec.ac.in>
+// 📱 Firebase user authenticated: <Gagan211105@akgec.ac.in>
+// 🔐 Backend returned user: <Gagan211105@akgec.ac.in>
+// ✅ Logged in as <Gagan211105@akgec.ac.in>
 
 // ❌ PROBLEM INDICATORS:
 // Missing: ⚠️  Clearing existing Firebase session
@@ -287,8 +287,8 @@ console.log("📊 Google Sign-In Details:", {
 4. **Database:**
    ```javascript
    // Check both user records:
-   db.users.find({ email: "Gagan211105@akgec.ac.in" });
-   db.users.find({ email: "gagandev.001@gmail.com" });
+   db.users.find({ email: "<Gagan211105@akgec.ac.in>" });
+   db.users.find({ email: "<gagandev.001@gmail.com>" });
    // Each should have unique firebaseUid
    ```
 
@@ -300,7 +300,7 @@ console.log("📊 Google Sign-In Details:", {
 
 ```javascript
 // Check backend response (Network tab in DevTools)
-// Response should show: "email": "Gagan211105@akgec.ac.in"
+// Response should show: "email": "<Gagan211105@akgec.ac.in>"
 
 // If mismatch persists:
 // 1. Clear browser cache
@@ -334,9 +334,9 @@ console.log("📊 Google Sign-In Details:", {
 
 ## 🔗 Google OAuth Documentation
 
-- [Google OAuth: Account Chooser](https://developers.google.com/identity/protocols/oauth2/web/choose-account)
-- [Firebase: Prompt Parameter](https://firebase.google.com/docs/auth/web/google-signin#advanced-setup)
-- [Firebase: Best Practices](https://firebase.google.com/docs/auth/best-practices)
+- [Google OAuth: Account Chooser](<https://developers.google.com/identity/protocols/oauth2/web/choose-account>)
+- [Firebase: Prompt Parameter](<https://firebase.google.com/docs/auth/web/google-signin#advanced-setup>)
+- [Firebase: Best Practices](<https://firebase.google.com/docs/auth/best-practices>)
 
 ---
 
@@ -355,3 +355,4 @@ console.log("📊 Google Sign-In Details:", {
 **Last Updated:** February 9, 2026  
 **Status:** ✅ All fixes implemented and tested  
 **Severity:** 🔴 Critical - Prevented account confusion and security breach
+

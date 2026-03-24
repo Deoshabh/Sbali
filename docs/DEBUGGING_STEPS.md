@@ -34,7 +34,7 @@ git push origin main
 
 ### **Step 3: Try Creating a Product Again**
 
-1. Go to your admin panel: `https://sbali.in/admin/products`
+1. Go to your admin panel: `<https://sbali.in/admin/products`>
 2. Click "Add Product"
 3. Fill in all required fields
 4. Upload images
@@ -60,7 +60,7 @@ If you see this ✅ message, the product was saved successfully!
 
 ### **Step 5: Try Fetching Products**
 
-1. Refresh your products page: `https://sbali.in/products`
+1. Refresh your products page: `<https://sbali.in/products`>
 2. Check backend logs again
 
 You should see:
@@ -79,8 +79,7 @@ Or in admin panel:
 
 ## 🎯 What These Logs Will Tell Us
 
-### If you see the ✅ creation message BUT products still don't appear:
-
+### If you see the ✅ creation message BUT products still don't appear
 **Problem:** Products are being created but not fetched correctly
 
 **Possible causes:**
@@ -90,8 +89,7 @@ Or in admin panel:
 3. Frontend filtering products incorrectly
 4. `isActive` is being set to `false` somehow
 
-### If you DON'T see the ✅ creation message:
-
+### If you DON'T see the ✅ creation message
 **Problem:** Product creation is failing silently
 
 **Possible causes:**
@@ -101,8 +99,7 @@ Or in admin panel:
 3. Exception being thrown before save
 4. Network timeout
 
-### If fetch logs show "Found 0 products" but you created some:
-
+### If fetch logs show "Found 0 products" but you created some
 **Problem:** Query is wrong or products have wrong `isActive` value
 
 **Check:**
@@ -132,16 +129,16 @@ db.products.find({ isActive: true }).count()
 
 ```bash
 # Public endpoint (should show products)
-curl https://api.sbali.in/api/v1/products
+curl <https://api.sbali.in/api/v1/products>
 
 # Admin endpoint (requires auth)
-curl https://api.sbali.in/api/v1/admin/products \
+curl <https://api.sbali.in/api/v1/admin/products> \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
 ### Check Frontend Console
 
-1. Open `https://sbali.in/products`
+1. Open `<https://sbali.in/products`>
 2. Press F12 → Console tab
 3. Look for errors
 4. Check Network tab → Filter by "products"
@@ -206,3 +203,4 @@ Once you deploy and check the logs, share:
 4. Any error messages from browser console
 
 This will help me pinpoint the exact issue!
+

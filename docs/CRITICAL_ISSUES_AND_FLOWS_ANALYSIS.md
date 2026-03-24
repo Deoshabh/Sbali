@@ -2,7 +2,7 @@
 
 **Date**: February 1, 2026  
 **Analysis Type**: Full System Audit  
-**Website**: https://sbali.in/
+**Website**: <https://sbali.in/>
 
 ---
 
@@ -122,7 +122,7 @@ export const metadata = {
 ```javascript
 // In product detail page
 const productSchema = {
-  "@context": "https://schema.org/",
+  "@context": "<https://schema.org/",>
   "@type": "Product",
   name: product.name,
   image: product.images,
@@ -133,13 +133,13 @@ const productSchema = {
   },
   offers: {
     "@type": "Offer",
-    url: `https://sbali.in/products/${product.slug}`,
+    url: `<https://sbali.in/products/${product.slug}`,>
     priceCurrency: "INR",
     price: product.price,
     availability:
       product.stock > 0
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+        ? "<https://schema.org/InStock">
+        : "<https://schema.org/OutOfStock",>
   },
 };
 ```
@@ -152,7 +152,7 @@ export default async function sitemap() {
   const products = await fetch(`${API_URL}/products`).then((r) => r.json());
 
   const productUrls = products.map((p) => ({
-    url: `https://sbali.in/products/${p.slug}`,
+    url: `<https://sbali.in/products/${p.slug}`,>
     lastModified: p.updatedAt,
     changeFrequency: "weekly",
     priority: 0.8,
@@ -160,13 +160,13 @@ export default async function sitemap() {
 
   return [
     {
-      url: "https://sbali.in",
+      url: "<https://sbali.in",>
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
     },
     {
-      url: "https://sbali.in/products",
+      url: "<https://sbali.in/products",>
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
@@ -185,7 +185,7 @@ export default function robots() {
       allow: "/",
       disallow: ["/admin/", "/checkout/", "/cart/", "/profile/", "/orders/"],
     },
-    sitemap: "https://sbali.in/sitemap.xml",
+    sitemap: "<https://sbali.in/sitemap.xml",>
   };
 }
 ```
@@ -280,7 +280,7 @@ key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_RsGRtsJgCpkZEk',
 ```bash
 # frontend/.env.production
 NEXT_PUBLIC_RAZORPAY_KEY_ID=your_production_key_here
-NEXT_PUBLIC_API_URL=https://api.sbali.in/api/v1
+NEXT_PUBLIC_API_URL=<https://api.sbali.in/api/v1>
 ```
 
 **Remove hardcoded fallback**:
@@ -780,7 +780,7 @@ exports.deleteProduct = async (req, res) => {
       for (const imageUrl of product.images) {
         try {
           // Extract object name from URL
-          // URL format: https://minio-api.sbali.in/product-media/products/slug/filename
+          // URL format: <https://minio-api.sbali.in/product-media/products/slug/filename>
           const urlParts = imageUrl.split("/product-media/");
           if (urlParts.length > 1) {
             const objectName = urlParts[1];
@@ -1254,3 +1254,4 @@ You're **85% production-ready**. The remaining 15% is important but not blocking
 ---
 
 **Need help implementing any of these fixes? Let me know which to tackle first!**
+

@@ -31,7 +31,7 @@ docker-compose -f docker-compose.traefik.yml logs backend | tail -20
 sleep 10
 
 # Test health endpoint
-curl https://api.sbali.in/health
+curl <https://api.sbali.in/health>
 ```
 
 Expected output:
@@ -85,21 +85,21 @@ docker-compose -f docker-compose.traefik.yml up -d --build backend
 ### Test 1: Health Check
 
 ```bash
-curl https://api.sbali.in/health
+curl <https://api.sbali.in/health>
 # Expected: HTTP/2 200 OK
 ```
 
 ### Test 2: OPTIONS Preflight
 
 ```bash
-curl -X OPTIONS https://api.sbali.in/api/v1/auth/register \
-  -H "Origin: https://sbali.in" \
+curl -X OPTIONS <https://api.sbali.in/api/v1/auth/register> \
+  -H "Origin: <https://sbali.in"> \
   -H "Access-Control-Request-Method: POST" \
   -i
 
-# Expected:
+# Expected
 # HTTP/2 204 No Content (or 200 OK)
-# access-control-allow-origin: https://sbali.in
+# access-control-allow-origin: <https://sbali.in>
 # access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 # access-control-allow-credentials: true
 # (NOT 502 Bad Gateway)
@@ -108,18 +108,18 @@ curl -X OPTIONS https://api.sbali.in/api/v1/auth/register \
 ### Test 3: Categories API
 
 ```bash
-curl https://api.sbali.in/api/v1/categories \
-  -H "Origin: https://sbali.in"
+curl <https://api.sbali.in/api/v1/categories> \
+  -H "Origin: <https://sbali.in">
 
-# Expected:
+# Expected
 # HTTP/2 200 OK
-# access-control-allow-origin: https://sbali.in
+# access-control-allow-origin: <https://sbali.in>
 # (JSON array of categories)
 ```
 
 ### Test 4: Frontend Registration
 
-1. Go to https://sbali.in/auth/register
+1. Go to <https://sbali.in/auth/register>
 2. Fill form and submit
 3. Expected: **No CORS errors** in console
 4. Expected: Either successful registration or validation error (not CORS error)
@@ -132,7 +132,7 @@ curl https://api.sbali.in/api/v1/categories \
 # Check docker logs
 docker-compose -f docker-compose.traefik.yml logs backend
 
-# Look for:
+# Look for
 # ✅ MongoDB connected
 # ✅ Server running on port 5000
 # ❌ Any crash messages
@@ -148,12 +148,12 @@ docker-compose -f docker-compose.traefik.yml up -d backend
 # Check for errors
 docker-compose -f docker-compose.traefik.yml logs -f backend
 
-# Common issues:
+# Common issues
 # - MongoDB connection failed → Check MONGO_URI
 # - Port already in use → Check if another process using 5000
 # - Environment variables missing → Check .env file
 
-# Verify .env has:
+# Verify .env has
 MONGO_URI=mongodb://...
 JWT_ACCESS_SECRET=...
 JWT_REFRESH_SECRET=...
@@ -230,7 +230,7 @@ When OPTIONS preflight is sent:
 
 4. **Test endpoints** (use curl commands above)
 
-5. **Test from browser** (https://sbali.in/auth/register)
+5. **Test from browser** (<https://sbali.in/auth/register>)
 
 6. **Report status**
 
@@ -246,7 +246,7 @@ docker-compose -f docker-compose.traefik.yml logs backend | tail -50
 docker-compose -f docker-compose.traefik.yml ps
 
 # Network test
-curl -v https://api.sbali.in/health 2>&1 | head -30
+curl -v <https://api.sbali.in/health> 2>&1 | head -30
 ```
 
 ---
@@ -255,3 +255,4 @@ curl -v https://api.sbali.in/health 2>&1 | head -30
 **Fix**: Rebuild and restart backend container  
 **Time to fix**: 2-5 minutes  
 **Risk**: Zero (code changes safe, backward compatible)
+
