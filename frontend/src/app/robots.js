@@ -17,6 +17,8 @@ export default function robots() {
           "/wishlist/",
           "/reset-password/",
           "/forgot-password/",
+          "/search",
+          "/*?search=*",
         ],
       },
       {
@@ -31,9 +33,12 @@ export default function robots() {
           "/orders/",
           "/profile/",
           "/wishlist/",
+          "/search",
+          "/*?search=*",
         ],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   };
 }

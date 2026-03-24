@@ -72,7 +72,7 @@ export default async function sitemap() {
     // Fetch all active products
     const [productsRes, categoriesRes] = await Promise.all([
       fetch(`${API_URL}/products`, { next: { revalidate: 3600 } }),
-      fetch(`${API_URL}/products/categories`, { next: { revalidate: 86400 } }),
+      fetch(`${API_URL}/categories`, { next: { revalidate: 86400 } }),
     ]);
 
     // --- Products ---
@@ -96,16 +96,32 @@ export default async function sitemap() {
     // --- Categories ---
     let categoryUrls = [];
     if (categoriesRes.ok) {
-      const categories = await categoriesRes.json();
+      const categoriesPayload = await categoriesRes.json();
+      const categories = Array.isArray(categoriesPayload)
+        ? categoriesPayload
+        : categoriesPayload.categories || [];
+
       if (Array.isArray(categories)) {
-        categoryUrls = categories.map((cat) => {
-          const slug = typeof cat === 'string' ? cat : cat.slug || cat.name;
-          return {
-            url: `${BASE_URL}/categories?category=${encodeURIComponent(slug)}`,
-            lastModified: new Date().toISOString(),
-            changeFrequency: "weekly",
-            priority: 0.7,
-          };
+        categoryUrls = categories
+          .map((cat) => {
+            const slug = typeof cat === 'string' ? cat : cat.slug;
+            if (!slug) return null;
+
+            return {
+              url: `${BASE_URL}/categories/${encodeURIComponent(slug)}`,
+              lastModified: cat?.updatedAt || new Date().toISOString(),
+              changeFrequency: "weekly",
+              priority: 0.7,
+            };
+          })
+          .filter(Boolean);
+
+        // Dedupe in case API contains repeated slugs.
+        const seen = new Set();
+        categoryUrls = categoryUrls.filter((entry) => {
+          if (seen.has(entry.url)) return false;
+          seen.add(entry.url);
+          return true;
         });
       }
     }

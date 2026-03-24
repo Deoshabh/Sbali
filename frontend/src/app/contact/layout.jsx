@@ -1,4 +1,4 @@
-import { generateMetadata as generateSEOMetadata, JsonLd, generateBreadcrumbJsonLd } from '@/utils/seo';
+import { generateMetadata as generateSEOMetadata, JsonLd, generateBreadcrumbJsonLd, generateLocalBusinessJsonLd } from '@/utils/seo';
 import { buildPageMetadata } from '@/utils/seoFetcher';
 
 const FALLBACK = {
@@ -16,6 +16,7 @@ export async function generateMetadata() {
 export default function ContactLayout({ children }) {
   return (
     <>
+      <JsonLd data={generateLocalBusinessJsonLd()} />
       <JsonLd
         data={generateBreadcrumbJsonLd([
           { name: 'Home', path: '/' },

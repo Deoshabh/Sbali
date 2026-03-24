@@ -10,8 +10,42 @@ import {
 } from '@/lib/constants';
 
 const SITE_DESCRIPTION =
-  "Discover exquisite handcrafted shoes made with premium materials and timeless craftsmanship. Shop the finest collection of luxury footwear at Sbali.";
+  "Sbali offers handcrafted genuine leather shoes and goods from Agra, India, including premium bags, wallets, belts, and sandals.";
 const SITE_IMAGE = `${SITE_URL}/og-image.jpg`;
+
+const buildAlternateUrl = (baseUrl, path = "") => {
+  try {
+    const base = new URL(baseUrl || SITE_URL);
+    const target = new URL(path || "/", SITE_URL);
+    return `${base.origin}${target.pathname}${target.search}`;
+  } catch {
+    return `${SITE_URL}${path || ""}`;
+  }
+};
+
+const buildLanguageAlternates = (canonicalUrl) => {
+  let path = "/";
+  try {
+    path = new URL(canonicalUrl || SITE_URL).pathname;
+  } catch {
+    path = "/";
+  }
+
+  const enInBase = process.env.NEXT_PUBLIC_SITE_URL_IN || SITE_URL;
+  const hiInBase = process.env.NEXT_PUBLIC_SITE_URL_IN_HI || enInBase;
+  const enUsBase = process.env.NEXT_PUBLIC_SITE_URL_US || SITE_URL;
+  const enGbBase = process.env.NEXT_PUBLIC_SITE_URL_GB || SITE_URL;
+  const enAeBase = process.env.NEXT_PUBLIC_SITE_URL_AE || SITE_URL;
+
+  return {
+    "en-IN": buildAlternateUrl(enInBase, path),
+    "hi-IN": buildAlternateUrl(hiInBase, path),
+    "en-US": buildAlternateUrl(enUsBase, path),
+    "en-GB": buildAlternateUrl(enGbBase, path),
+    "en-AE": buildAlternateUrl(enAeBase, path),
+    "x-default": canonicalUrl,
+  };
+};
 
 /**
  * Generate base metadata for all pages
@@ -34,10 +68,11 @@ export const generateMetadata = ({
     keywords: [
       "shoes",
       "footwear",
-      "premium shoes",
-      "handcrafted shoes",
-      "luxury footwear",
-      "online shoe store",
+      "genuine leather",
+      "handcrafted leather shoes",
+      "leather goods india",
+      "Agra leather",
+      "online leather store",
       ...keywords,
     ].join(", "),
 
@@ -85,6 +120,7 @@ export const generateMetadata = ({
     // Alternate languages (if applicable)
     alternates: {
       canonical: url,
+      languages: buildLanguageAlternates(url),
     },
 
     // Other metadata
@@ -250,6 +286,33 @@ export const generateOrganizationJsonLd = (siteSettings) => {
 };
 
 /**
+ * Generate JSON-LD structured data for local business.
+ */
+export const generateLocalBusinessJsonLd = () => {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: SITE_NAME,
+    url: SITE_URL,
+    image: `${SITE_URL}/logo.png`,
+    description: SITE_DESCRIPTION,
+    telephone: process.env.NEXT_PUBLIC_CONTACT_PHONE || '',
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Agra",
+      addressRegion: "Uttar Pradesh",
+      addressCountry: "IN",
+    },
+    areaServed: ["IN", "US", "GB", "AE"],
+    sameAs: [
+      process.env.NEXT_PUBLIC_INSTAGRAM_URL,
+      process.env.NEXT_PUBLIC_FACEBOOK_URL,
+      process.env.NEXT_PUBLIC_TWITTER_URL,
+    ].filter(Boolean),
+  };
+};
+
+/**
  * Generate JSON-LD structured data for breadcrumb
  */
 export const generateBreadcrumbJsonLd = (breadcrumbs) => {
@@ -290,11 +353,13 @@ export const generateWebsiteJsonLd = () => {
  * Component to render JSON-LD script
  */
 export const JsonLd = ({ data }) => {
+  const json = JSON.stringify(data)
+    .replace(/</g, "\\u003c")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <script type="application/ld+json">{json}</script>
   );
 };
 
@@ -304,6 +369,7 @@ const seoUtils = {
   generateCategoryMetadata,
   generateProductJsonLd,
   generateOrganizationJsonLd,
+  generateLocalBusinessJsonLd,
   generateBreadcrumbJsonLd,
   generateWebsiteJsonLd,
   JsonLd,

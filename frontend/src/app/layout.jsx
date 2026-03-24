@@ -61,9 +61,9 @@ export const viewport = {
 };
 
 export const metadata = generateSEOMetadata({
-  title: 'Sbali - Premium Handcrafted Shoes',
-  description: 'Discover exquisite handcrafted shoes made with premium materials and timeless craftsmanship. Shop the finest collection of luxury footwear at Sbali.',
-  keywords: ['shoes', 'handcrafted', 'premium', 'leather', 'oxford', 'derby', 'brogue', 'loafer', 'luxury footwear', 'online shoe store India'],
+  title: 'Sbali - Handcrafted Genuine Leather Shoes and Goods',
+  description: 'Discover handcrafted genuine leather shoes, bags, wallets, belts, and sandals by Sbali from Agra, India.',
+  keywords: ['genuine leather', 'handcrafted leather shoes', 'leather goods india', 'Agra leather', 'leather bags', 'leather wallets', 'leather belts'],
 });
 
 import QueryProvider from '@/providers/QueryProvider';

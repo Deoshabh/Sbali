@@ -1,11 +1,17 @@
-import { JsonLd, generateWebsiteJsonLd, generateOrganizationJsonLd, generateMetadata as generateSEOMetadata } from '@/utils/seo';
+import { JsonLd, generateWebsiteJsonLd, generateOrganizationJsonLd, generateLocalBusinessJsonLd, generateMetadata as generateSEOMetadata } from '@/utils/seo';
 import { buildPageMetadata } from '@/utils/seoFetcher';
 import SbaliHome from '@/components/storefront/SbaliHome';
 
 const FALLBACK = {
-  title: 'Sbali - Premium Handcrafted Shoes | Luxury Footwear Online',
-  description: 'Shop premium handcrafted leather shoes at Sbali. Explore our exquisite collection of oxfords, derbys, brogues, loafers and more. Free shipping across India.',
-  keywords: ['premium shoes', 'handcrafted leather shoes', 'luxury footwear India', 'buy shoes online', 'oxford shoes', 'derby shoes', 'loafers'],
+  title: 'Sbali | Genuine Leather Shoes and Goods from Agra, India',
+  description: 'Shop handcrafted genuine leather shoes, bags, wallets, belts, and sandals from Sbali. Agra craftsmanship for Indian and international buyers.',
+  keywords: [
+    'genuine leather shoes india',
+    'handcrafted leather goods',
+    'Agra leather brand',
+    'leather bags wallets belts india',
+    'premium leather footwear india',
+  ],
   url: 'https://sbali.in',
 };
 
@@ -19,6 +25,7 @@ export default function Home() {
     <>
       <JsonLd data={generateWebsiteJsonLd()} />
       <JsonLd data={generateOrganizationJsonLd()} />
+      <JsonLd data={generateLocalBusinessJsonLd()} />
 
       <SbaliHome />
     </>
