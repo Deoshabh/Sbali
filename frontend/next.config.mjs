@@ -104,7 +104,7 @@ const nextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
+            value: "camera=(), microphone=(), geolocation=(self)",
           },
           {
             // Cross-Origin-Opener-Policy: prevents cross-origin windows from retaining

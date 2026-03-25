@@ -1,4 +1,5 @@
 const Minio = require("minio");
+const https = require("https");
 const { log } = require("./logger");
 
 /**
@@ -23,6 +24,7 @@ const {
   MINIO_REGION,
   MINIO_PUBLIC_URL,
   MINIO_CDN_URL,
+  MINIO_INSECURE_SKIP_TLS_VERIFY,
 } = process.env;
 
 if (
@@ -72,6 +74,11 @@ async function initializeBucket() {
     });
 
     const useSSL = String(MINIO_USE_SSL).toLowerCase() === "true";
+    const skipTlsVerify = String(MINIO_INSECURE_SKIP_TLS_VERIFY).toLowerCase() === "true";
+
+    if (useSSL && skipTlsVerify) {
+      log.warn("MINIO_INSECURE_SKIP_TLS_VERIFY is enabled. TLS certificate verification is disabled for storage client.");
+    }
 
     minioClient = new Minio.Client({
       endPoint: MINIO_ENDPOINT,
@@ -79,6 +86,9 @@ async function initializeBucket() {
       useSSL: useSSL,
       accessKey: MINIO_ACCESS_KEY,
       secretKey: MINIO_SECRET_KEY,
+      ...(useSSL && skipTlsVerify
+        ? { transportAgent: new https.Agent({ rejectUnauthorized: false }) }
+        : {}),
     });
 
     log.info(

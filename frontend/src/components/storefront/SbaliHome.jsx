@@ -20,7 +20,7 @@ const FALLBACK = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 const DEMO_IMAGES = {
   hero: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=1200&h=1600&fit=crop&q=80',
   craft: [
-    'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&h=800&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1200&h=800&fit=crop&q=80',
     'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1200&h=800&fit=crop&q=80',
     'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=1200&h=800&fit=crop&q=80',
     'https://images.unsplash.com/photo-1449505278894-297fdb3edbc1?w=1200&h=800&fit=crop&q=80',

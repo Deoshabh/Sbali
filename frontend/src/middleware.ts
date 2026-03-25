@@ -33,15 +33,15 @@ export function middleware(request: NextRequest) {
     // strict-dynamic + nonce: trusted scripts can load other scripts dynamically.
     // 'unsafe-inline' kept as fallback for browsers without strict-dynamic support.
     // 'unsafe-eval' removed — Firebase 12+ and React 18 do not require it.
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com`,
     // script-src-elem is set explicitly so parser-inserted third-party scripts
     // (e.g. Cloudflare email-decode) are still allowed when strict-dynamic is active.
-    `script-src-elem 'self' 'nonce-${nonce}' 'unsafe-inline' https://sbali.in https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
+    `script-src-elem 'self' 'nonce-${nonce}' 'unsafe-inline' https://sbali.in https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: blob: https://cdn.sbali.in https://cdn.radeo.in https://minio.sbali.in https://images.unsplash.com https://*.googleusercontent.com",
     "media-src 'self' data: blob: https://cdn.sbali.in https://cdn.radeo.in https://minio.sbali.in",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.sbali.in https://cdn.sbali.in https://minio.sbali.in https://*.firebaseio.com https://*.googleapis.com https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.razorpay.com wss://*.sbali.in https://api.honeybadger.io https://challenges.cloudflare.com",
+    "connect-src 'self' https://api.sbali.in https://cdn.sbali.in https://minio.sbali.in https://*.firebaseio.com https://*.googleapis.com https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.razorpay.com wss://*.sbali.in https://api.honeybadger.io https://challenges.cloudflare.com https://www.google-analytics.com https://www.googletagmanager.com",
     "frame-src https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com https://*.firebaseapp.com",
     "object-src 'none'",
     "base-uri 'self'",

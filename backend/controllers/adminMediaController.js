@@ -71,6 +71,12 @@ exports.getUploadUrl = async (req, res) => {
     });
   } catch (error) {
     log.error("Error generating upload URL:", error);
+    if (error?.message?.includes('MinIO not initialized')) {
+      return res.status(503).json({
+        success: false,
+        message: 'Media storage is not configured or unavailable. Please check MINIO_* environment and storage connectivity.',
+      });
+    }
     res.status(500).json({
       success: false,
       message: "Failed to generate upload URL",

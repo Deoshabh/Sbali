@@ -36,6 +36,7 @@ const envSchema = z.object({
   MINIO_REGION: z.string().default("us-east-1"),
   MINIO_PUBLIC_URL: z.string().optional(),
   MINIO_CDN_URL: z.string().optional(), // e.g. https://cdn.sbali.in
+  MINIO_INSECURE_SKIP_TLS_VERIFY: z.string().default("false"),
 
   // Payment
   RAZORPAY_KEY_ID: z.string().min(1, "RAZORPAY_KEY_ID is required"),
