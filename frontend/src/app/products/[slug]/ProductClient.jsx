@@ -14,6 +14,25 @@ import ReviewSection from '@/components/ReviewSection';
 import Product360Viewer from '@/components/products/Product360Viewer';
 import { formatPrice } from '@/utils/helpers';
 
+const normalizeCdnMediaUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('https://cdn.sbali.in/product-media/')) {
+        return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+    }
+    return url;
+};
+
+const getAlternateCdnMediaUrl = (url) => {
+    if (!url || typeof url !== 'string') return null;
+    if (url.includes('https://cdn.sbali.in/product-media/')) {
+        return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+    }
+    if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+        return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+    }
+    return null;
+};
+
 export default function ProductClient({ product }) {
     const router = useRouter();
 
@@ -69,11 +88,11 @@ export default function ProductClient({ product }) {
     const galleryItems = useMemo(() => {
         const items = filteredImages.map((img) => ({
             type: 'image',
-            src: img?.url || img || '/placeholder.svg',
+            src: normalizeCdnMediaUrl(img?.url || img || '/placeholder.svg'),
             image: img,
         }));
         if (hasVideo) {
-            items.push({ type: 'video', src: product.video.url, duration: product.video.duration });
+            items.push({ type: 'video', src: normalizeCdnMediaUrl(product.video.url), duration: product.video.duration });
         }
         return items;
     }, [filteredImages, hasVideo, product?.video]);
@@ -200,6 +219,16 @@ export default function ProductClient({ product }) {
                                                         preload="metadata"
                                                         className="w-full h-full object-contain"
                                                         style={{ maxHeight: '100%' }}
+                                                        onError={(e) => {
+                                                            const video = e.currentTarget;
+                                                            if (video.dataset.fallbackApplied === '1') return;
+                                                            const fallback = getAlternateCdnMediaUrl(video.currentSrc || video.src);
+                                                            if (fallback) {
+                                                                video.dataset.fallbackApplied = '1';
+                                                                video.src = fallback;
+                                                                video.load();
+                                                            }
+                                                        }}
                                                     >
                                                         Your browser does not support video playback.
                                                     </video>
@@ -327,6 +356,16 @@ export default function ProductClient({ product }) {
                                                         muted
                                                         preload="metadata"
                                                         className="absolute inset-0 w-full h-full object-contain"
+                                                        onError={(e) => {
+                                                            const video = e.currentTarget;
+                                                            if (video.dataset.fallbackApplied === '1') return;
+                                                            const fallback = getAlternateCdnMediaUrl(video.currentSrc || video.src);
+                                                            if (fallback) {
+                                                                video.dataset.fallbackApplied = '1';
+                                                                video.src = fallback;
+                                                                video.load();
+                                                            }
+                                                        }}
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                                                         <FiPlay className="w-6 h-6 text-white drop-shadow-lg" />

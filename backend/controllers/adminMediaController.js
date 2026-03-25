@@ -51,6 +51,58 @@ function getUploadProxyUrlBase(req) {
   return `${req.protocol}://${req.get("host")}/api/v1/admin/media/upload-proxy`;
 }
 
+function isAllowedProxyHost(urlValue) {
+  try {
+    const parsed = new URL(urlValue);
+    const allowedHosts = new Set(['cdn.sbali.in', 'minio.sbali.in']);
+    return (parsed.protocol === 'https:' || parsed.protocol === 'http:') && allowedHosts.has(parsed.hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Image proxy for admin editor to keep canvas origin-safe.
+ * GET /api/v1/admin/media/image-proxy?url=<remote-image-url>
+ */
+exports.getImageProxy = async (req, res) => {
+  try {
+    const targetUrl = String(req.query.url || '').trim();
+
+    if (!targetUrl) {
+      return res.status(400).json({ success: false, message: 'url query parameter is required' });
+    }
+
+    if (!isAllowedProxyHost(targetUrl)) {
+      return res.status(400).json({ success: false, message: 'Unsupported image host' });
+    }
+
+    const response = await fetch(targetUrl, {
+      method: 'GET',
+      redirect: 'follow',
+    });
+
+    if (!response.ok) {
+      return res.status(502).json({ success: false, message: 'Failed to fetch source image' });
+    }
+
+    const contentType = String(response.headers.get('content-type') || '').toLowerCase();
+    if (!contentType.startsWith('image/')) {
+      return res.status(400).json({ success: false, message: 'Source is not an image' });
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    res.setHeader('Content-Type', contentType || 'image/jpeg');
+    res.setHeader('Cache-Control', 'private, max-age=300');
+    return res.status(200).send(buffer);
+  } catch (error) {
+    log.error('Image proxy failed:', error);
+    return res.status(500).json({ success: false, message: 'Failed to proxy image' });
+  }
+};
+
 /**
  * Generate tokenized upload URL for admin upload proxy
  * POST /api/v1/admin/media/upload-url

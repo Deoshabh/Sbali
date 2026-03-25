@@ -17,8 +17,22 @@ import { FiPlus, FiX, FiVideo, FiTrash2 } from 'react-icons/fi';
 
 const normalizeCdnImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
-  // Keep URL as-is; fallback variants are tried at image-render time.
+  // Canonicalize legacy product-media paths to current sbali-products path.
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
   return url;
+};
+
+const getAlternateCdnMediaUrl = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+  if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+    return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+  }
+  return null;
 };
 
 function ProductFormContent() {
@@ -723,6 +737,16 @@ function ProductFormContent() {
                     controls
                     className="w-full rounded-lg border border-primary-200"
                     style={{ maxHeight: '280px' }}
+                    onError={(e) => {
+                      const video = e.currentTarget;
+                      if (video.dataset.fallbackApplied === '1') return;
+                      const fallback = getAlternateCdnMediaUrl(video.currentSrc || video.src);
+                      if (fallback) {
+                        video.dataset.fallbackApplied = '1';
+                        video.src = fallback;
+                        video.load();
+                      }
+                    }}
                   >
                     Your browser does not support video playback.
                   </video>

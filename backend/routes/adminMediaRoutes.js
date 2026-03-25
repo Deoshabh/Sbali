@@ -8,6 +8,7 @@ const upload = multer({
 
 const {
   getUploadUrl,
+  getImageProxy,
   uploadProxy,
   uploadDirect,
   deleteMedia,
@@ -34,6 +35,9 @@ router.use(admin);
 
 // POST /api/v1/admin/media/upload-url - Generate tokenized upload proxy URL
 router.post("/upload-url", getUploadUrl);
+
+// GET /api/v1/admin/media/image-proxy - Proxy remote image for admin editor canvas operations
+router.get('/image-proxy', getImageProxy);
 
 // POST /api/v1/admin/media/upload-direct - Upload file buffer via backend
 router.post("/upload-direct", upload.single("file"), uploadDirect);

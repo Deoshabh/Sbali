@@ -82,9 +82,7 @@ export default async function RootLayout({ children }) {
         {/* Critical preconnects: resolved early so TLS handshakes don't delay LCP images */}
         <link rel="preconnect" href="https://api.sbali.in" />
         <link rel="preconnect" href="https://cdn.sbali.in" />
-        <link rel="preconnect" href="https://minio.sbali.in" />
         {/* Unsplash is used for demo hero images — preconnect reduces TTFB during dev/staging */}
-        <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         {/*
           Trusted Types default passthrough policy.
