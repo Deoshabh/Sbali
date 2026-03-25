@@ -54,6 +54,15 @@ const CDN_BASE_URL = (MINIO_CDN_URL || MINIO_PUBLIC_URL || "").replace(/\/$/, ""
 
 const REGION = MINIO_REGION || "us-east-1";
 
+function parseBooleanEnv(value, defaultValue = false) {
+  if (value === undefined || value === null || String(value).trim() === "") {
+    return defaultValue;
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  return ["true", "1", "yes", "y", "on"].includes(normalized);
+}
+
 // Internal state
 let minioClient = null;
 let isInitialized = false;
@@ -73,11 +82,19 @@ async function initializeBucket() {
       ssl: MINIO_USE_SSL,
     });
 
-    const useSSL = String(MINIO_USE_SSL).toLowerCase() === "true";
-    const skipTlsVerify = String(MINIO_INSECURE_SKIP_TLS_VERIFY).toLowerCase() === "true";
+    const useSSL = parseBooleanEnv(MINIO_USE_SSL, false);
+    const skipTlsVerify = parseBooleanEnv(MINIO_INSECURE_SKIP_TLS_VERIFY, false);
+
+    log.info("S3 TLS configuration", {
+      useSSL,
+      skipTlsVerify,
+      skipTlsVerifyRaw: MINIO_INSECURE_SKIP_TLS_VERIFY,
+    });
 
     if (useSSL && skipTlsVerify) {
       log.warn("MINIO_INSECURE_SKIP_TLS_VERIFY is enabled. TLS certificate verification is disabled for storage client.");
+    } else if (useSSL && !skipTlsVerify) {
+      log.info("TLS certificate verification is enabled for storage client. If your MinIO uses a self-signed certificate, set MINIO_INSECURE_SKIP_TLS_VERIFY=true.");
     }
 
     minioClient = new Minio.Client({
@@ -201,7 +218,7 @@ function getPublicUrl(key, bucket = MINIO_BUCKET) {
     const baseUrl = MINIO_PUBLIC_URL.replace(/\/$/, "");
     return `${baseUrl}/${bucket}/${key}`;
   }
-  const useSSL = String(MINIO_USE_SSL).toLowerCase() === "true";
+  const useSSL = parseBooleanEnv(MINIO_USE_SSL, false);
   const protocol = useSSL ? "https" : "http";
   return `${protocol}://${MINIO_ENDPOINT}/${bucket}/${key}`;
 }

@@ -599,6 +599,7 @@ exports.resetPassword = async (req, res, next) => {
 exports.firebaseLogin = async (req, res, next) => {
   try {
     const { firebaseToken, email, phoneNumber, displayName, photoURL } = req.body;
+    const providerId = req.body?.providerId;
 
     log.debug("Firebase login request received", {
       hasToken: Boolean(firebaseToken),
@@ -679,11 +680,24 @@ exports.firebaseLogin = async (req, res, next) => {
       }
     }
 
+    const normalizedEmail = (decodedToken.email || email || "").toLowerCase();
+
     if (!user) {
+      if (!normalizedEmail) {
+        log.warn("Firebase login rejected: missing email for new user", {
+          uid: decodedToken.uid,
+          providerId: providerId || decodedToken?.firebase?.sign_in_provider || null,
+        });
+        return res.status(400).json({
+          message: "Email is required to create an account",
+          error: "EMAIL_REQUIRED",
+        });
+      }
+
       log.debug("Creating new Firebase user");
       user = await User.create({
         name: displayName || decodedToken.name || "User",
-        email: decodedToken.email || email,
+        email: normalizedEmail,
         phone: decodedToken.phone_number || phoneNumber,
         firebaseUid: decodedToken.uid,
         profilePicture: photoURL || decodedToken.picture,
@@ -691,7 +705,7 @@ exports.firebaseLogin = async (req, res, next) => {
         emailVerified: decodedToken.email_verified || false,
         phoneVerified: !!decodedToken.phone_number,
         authProvider: normalizeAuthProvider(
-          decodedToken.firebase.sign_in_provider,
+          providerId || decodedToken?.firebase?.sign_in_provider,
         ),
       });
     } else {
@@ -714,11 +728,11 @@ exports.firebaseLogin = async (req, res, next) => {
       }
 
       if (
-        decodedToken.firebase.sign_in_provider &&
-        decodedToken.firebase.sign_in_provider !== "password"
+        (providerId || decodedToken?.firebase?.sign_in_provider) &&
+        (providerId || decodedToken?.firebase?.sign_in_provider) !== "password"
       ) {
         user.authProvider = normalizeAuthProvider(
-          decodedToken.firebase.sign_in_provider,
+          providerId || decodedToken?.firebase?.sign_in_provider,
         );
       }
       await user.save();
