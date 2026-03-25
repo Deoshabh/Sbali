@@ -56,7 +56,8 @@ const useFooterColors = () => {
     setColors({
       bg: get('--color-footer-bg', FOOTER_BG_DEFAULT),
       cream: get('--color-footer-text', FOOTER_CREAM_DEFAULT),
-      gold: get('--color-footer-accent', FOOTER_GOLD_DEFAULT),        // Use lighter muted values so they pass contrast on the dark bg at runtime too      muted: get('--color-footer-muted', FOOTER_MUTED_DEFAULT),
+      gold: get('--color-footer-accent', FOOTER_GOLD_DEFAULT),
+      muted: get('--color-footer-muted', FOOTER_MUTED_DEFAULT),
       colHeader: get('--color-footer-muted', FOOTER_COL_HEADER_DEFAULT),
       border: get('--color-footer-border', FOOTER_BORDER_DEFAULT),
       legalBorder: get('--color-footer-border', FOOTER_LEGAL_BORDER_DEFAULT),

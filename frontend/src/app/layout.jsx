@@ -74,6 +74,7 @@ export default async function RootLayout({ children }) {
   // Read the nonce injected by middleware (used for nonce-based CSP).
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') ?? '';
+  const hasTurnstileSiteKey = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
   return (
     <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${jakarta.variable} ${lora.variable} ${baskerville.variable} ${spaceMono.variable}`}>
@@ -106,16 +107,17 @@ if(window.trustedTypes&&window.trustedTypes.createPolicy){
 }`,
           }}
         />
-        {/* nonce attribute allows this script to execute under the strict nonce-based CSP */}
-        <script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-          async
-          defer
-          nonce={nonce}
-        />
+        {hasTurnstileSiteKey && (
+          <script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            async
+            defer
+            nonce={nonce}
+          />
+        )}
       </head>
       <body className="antialiased">
-        <div id="turnstile-container" style={{ display: 'none' }} />
+        {hasTurnstileSiteKey && <div id="turnstile-container" style={{ display: 'none' }} />}
         <ErrorBoundary>
           <QueryProvider>
             <AuthProvider>

@@ -13,6 +13,16 @@ const { generateVariants, getImageMetadata } = require('../utils/imageOptimizer'
 exports.getUploadUrl = async (req, res) => {
   try {
     const { fileName, fileType, productSlug } = req.body;
+    const normalizedFileType = String(fileType || '').toLowerCase();
+    const allowedMediaTypes = new Set([
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'video/mp4',
+      'video/webm',
+      'video/quicktime',
+    ]);
 
     // Validate input
     if (!fileName || !fileType) {
@@ -26,12 +36,19 @@ exports.getUploadUrl = async (req, res) => {
     const folder = productSlug || 'uploads';
 
     // Validate file size (if provided)
-    const isVideo = fileType && fileType.startsWith('video/');
+    const isVideo = normalizedFileType.startsWith('video/');
     const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024; // 50MB for video, 5MB for images
     if (req.body.fileSize && req.body.fileSize > maxSize) {
       return res.status(400).json({
         success: false,
         message: `File size exceeds ${isVideo ? '50MB' : '5MB'} limit`,
+      });
+    }
+
+    if (!allowedMediaTypes.has(normalizedFileType)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Unsupported file type. Allowed: JPEG, JPG, PNG, WebP, MP4, WebM, MOV',
       });
     }
 
@@ -46,7 +63,7 @@ exports.getUploadUrl = async (req, res) => {
     const key = `products/${folder}/${timestamp}-${sanitizedFileName}`;
 
     // Generate signed URL
-    const result = await generateSignedUploadUrl(key, fileType);
+    const result = await generateSignedUploadUrl(key, normalizedFileType);
 
     res.json({
       success: true,

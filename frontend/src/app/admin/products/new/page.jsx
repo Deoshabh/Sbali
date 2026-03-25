@@ -217,15 +217,16 @@ function ProductFormContent() {
   const handleVideoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const allowedVideoMimeTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
 
     // Validate file type
     if (!file.type.startsWith('video/')) {
-      toast.error('Please select a valid video file (MP4 or WebM)');
+      toast.error('Please select a valid video file (MP4, WebM, or MOV)');
       return;
     }
 
-    if (!['video/mp4', 'video/webm'].includes(file.type)) {
-      toast.error('Only MP4 and WebM video formats are supported');
+    if (!allowedVideoMimeTypes.includes(file.type)) {
+      toast.error('Only MP4, WebM, and MOV video formats are supported');
       return;
     }
 
@@ -268,7 +269,11 @@ function ProductFormContent() {
   };
   const handleSizeChange = (e) => {
     const value = e.target.value;
-    const newSizes = value.split(',').map(s => s.trim()).filter(Boolean);
+    const parsedSizes = value
+      .split(/[\n,\s]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const newSizes = Array.from(new Set(parsedSizes));
 
     // Preserve existing stock values for sizes that remain
     const newSizeStocks = { ...formData.sizeStocks };
@@ -647,7 +652,7 @@ function ProductFormContent() {
                 <FiVideo className="w-5 h-5" /> Product Video
               </h2>
               <p className="text-sm text-primary-600 mb-4">
-                Optional short video (max 30 seconds, MP4 or WebM, up to 50MB). Shown after product images.
+                Optional short video (max 30 seconds, MP4/WebM/MOV, up to 50MB). Shown after product images.
               </p>
 
               {/* Show existing or new video preview */}
@@ -679,10 +684,10 @@ function ProductFormContent() {
                 <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-primary-300 rounded-lg cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-colors">
                   <FiVideo className="w-8 h-8 text-primary-400 mb-2" />
                   <span className="text-sm text-primary-500 font-medium">Click to upload video</span>
-                  <span className="text-xs text-primary-400 mt-1">MP4 or WebM • Max 30 seconds • Max 50MB</span>
+                  <span className="text-xs text-primary-400 mt-1">MP4, WebM, or MOV • Max 30 seconds • Max 50MB</span>
                   <input
                     type="file"
-                    accept="video/mp4,video/webm"
+                    accept="video/mp4,video/webm,video/quicktime,.mov"
                     onChange={handleVideoChange}
                     className="hidden"
                   />

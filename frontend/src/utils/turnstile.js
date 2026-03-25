@@ -8,6 +8,8 @@
 const TURNSTILE_SITE_KEY =
   process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
+let hasLoggedMissingSiteKey = false;
+
 /**
  * Execute Turnstile challenge for a specific action
  * @param {string} action - The action name (e.g., 'login', 'register')
@@ -16,6 +18,18 @@ const TURNSTILE_SITE_KEY =
 export const executeTurnstile = async (action) => {
   try {
     if (typeof window === 'undefined') return null;
+    if (!TURNSTILE_SITE_KEY) {
+      if (!hasLoggedMissingSiteKey) {
+        hasLoggedMissingSiteKey = true;
+        console.warn('Turnstile site key missing; skipping token generation.');
+      }
+      return null;
+    }
+
+    if (!document.querySelector('#turnstile-container')) {
+      console.warn('Turnstile container missing; skipping token generation.');
+      return null;
+    }
 
     if (!window.turnstile) {
       await waitForTurnstile(5000);
