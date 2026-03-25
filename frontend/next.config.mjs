@@ -21,13 +21,28 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "minio.sbali.in",
+        pathname: "/sbali-products/**",
+      },
+      {
+        protocol: "https",
         hostname: "cdn.sbali.in",
         pathname: "/product-media/**",
       },
       {
         protocol: "https",
+        hostname: "cdn.sbali.in",
+        pathname: "/sbali-products/**",
+      },
+      {
+        protocol: "https",
         hostname: "cdn.radeo.in",
         pathname: "/product-media/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.radeo.in",
+        pathname: "/sbali-products/**",
       },
       {
         protocol: "http",
