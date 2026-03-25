@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminAPI } from '@/utils/api';
 import Link from 'next/link';
@@ -24,6 +24,11 @@ const BAR_COLORS = ['#5D4037', '#D7CCC8', '#8D6E63', '#3B2F2F', '#A1887F'];
 
 export default function AppAnalyticsPage() {
   const [period, setPeriod] = useState('30d');
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin', 'app', 'analytics', period],
@@ -43,7 +48,7 @@ export default function AppAnalyticsPage() {
     staleTime: 120_000,
   });
 
-  if (isLoading) {
+  if (isLoading || !isMounted) {
     return (
       <div className="min-h-screen bg-gray-50/50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-900" />
@@ -105,7 +110,7 @@ export default function AppAnalyticsPage() {
           <div className="lg:col-span-2">
             <ChartCard title="App Installs" subtitle="New installs per day">
               {installs.length === 0 ? <EmptyState /> : (
-                <ResponsiveContainer width="100%" height={280}>
+                <ResponsiveContainer width="100%" height={280} minWidth={0} minHeight={0}>
                   <AreaChart data={installs} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                     <defs>
                       <linearGradient id="installGrad" x1="0" y1="0" x2="0" y2="1">
@@ -128,7 +133,7 @@ export default function AppAnalyticsPage() {
           <ChartCard title="Platform Split" subtitle="Android vs iOS">
             {platformSplit.length === 0 ? <EmptyState /> : (
               <div>
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={200} minWidth={0} minHeight={0}>
                   <PieChart>
                     <Pie data={platformSplit} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="count" nameKey="_id" startAngle={90} endAngle={-270}>
                       {platformSplit.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
@@ -153,7 +158,7 @@ export default function AppAnalyticsPage() {
           <div className="lg:col-span-2">
             <ChartCard title="Notifications Sent" subtitle="Daily notification volume">
               {notifsByDay.length === 0 ? <EmptyState /> : (
-                <ResponsiveContainer width="100%" height={240}>
+                <ResponsiveContainer width="100%" height={240} minWidth={0} minHeight={0}>
                   <BarChart data={notifsByDay} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                     <XAxis dataKey="_id" tick={{ fontSize: 11, fill: '#9CA3AF' }} tickLine={false} axisLine={false} tickFormatter={(v) => fmtDate(v)} />

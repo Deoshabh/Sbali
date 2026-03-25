@@ -34,6 +34,7 @@ function ProductFormContent() {
   const [existingVideo, setExistingVideo] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [sizeInput, setSizeInput] = useState('');
   const isDirty = useRef(false);
 
   // Categories via React Query
@@ -267,36 +268,53 @@ function ProductFormContent() {
     }
     setExistingVideo(null);
   };
-  const handleSizeChange = (e) => {
-    const value = e.target.value;
-    const parsedSizes = value
-      .split(/[\n,\s]+/)
+  const handleAddSizes = () => {
+    const candidates = sizeInput
+      .split(/[\n,]+/)
       .map((s) => s.trim())
       .filter(Boolean);
-    const newSizes = Array.from(new Set(parsedSizes));
 
-    // Preserve existing stock values for sizes that remain
-    const newSizeStocks = { ...formData.sizeStocks };
+    if (candidates.length === 0) {
+      return;
+    }
 
-    // Remove stocks for deleted sizes
-    Object.keys(newSizeStocks).forEach(size => {
-      if (!newSizes.includes(size)) {
-        delete newSizeStocks[size];
+    const uniqueCandidates = Array.from(new Set(candidates));
+    const existing = new Set(formData.sizes);
+    const sizesToAdd = uniqueCandidates.filter((size) => !existing.has(size));
+
+    if (sizesToAdd.length === 0) {
+      toast.error('All entered sizes are already added');
+      return;
+    }
+
+    const nextSizeStocks = { ...formData.sizeStocks };
+    sizesToAdd.forEach((size) => {
+      if (nextSizeStocks[size] === undefined) {
+        nextSizeStocks[size] = 0;
       }
     });
 
-    // Initialize stock for new sizes
-    newSizes.forEach(size => {
-      if (newSizeStocks[size] === undefined) {
-        newSizeStocks[size] = 0;
-      }
-    });
+    setFormData((prev) => ({
+      ...prev,
+      sizes: [...prev.sizes, ...sizesToAdd],
+      sizeStocks: nextSizeStocks,
+    }));
+    setSizeInput('');
+    setIsFormDirty(true);
+    isDirty.current = true;
+  };
 
-    setFormData({
-      ...formData,
-      sizes: newSizes,
-      sizeStocks: newSizeStocks
-    });
+  const handleRemoveSize = (sizeToRemove) => {
+    const nextSizeStocks = { ...formData.sizeStocks };
+    delete nextSizeStocks[sizeToRemove];
+
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((size) => size !== sizeToRemove),
+      sizeStocks: nextSizeStocks,
+    }));
+    setIsFormDirty(true);
+    isDirty.current = true;
   };
 
   const handleSizeStockChange = (size, value) => {
@@ -956,16 +974,52 @@ function ProductFormContent() {
                   <label className="block text-sm font-medium text-primary-900 mb-2">
                     Sizes (UK)
                   </label>
-                  <input
-                    type="text"
-                    value={formData.sizes.join(', ')}
-                    onChange={handleSizeChange}
-                    className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-900"
-                    placeholder="e.g., 6, 7, 8, 9, 10"
-                  />
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="text"
+                      value={sizeInput}
+                      onChange={(e) => setSizeInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddSizes();
+                        }
+                      }}
+                      className="flex-1 px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-900"
+                      placeholder="Type a size and click Add (e.g., 6)"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddSizes}
+                      className="px-4 py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 transition-colors"
+                    >
+                      Add Size
+                    </button>
+                  </div>
                   <p className="text-xs text-primary-500 mt-1">
-                    Separate sizes with commas
+                    You can add one or many sizes together separated by commas.
                   </p>
+
+                  {formData.sizes.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {formData.sizes.map((size) => (
+                        <span
+                          key={size}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-primary-100 text-primary-800 rounded-full"
+                        >
+                          {size}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSize(size)}
+                            className="text-primary-700 hover:text-primary-900"
+                            aria-label={`Remove size ${size}`}
+                          >
+                            <FiX className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Stock Per Size Section */}

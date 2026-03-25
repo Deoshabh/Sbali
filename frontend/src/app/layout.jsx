@@ -99,11 +99,25 @@ export default async function RootLayout({ children }) {
           dangerouslySetInnerHTML={{
             __html: `
 if(window.trustedTypes&&window.trustedTypes.createPolicy){
-  try{window.trustedTypes.createPolicy('default',{
+  var tt=window.trustedTypes;
+  var nativeCreate=tt.createPolicy.bind(tt);
+  try{nativeCreate('default',{
     createHTML:function(s){return s},
     createScriptURL:function(s){return s},
     createScript:function(s){return s}
   });}catch(e){}
+  try{
+    tt.createPolicy=function(name,rules){
+      if(name==='firebase-js-sdk-policy'||name==='gapi#gapi'){
+        try{return nativeCreate(name,rules);}catch(_e){
+          try{return nativeCreate('default',rules);}catch(_e2){
+            try{return nativeCreate('firebase',rules);}catch(_e3){return null;}
+          }
+        }
+      }
+      return nativeCreate(name,rules);
+    }
+  }catch(e){}
 }`,
           }}
         />
