@@ -24,11 +24,25 @@ jobs:
   rollback:
     name: Rollback ${{ github.event.inputs.service }}
     runs-on: ubuntu-latest
+    env:
+      BACKEND_WEBHOOK: ${{ secrets.DOKPLOY_WEBHOOK_BACKEND }}
+      FRONTEND_WEBHOOK: ${{ secrets.DOKPLOY_WEBHOOK_FRONTEND }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
+
+      - name: Validate rollback secrets
+        run: |
+          if [ "${{ github.event.inputs.service }}" != "frontend" ] && [ -z "$BACKEND_WEBHOOK" ]; then
+            echo "::error::Missing secret DOKPLOY_WEBHOOK_BACKEND"
+            exit 1
+          fi
+          if [ "${{ github.event.inputs.service }}" != "backend" ] && [ -z "$FRONTEND_WEBHOOK" ]; then
+            echo "::error::Missing secret DOKPLOY_WEBHOOK_FRONTEND"
+            exit 1
+          fi
 
       - name: Determine rollback target
         id: target
@@ -43,7 +57,7 @@ jobs:
       - name: Trigger Backend Rollback
         if: ${{ github.event.inputs.service == 'backend' || github.event.inputs.service == 'both' }}
         run: |
-          curl -sf -X POST "${{ secrets.DOKPLOY_WEBHOOK_BACKEND }}" \
+          curl -sSf -X POST "$BACKEND_WEBHOOK" \
             -H "Content-Type: application/json" \
             -d '{"ref": "${{ steps.target.outputs.sha }}"}'
           echo "Backend rollback triggered"
@@ -51,7 +65,7 @@ jobs:
       - name: Trigger Frontend Rollback
         if: ${{ github.event.inputs.service == 'frontend' || github.event.inputs.service == 'both' }}
         run: |
-          curl -sf -X POST "${{ secrets.DOKPLOY_WEBHOOK_FRONTEND }}" \
+          curl -sSf -X POST "$FRONTEND_WEBHOOK" \
             -H "Content-Type: application/json" \
             -d '{"ref": "${{ steps.target.outputs.sha }}"}'
           echo "Frontend rollback triggered"
