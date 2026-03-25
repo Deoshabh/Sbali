@@ -15,6 +15,18 @@ import toast from 'react-hot-toast';
 import { formatPrice } from '@/utils/helpers';
 import { FiPlus, FiX, FiVideo, FiTrash2 } from 'react-icons/fi';
 
+const normalizeCdnImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+
+  // Legacy format: https://cdn.sbali.in/sbali-products/<key>
+  // Current CDN route: https://cdn.sbali.in/product-media/<key>
+  if (url.startsWith('https://cdn.sbali.in/sbali-products/')) {
+    return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+  }
+
+  return url;
+};
+
 function ProductFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -140,7 +152,7 @@ function ProductFormContent() {
       // Set existing images
       if (product.images && product.images.length > 0) {
         setExistingImages(product.images);
-        const previews = product.images.map(img => img.url || img);
+        const previews = product.images.map(img => normalizeCdnImageUrl(img.url || img));
         setImagePreviews(previews);
       }
 
@@ -155,7 +167,10 @@ function ProductFormContent() {
 
       // Set existing video
       if (product.video?.url) {
-        setExistingVideo(product.video);
+        setExistingVideo({
+          ...product.video,
+          url: normalizeCdnImageUrl(product.video.url),
+        });
       }
     } catch (error) {
       console.error('Failed to fetch product:', error);
@@ -609,6 +624,7 @@ function ProductFormContent() {
       productData.isActive = formData.isActive;
 
       if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
         console.log('Product payload:', productData);
       }
 

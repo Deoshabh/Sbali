@@ -53,6 +53,7 @@ const BUCKETS = {
 const PUBLIC_BASE_URL = (MINIO_PUBLIC_URL || MINIO_CDN_URL || "").replace(/\/$/, "");
 
 const REGION = MINIO_REGION || "us-east-1";
+const PUBLIC_PATH_PREFIX = String(process.env.MINIO_PUBLIC_PATH_PREFIX || "").trim();
 
 function parseBooleanEnv(value, defaultValue = false) {
   if (value === undefined || value === null || String(value).trim() === "") {
@@ -65,6 +66,19 @@ function parseBooleanEnv(value, defaultValue = false) {
 
 function normalizeObjectKey(fileName) {
   return String(fileName || "").replace(/^\/+/, "");
+}
+
+function normalizePathPrefix(prefix) {
+  if (!prefix) return "";
+  return String(prefix).replace(/^\/+/, "").replace(/\/+$/, "");
+}
+
+function shouldUseDefaultCdnPrefix(baseUrl) {
+  try {
+    return new URL(baseUrl).hostname === "cdn.sbali.in";
+  } catch {
+    return false;
+  }
 }
 
 function buildInternalObjectBaseUrl() {
@@ -207,6 +221,17 @@ async function deleteObjects(keys) {
 function getPublicFileUrl(fileName, bucket = MINIO_BUCKET) {
   const key = normalizeObjectKey(fileName);
   if (PUBLIC_BASE_URL) {
+    const normalizedPrefix = normalizePathPrefix(PUBLIC_PATH_PREFIX);
+
+    if (normalizedPrefix) {
+      return `${PUBLIC_BASE_URL}/${normalizedPrefix}/${key}`;
+    }
+
+    // Default compatibility for existing sbali CDN routing.
+    if (shouldUseDefaultCdnPrefix(PUBLIC_BASE_URL)) {
+      return `${PUBLIC_BASE_URL}/product-media/${key}`;
+    }
+
     return `${PUBLIC_BASE_URL}/${bucket}/${key}`;
   }
   return `${buildInternalObjectBaseUrl()}/${bucket}/${key}`;

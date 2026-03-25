@@ -37,6 +37,14 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
   const [imageSrc, setImageSrc] = useState(null);
   const [saving, setSaving] = useState(false);
 
+  const normalizeCdnImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.startsWith('https://cdn.sbali.in/sbali-products/')) {
+      return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+    }
+    return url;
+  };
+
   // Aspect ratio presets for shoe product images
   const aspectRatios = [
     { label: 'Free', value: 'free', ratio: null },
@@ -56,24 +64,8 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
       return;
     }
 
-    // For remote URLs (MinIO), fetch as blob to avoid tainted canvas
-    const fetchImage = async () => {
-      try {
-        const res = await fetch(image);
-        const blob = await res.blob();
-        const dataUrl = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(blob);
-        });
-        setImageSrc(dataUrl);
-      } catch (err) {
-        console.error('Failed to fetch image, trying direct load:', err);
-        setImageSrc(image);
-      }
-    };
-
-    fetchImage();
+    // Use direct URL load to avoid CORS-blocked fetch for CDN assets.
+    setImageSrc(normalizeCdnImageUrl(image));
   }, [image]);
 
   // ── Draw the main canvas ──
