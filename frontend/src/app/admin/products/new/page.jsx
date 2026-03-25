@@ -17,13 +17,7 @@ import { FiPlus, FiX, FiVideo, FiTrash2 } from 'react-icons/fi';
 
 const normalizeCdnImageUrl = (url) => {
   if (!url || typeof url !== 'string') return url;
-
-  // Legacy format: https://cdn.sbali.in/sbali-products/<key>
-  // Current CDN route: https://cdn.sbali.in/product-media/<key>
-  if (url.startsWith('https://cdn.sbali.in/sbali-products/')) {
-    return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
-  }
-
+  // Keep URL as-is; fallback variants are tried at image-render time.
   return url;
 };
 

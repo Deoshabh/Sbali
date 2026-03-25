@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import ImageEditor from './ImageEditor';
 import { FiUpload, FiX, FiEdit2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
@@ -167,9 +166,22 @@ const ImageUploadWithEditor = ({ images = [], imagePreviews = [], existingImages
               <Image
                 src={preview}
                 alt={`Preview ${index + 1}`}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
-                className="object-contain rounded-lg p-2"
+                className="w-full h-full object-contain rounded-lg p-2"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  const src = img.getAttribute('src') || '';
+                  if (img.dataset.fallbackApplied === '1') return;
+
+                  if (src.includes('https://cdn.sbali.in/product-media/')) {
+                    img.dataset.fallbackApplied = '1';
+                    img.src = src.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+                  } else if (src.includes('https://cdn.sbali.in/sbali-products/')) {
+                    img.dataset.fallbackApplied = '1';
+                    img.src = src.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+                  }
+                }}
               />
               
               {/* Hover Overlay with Actions */}

@@ -36,13 +36,23 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [saving, setSaving] = useState(false);
+  const triedCdnFallbackRef = useRef(false);
 
   const normalizeCdnImageUrl = (url) => {
     if (!url || typeof url !== 'string') return url;
-    if (url.startsWith('https://cdn.sbali.in/sbali-products/')) {
+    // Preserve original URL and rely on fallback only when load fails.
+    return url;
+  };
+
+  const getAlternateCdnUrl = (url) => {
+    if (!url || typeof url !== 'string') return null;
+    if (url.includes('https://cdn.sbali.in/product-media/')) {
+      return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+    }
+    if (url.includes('https://cdn.sbali.in/sbali-products/')) {
       return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
     }
-    return url;
+    return null;
   };
 
   // Aspect ratio presets for shoe product images
@@ -57,6 +67,7 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
   // ── Load image (handle both data URLs and remote URLs) ──
   useEffect(() => {
     if (!image) return;
+    triedCdnFallbackRef.current = false;
 
     // Data URLs work directly — no CORS issue
     if (image.startsWith('data:')) {
@@ -140,7 +151,17 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
       imgRef.current = img;
       setImageLoaded(true);
     };
-    img.onerror = () => console.error('Failed to load image for editor');
+    img.onerror = () => {
+      if (!triedCdnFallbackRef.current) {
+        const fallback = getAlternateCdnUrl(imageSrc);
+        if (fallback && fallback !== imageSrc) {
+          triedCdnFallbackRef.current = true;
+          setImageSrc(fallback);
+          return;
+        }
+      }
+      console.error('Failed to load image for editor');
+    };
     img.src = imageSrc;
   }, [imageSrc]);
 
