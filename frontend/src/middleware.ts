@@ -102,11 +102,22 @@ export function middleware(request: NextRequest) {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    // Trusted Types: mitigate DOM-based XSS by enforcing typed DOM APIs.
-    // 'allow-duplicates' lets third-party scripts (Firebase, Razorpay) register their own policies.
-    "trusted-types nextjs nextjs#bundler goog#html gapi#gapi firebase firebase-js-sdk-policy default 'allow-duplicates'",
-    "require-trusted-types-for 'script'",
   ].join('; ');
+
+  const enforceTrustedTypes = process.env.ENFORCE_TRUSTED_TYPES === 'true';
+
+  const trustedTypesDirectives = enforceTrustedTypes
+    ? [
+        // Trusted Types: mitigate DOM-based XSS by enforcing typed DOM APIs.
+        // 'allow-duplicates' lets third-party scripts (Firebase, Razorpay) register their own policies.
+        "trusted-types nextjs nextjs#bundler goog#html gapi#gapi firebase firebase-js-sdk-policy default 'allow-duplicates'",
+        "require-trusted-types-for 'script'",
+      ].join('; ')
+    : '';
+
+  const finalCsp = trustedTypesDirectives
+    ? `${cspDirectives}; ${trustedTypesDirectives}`
+    : cspDirectives;
 
   // Pass nonce to server components via request header
   const requestHeaders = new Headers(request.headers);
@@ -158,7 +169,7 @@ export function middleware(request: NextRequest) {
   });
 
   // Content Security Policy (nonce-based, replaces next.config.mjs static CSP)
-  response.headers.set('Content-Security-Policy', cspDirectives);
+  response.headers.set('Content-Security-Policy', finalCsp);
 
   // Cross-Origin-Opener-Policy: same-origin-allow-popups allows Razorpay/Firebase
   // popup windows while preventing cross-origin window.opener access.

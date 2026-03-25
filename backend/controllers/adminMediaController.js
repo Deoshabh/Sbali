@@ -1,13 +1,58 @@
 const { log } = require('../utils/logger');
-const { generateSignedUploadUrl, deleteObject, uploadBuffer, BUCKETS } = require("../utils/minio");
+const crypto = require("crypto");
+const { deleteObject, uploadBuffer, getPublicFileUrl, BUCKETS } = require("../utils/minio");
 const sharp = require("sharp");
 const Product = require("../models/Product");
 const Media = require("../models/Media");
 const { getOrSetCache, invalidateCache } = require("../utils/cache");
 const { generateVariants, getImageMetadata } = require('../utils/imageOptimizer');
 
+const UPLOAD_PROXY_TTL_SECONDS = 5 * 60;
+const UPLOAD_PROXY_SECRET =
+  process.env.UPLOAD_PROXY_SECRET ||
+  process.env.JWT_ACCESS_SECRET ||
+  process.env.JWT_SECRET ||
+  "change-me-in-production";
+
+function sanitizeFileName(fileName) {
+  return String(fileName || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9.-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function createUploadToken({ key, contentType, expires }) {
+  return crypto
+    .createHmac("sha256", UPLOAD_PROXY_SECRET)
+    .update(`${key}:${contentType}:${expires}`)
+    .digest("hex");
+}
+
+function tokensMatch(expected, received) {
+  const a = Buffer.from(String(expected || ""), "utf8");
+  const b = Buffer.from(String(received || ""), "utf8");
+  if (a.length !== b.length) return false;
+  return crypto.timingSafeEqual(a, b);
+}
+
+function getUploadProxyUrlBase(req) {
+  const configured = process.env.API_PUBLIC_URL || process.env.NEXT_PUBLIC_API_URL || "";
+
+  if (configured) {
+    try {
+      const origin = new URL(configured).origin;
+      return `${origin}/api/v1/admin/media/upload-proxy`;
+    } catch {
+      // fall back to request host
+    }
+  }
+
+  return `${req.protocol}://${req.get("host")}/api/v1/admin/media/upload-proxy`;
+}
+
 /**
- * Generate signed upload URL for admin
+ * Generate tokenized upload URL for admin upload proxy
  * POST /api/v1/admin/media/upload-url
  */
 exports.getUploadUrl = async (req, res) => {
@@ -53,17 +98,32 @@ exports.getUploadUrl = async (req, res) => {
     }
 
     // Sanitize filename
-    const sanitizedFileName = fileName
-      .toLowerCase()
-      .replace(/[^a-z0-9.-]/g, "-")
-      .replace(/-+/g, "-");
+    const sanitizedFileName = sanitizeFileName(fileName);
+    if (!sanitizedFileName) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid fileName",
+      });
+    }
 
     // Generate unique object key
     const timestamp = Date.now();
     const key = `products/${folder}/${timestamp}-${sanitizedFileName}`;
 
-    // Generate signed URL
-    const result = await generateSignedUploadUrl(key, normalizedFileType);
+    const expires = Date.now() + UPLOAD_PROXY_TTL_SECONDS * 1000;
+    const token = createUploadToken({ key, contentType: normalizedFileType, expires });
+    const uploadProxyBaseUrl = getUploadProxyUrlBase(req);
+    const signedUrl =
+      `${uploadProxyBaseUrl}?key=${encodeURIComponent(key)}` +
+      `&contentType=${encodeURIComponent(normalizedFileType)}` +
+      `&expires=${encodeURIComponent(String(expires))}` +
+      `&token=${encodeURIComponent(token)}`;
+
+    const result = {
+      signedUrl,
+      publicUrl: getPublicFileUrl(key, BUCKETS.DEFAULT),
+      key,
+    };
 
     res.json({
       success: true,
@@ -81,6 +141,115 @@ exports.getUploadUrl = async (req, res) => {
       success: false,
       message: "Failed to generate upload URL",
     });
+  }
+};
+
+/**
+ * Upload file via API proxy and store directly in MinIO using putObject.
+ * PUT /api/v1/admin/media/upload-proxy
+ */
+exports.uploadProxy = async (req, res) => {
+  try {
+    const key = String(req.query.key || "");
+    const contentType = String(req.query.contentType || "").toLowerCase();
+    const expiresRaw = String(req.query.expires || "");
+    const token = String(req.query.token || "");
+
+    if (!key || !contentType || !expiresRaw || !token) {
+      return res.status(400).json({ success: false, message: "Missing upload query parameters" });
+    }
+
+    const expires = Number(expiresRaw);
+    if (!Number.isFinite(expires) || Date.now() > expires) {
+      return res.status(410).json({ success: false, message: "Upload URL has expired" });
+    }
+
+    const expected = createUploadToken({ key, contentType, expires });
+    if (!tokensMatch(expected, token)) {
+      return res.status(403).json({ success: false, message: "Invalid upload token" });
+    }
+
+    const body = req.body;
+    if (!Buffer.isBuffer(body) || body.length === 0) {
+      return res.status(400).json({ success: false, message: "Request body must be a file buffer" });
+    }
+
+    const isVideo = contentType.startsWith("video/");
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (body.length > maxSize) {
+      return res.status(400).json({
+        success: false,
+        message: `File size exceeds ${isVideo ? "50MB" : "5MB"} limit`,
+      });
+    }
+
+    const requestContentType = String(req.headers["content-type"] || "")
+      .split(";")[0]
+      .trim()
+      .toLowerCase();
+    if (requestContentType && requestContentType !== contentType) {
+      return res.status(400).json({ success: false, message: "Content-Type mismatch" });
+    }
+
+    const publicUrl = await uploadBuffer(body, key, contentType, BUCKETS.DEFAULT);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        key,
+        publicUrl,
+      },
+    });
+  } catch (error) {
+    log.error("Upload proxy failed:", error);
+    return res.status(500).json({ success: false, message: "Failed to upload media" });
+  }
+};
+
+/**
+ * Direct authenticated upload endpoint (no presigned URL in browser).
+ * POST /api/v1/admin/media/upload-direct
+ */
+exports.uploadDirect = async (req, res) => {
+  try {
+    const file = req.file;
+    const key = String(req.body?.key || "").trim();
+    const requestedType = String(req.body?.contentType || "").trim().toLowerCase();
+
+    if (!file || !Buffer.isBuffer(file.buffer)) {
+      return res.status(400).json({ success: false, message: "File is required" });
+    }
+
+    if (!key) {
+      return res.status(400).json({ success: false, message: "Object key is required" });
+    }
+
+    const contentType = requestedType || String(file.mimetype || "").toLowerCase();
+    if (!contentType) {
+      return res.status(400).json({ success: false, message: "Content-Type is required" });
+    }
+
+    const isVideo = contentType.startsWith("video/");
+    const maxSize = isVideo ? 50 * 1024 * 1024 : 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return res.status(400).json({
+        success: false,
+        message: `File size exceeds ${isVideo ? "50MB" : "5MB"} limit`,
+      });
+    }
+
+    const publicUrl = await uploadBuffer(file.buffer, key, contentType, BUCKETS.DEFAULT);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        key,
+        publicUrl,
+      },
+    });
+  } catch (error) {
+    log.error("Direct upload failed:", error);
+    return res.status(500).json({ success: false, message: "Failed to upload media" });
   }
 };
 

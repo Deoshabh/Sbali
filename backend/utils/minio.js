@@ -12,7 +12,7 @@ const { log } = require("./logger");
  *   sbali-products  — product images (public read, versioned)
  *   sbali-media     — CMS media uploads (public read, versioned)
  *   sbali-reviews   — customer review photos (private)
- *   sbali-temp      — pre-signed upload staging (auto-deleted after 24h)
+ *   sbali-temp      — temporary uploads (auto-deleted after 24h)
  */
 const {
   MINIO_ENDPOINT,
@@ -173,33 +173,13 @@ function requireInitialized() {
   }
 }
 
-/**
- * Generate signed upload URL
- */
-async function generateSignedUploadUrl(key, contentType) {
+async function ensureBucketExists(bucket = MINIO_BUCKET) {
   requireInitialized();
-
-  const allowedTypes = [
-    "image/jpeg", "image/jpg", "image/png", "image/webp",
-    "video/mp4", "video/webm", "video/quicktime",
-  ];
-
-  if (!allowedTypes.includes(contentType.toLowerCase())) {
-    throw new Error("Invalid file type. Allowed: JPEG, PNG, WebP, MP4, WebM, MOV");
+  const exists = await minioClient.bucketExists(bucket);
+  if (!exists) {
+    await minioClient.makeBucket(bucket, REGION);
+    log.warn(`Bucket '${bucket}' was missing and has been created on demand.`);
   }
-
-  const signedUrl = await minioClient.presignedPutObject(
-    MINIO_BUCKET,
-    key,
-    5 * 60,
-    { "Content-Type": contentType },
-  );
-
-  return {
-    signedUrl,
-    publicUrl: getPublicFileUrl(key, MINIO_BUCKET),
-    key,
-  };
 }
 
 /**
@@ -207,6 +187,7 @@ async function generateSignedUploadUrl(key, contentType) {
  */
 async function deleteObject(key) {
   requireInitialized();
+  await ensureBucketExists(MINIO_BUCKET);
   await minioClient.removeObject(MINIO_BUCKET, key);
 }
 
@@ -215,6 +196,7 @@ async function deleteObject(key) {
  */
 async function deleteObjects(keys) {
   requireInitialized();
+  await ensureBucketExists(MINIO_BUCKET);
   await minioClient.removeObjects(MINIO_BUCKET, keys);
 }
 
@@ -239,9 +221,10 @@ function getPublicUrl(key, bucket = MINIO_BUCKET) {
  * @param {Buffer} buffer - File buffer
  * @param {string} key - Object key/path
  * @param {string} contentType - MIME type
+ * @param {string} [bucket=MINIO_BUCKET] - Bucket name
  * @returns {Promise<string>} - Public URL
  */
-async function uploadBuffer(buffer, key, contentType) {
+async function uploadBuffer(buffer, key, contentType, bucket = MINIO_BUCKET) {
   requireInitialized();
 
   const allowedTypes = [
@@ -266,14 +249,10 @@ async function uploadBuffer(buffer, key, contentType) {
     "Content-Type": contentType,
   };
 
-  await minioClient.putObject(
-    MINIO_BUCKET,
-    key,
-    buffer,
-    buffer.length,
-    metadata,
-  );
-  return getPublicFileUrl(key, MINIO_BUCKET);
+  await ensureBucketExists(bucket);
+
+  await minioClient.putObject(bucket, key, buffer, buffer.length, metadata);
+  return getPublicFileUrl(key, bucket);
 }
 
 /**
@@ -315,9 +294,9 @@ async function getStorageHealth() {
 
 module.exports = {
   initializeBucket,
-  generateSignedUploadUrl,
   deleteObject,
   deleteObjects,
+  ensureBucketExists,
   getPublicFileUrl,
   getPublicUrl,
   uploadBuffer,

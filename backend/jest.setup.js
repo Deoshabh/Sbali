@@ -14,13 +14,17 @@ process.env.JWT_REFRESH_EXPIRATION = "7d";
 // Mock MinIO to prevent initialization issues in tests
 jest.mock("./utils/minio", () => ({
   initializeBucket: jest.fn().mockResolvedValue(true),
-  generateSignedUploadUrl: jest
-    .fn()
-    .mockResolvedValue("https://fake-minio-url.com/upload"),
-  generateSignedGetUrl: jest
-    .fn()
-    .mockResolvedValue("https://fake-minio-url.com/get"),
-  deleteFile: jest.fn().mockResolvedValue(true),
+  uploadBuffer: jest.fn().mockResolvedValue("https://cdn.sbali.in/sbali-products/test.jpg"),
+  deleteObject: jest.fn().mockResolvedValue(true),
+  deleteObjects: jest.fn().mockResolvedValue(true),
+  getPublicFileUrl: jest.fn((key, bucket) => `https://cdn.sbali.in/${bucket || 'sbali-products'}/${key}`),
+  BUCKETS: {
+    PRODUCTS: "sbali-products",
+    MEDIA: "sbali-media",
+    REVIEWS: "sbali-reviews",
+    TEMP: "sbali-temp",
+    DEFAULT: "sbali-products",
+  },
 }));
 
 beforeAll(async () => {

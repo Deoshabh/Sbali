@@ -8,6 +8,8 @@ const upload = multer({
 
 const {
   getUploadUrl,
+  uploadProxy,
+  uploadDirect,
   deleteMedia,
   uploadFrames,
   getFrameManifest,
@@ -19,12 +21,22 @@ const {
 const { authenticate } = require("../middleware/auth");
 const admin = require("../middleware/admin");
 
+// PUT /api/v1/admin/media/upload-proxy - Tokenized direct upload endpoint
+router.put(
+  "/upload-proxy",
+  express.raw({ type: "*/*", limit: "55mb" }),
+  uploadProxy,
+);
+
 // All routes require admin authentication
 router.use(authenticate);
 router.use(admin);
 
-// POST /api/v1/admin/media/upload-url - Generate signed upload URL
+// POST /api/v1/admin/media/upload-url - Generate tokenized upload proxy URL
 router.post("/upload-url", getUploadUrl);
+
+// POST /api/v1/admin/media/upload-direct - Upload file buffer via backend
+router.post("/upload-direct", upload.single("file"), uploadDirect);
 
 // DELETE /api/v1/admin/media - Delete media object
 router.delete("/", deleteMedia);

@@ -6,6 +6,14 @@ import { getApiUrl } from "./getApiUrl";
 // Server-side: full backend URL for SSR/ISR
 const API_URL = getApiUrl();
 
+const accessTokenCookieOptions = {
+  expires: 1,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/',
+  ...(process.env.NODE_ENV === 'production' ? { domain: '.sbali.in' } : {}),
+};
+
 /* ═══════════════════════════════════════════════════════════
    Retry with exponential backoff
    Retries on network errors and 502/503/504 (server down).
@@ -118,12 +126,15 @@ api.interceptors.response.use(
         );
 
         const { accessToken } = response.data;
-        Cookies.set("accessToken", accessToken, { expires: 1 });
+        Cookies.set("accessToken", accessToken, accessTokenCookieOptions);
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
-        Cookies.remove("accessToken");
+        Cookies.remove("accessToken", {
+          path: '/',
+          ...(process.env.NODE_ENV === 'production' ? { domain: '.sbali.in' } : {}),
+        });
         Cookies.remove("refreshToken");
 
         if (typeof window !== "undefined") {
@@ -274,6 +285,10 @@ export const adminAPI = {
 
   // Media
   getUploadUrl: (data) => api.post("/admin/media/upload-url", data),
+  uploadDirect: (formData) =>
+    api.post("/admin/media/upload-direct", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
   getOrphanedMedia: (params) => api.get("/admin/media/orphaned", { params }),
   deleteOrphanedMedia: (ids) => api.delete("/admin/media/orphaned/bulk", { data: { ids } }),
 

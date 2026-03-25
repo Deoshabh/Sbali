@@ -400,18 +400,13 @@ function ProductFormContent() {
               throw new Error(`Invalid upload URL response for ${file.name}`);
             }
 
-            // Upload image to MinIO
-            const uploadResponse = await fetch(uploadUrlData.signedUrl, {
-              method: 'PUT',
-              body: file,
-              headers: {
-                'Content-Type': file.type,
-              },
-            });
+            // Upload via backend to avoid CSP issues with external MinIO presigned URLs.
+            const uploadForm = new FormData();
+            uploadForm.append('file', file);
+            uploadForm.append('key', uploadUrlData.key);
+            uploadForm.append('contentType', file.type);
 
-            if (!uploadResponse.ok) {
-              throw new Error(`Failed to upload ${file.name}: ${uploadResponse.statusText}`);
-            }
+            await adminAPI.uploadDirect(uploadForm);
 
             // Add image metadata
             uploadedImages.push({
@@ -448,11 +443,12 @@ function ProductFormContent() {
 
             const uploadUrlData = responseData?.data || responseData;
 
-            await fetch(uploadUrlData.signedUrl, {
-              method: 'PUT',
-              body: file,
-              headers: { 'Content-Type': file.type },
-            });
+            const uploadForm = new FormData();
+            uploadForm.append('file', file);
+            uploadForm.append('key', uploadUrlData.key);
+            uploadForm.append('contentType', file.type);
+
+            await adminAPI.uploadDirect(uploadForm);
 
             uploaded360Images.push({
               url: uploadUrlData.publicUrl,
@@ -495,12 +491,12 @@ function ProductFormContent() {
           const uploadUrlData = responseData?.data || responseData;
           if (!uploadUrlData?.signedUrl) throw new Error('Invalid video upload URL response');
 
-          const uploadRes = await fetch(uploadUrlData.signedUrl, {
-            method: 'PUT',
-            body: videoFile,
-            headers: { 'Content-Type': videoFile.type },
-          });
-          if (!uploadRes.ok) throw new Error(`Video upload failed: ${uploadRes.statusText}`);
+          const uploadForm = new FormData();
+          uploadForm.append('file', videoFile);
+          uploadForm.append('key', uploadUrlData.key);
+          uploadForm.append('contentType', videoFile.type);
+
+          await adminAPI.uploadDirect(uploadForm);
 
           // Get duration from the preview element
           let duration = 0;

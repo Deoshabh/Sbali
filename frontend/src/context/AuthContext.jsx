@@ -13,6 +13,14 @@ import {
 
 const AuthContext = createContext();
 
+const accessTokenCookieOptions = {
+  expires: 1,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  path: '/',
+  ...(process.env.NODE_ENV === 'production' ? { domain: '.sbali.in' } : {}),
+};
+
 /* ─── Helper: sync Firebase user → backend ─── */
 async function syncWithBackend(firebaseUser, token) {
   const response = await authAPI.firebaseLogin({
@@ -72,7 +80,7 @@ export const AuthProvider = ({ children }) => {
             const data = await syncWithBackend(firebaseUser, token);
             if (isMounted.current) {
               if (data.accessToken) {
-                Cookies.set('accessToken', data.accessToken, { expires: 1, secure: true, sameSite: 'Strict', path: '/' });
+                Cookies.set('accessToken', data.accessToken, accessTokenCookieOptions);
               }
               setUser(data.user);
             }
@@ -118,7 +126,7 @@ export const AuthProvider = ({ children }) => {
       if (!firebaseUser) return { success: false, error: 'Firebase login failed' };
 
       const data = await syncWithBackend(firebaseUser, token);
-      Cookies.set('accessToken', data.accessToken, { expires: 1, secure: true, sameSite: 'Strict', path: '/' });
+      Cookies.set('accessToken', data.accessToken, accessTokenCookieOptions);
       setUser(data.user);
       setLoading(false);
       return { success: true };
@@ -138,7 +146,7 @@ export const AuthProvider = ({ children }) => {
       if (!firebaseUser) return { success: false, error: 'Firebase registration failed' };
 
       const data = await syncWithBackend(firebaseUser, token);
-      Cookies.set('accessToken', data.accessToken, { expires: 1, secure: true, sameSite: 'Strict', path: '/' });
+      Cookies.set('accessToken', data.accessToken, accessTokenCookieOptions);
       setUser(data.user);
       setLoading(false);
       return { success: true };
