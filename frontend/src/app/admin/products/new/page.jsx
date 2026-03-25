@@ -531,12 +531,33 @@ function ProductFormContent() {
         ? formData.sizes.reduce((sum, size) => sum + (formData.sizeStocks[size] || 0), 0)
         : Number(formData.stock) || 0;
 
+      const numericPrice = Number(formData.price);
+      if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+        toast.error('Price must be a valid number greater than 0');
+        return;
+      }
+
+      if (!formData.category) {
+        toast.error('Category is required');
+        return;
+      }
+
+      if (!allImages || allImages.length === 0) {
+        toast.error('At least one image is required');
+        return;
+      }
+
+      const parsedTags = String(formData.tags || '')
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean);
+
       const productData = {
         name: formData.name,
         slug: formData.slug,
         description: formData.description,
         category: formData.category,
-        price: Number(formData.price),
+        price: numericPrice,
         gstPercentage: Number(formData.gstPercentage) || 0,
         averageDeliveryCost: Number(formData.averageDeliveryCost) || 0,
         images: allImages,
@@ -571,8 +592,8 @@ function ProductFormContent() {
         productData.colors = formData.colors;
       }
 
-      if (formData.tags) {
-        productData.tags = formData.tags; // Already array from state
+      if (parsedTags.length > 0) {
+        productData.tags = parsedTags;
       }
 
       // Add specifications
@@ -586,6 +607,10 @@ function ProductFormContent() {
       }
 
       productData.isActive = formData.isActive;
+
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('Product payload:', productData);
+      }
 
       // Step 3: Create or Update product
       if (isEditMode) {
@@ -602,8 +627,19 @@ function ProductFormContent() {
       router.push('/admin/products');
     } catch (error) {
       console.error('Failed to save product:', error);
-      console.error('Error details:', error.response?.data);
-      toast.error(error.response?.data?.message || 'Failed to save product');
+      const responseData = error.response?.data;
+      console.error('Error details:', responseData);
+
+      const fieldErrors = responseData?.errors || responseData?.details || [];
+      if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+        console.error('Validation errors:', fieldErrors);
+      }
+
+      const firstFieldError = Array.isArray(fieldErrors) && fieldErrors.length > 0
+        ? (fieldErrors[0]?.message || fieldErrors[0]?.msg)
+        : null;
+
+      toast.error(firstFieldError || responseData?.message || 'Failed to save product');
     } finally {
       setLoading(false);
     }
