@@ -160,14 +160,14 @@ mediaSchema.pre("save", function () {
   
   // Generate CDN URL if not set
   if (!this.cdnUrl && this.storageUrl) {
-    // Convert MinIO URL to CDN URL
-    // Example: http://minio:9000/cms-media/filename.jpg → https://cdn.sbali.in/cms-media/filename.jpg
-    const url = new URL(this.storageUrl);
-    if (url.hostname === "minio" || url.hostname.includes("minio")) {
-      this.cdnUrl = this.storageUrl.replace(
-        url.origin,
-        "https://cdn.sbali.in"
-      );
+    const publicBaseUrl = (process.env.MINIO_PUBLIC_URL || process.env.MINIO_CDN_URL || "").replace(/\/$/, "");
+    if (publicBaseUrl) {
+      try {
+        const storageUrl = new URL(this.storageUrl);
+        this.cdnUrl = `${publicBaseUrl}${storageUrl.pathname}`;
+      } catch (_error) {
+        this.cdnUrl = this.storageUrl;
+      }
     } else {
       this.cdnUrl = this.storageUrl;
     }

@@ -18,6 +18,9 @@ const generateAccessToken = (user) => {
   });
 };
 
+const getRefreshSecret = () =>
+  process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET;
+
 const setRefreshCookie = (res, token) => {
   return res.cookie("refreshToken", token, {
     httpOnly: true,
@@ -38,11 +41,18 @@ const clearRefreshCookie = (res) => {
 };
 
 const generateRefreshToken = async (user, ip, family = null) => {
+  const refreshSecret = getRefreshSecret();
+  if (!refreshSecret) {
+    const err = new Error("Refresh token secret is not configured");
+    err.code = "REFRESH_SECRET_MISSING";
+    throw err;
+  }
+
   const tokenId = crypto.randomUUID();
   const tokenFamily = family || crypto.randomUUID();
   const token = jwt.sign(
     { id: user._id, jti: tokenId, fam: tokenFamily },
-    process.env.JWT_REFRESH_SECRET,
+    refreshSecret,
     { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" },
   );
 
@@ -240,7 +250,15 @@ exports.refresh = async (req, res, next) => {
     const token = req.cookies.refreshToken;
     if (!token) return res.status(401).json({ message: "No refresh token" });
 
-    const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    const refreshSecret = getRefreshSecret();
+    if (!refreshSecret) {
+      return res.status(500).json({
+        message: "Authentication service misconfigured",
+        error: "REFRESH_SECRET_MISSING",
+      });
+    }
+
+    const payload = jwt.verify(token, refreshSecret);
 
     let validToken = null;
     let isMatch = false;

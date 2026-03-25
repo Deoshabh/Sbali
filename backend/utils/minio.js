@@ -49,8 +49,8 @@ const BUCKETS = {
   DEFAULT: MINIO_BUCKET,
 };
 
-/** CDN base URL — serves images via Cloudflare edge cache (e.g. https://cdn.sbali.in) */
-const CDN_BASE_URL = (MINIO_CDN_URL || MINIO_PUBLIC_URL || "").replace(/\/$/, "");
+/** Public base URL for assets (typically CDN domain) */
+const PUBLIC_BASE_URL = (MINIO_PUBLIC_URL || MINIO_CDN_URL || "").replace(/\/$/, "");
 
 const REGION = MINIO_REGION || "us-east-1";
 
@@ -61,6 +61,18 @@ function parseBooleanEnv(value, defaultValue = false) {
 
   const normalized = String(value).trim().toLowerCase();
   return ["true", "1", "yes", "y", "on"].includes(normalized);
+}
+
+function normalizeObjectKey(fileName) {
+  return String(fileName || "").replace(/^\/+/, "");
+}
+
+function buildInternalObjectBaseUrl() {
+  const useSSL = parseBooleanEnv(MINIO_USE_SSL, false);
+  const protocol = useSSL ? "https" : "http";
+  const hasPort = MINIO_PORT !== undefined && MINIO_PORT !== null && String(MINIO_PORT).trim() !== "";
+  const portPart = hasPort ? `:${String(MINIO_PORT).trim()}` : "";
+  return `${protocol}://${MINIO_ENDPOINT}${portPart}`;
 }
 
 // Internal state
@@ -185,7 +197,7 @@ async function generateSignedUploadUrl(key, contentType) {
 
   return {
     signedUrl,
-    publicUrl: getPublicUrl(key),
+    publicUrl: getPublicFileUrl(key, MINIO_BUCKET),
     key,
   };
 }
@@ -207,20 +219,19 @@ async function deleteObjects(keys) {
 }
 
 /**
- * Public URL
- * Prefers MINIO_CDN_URL (Cloudflare-fronted), then MINIO_PUBLIC_URL, then direct
+ * Public file URL for client responses
+ * Prefers MINIO_PUBLIC_URL, then MINIO_CDN_URL, then internal endpoint fallback.
  */
+function getPublicFileUrl(fileName, bucket = MINIO_BUCKET) {
+  const key = normalizeObjectKey(fileName);
+  if (PUBLIC_BASE_URL) {
+    return `${PUBLIC_BASE_URL}/${bucket}/${key}`;
+  }
+  return `${buildInternalObjectBaseUrl()}/${bucket}/${key}`;
+}
+
 function getPublicUrl(key, bucket = MINIO_BUCKET) {
-  if (CDN_BASE_URL) {
-    return `${CDN_BASE_URL}/${bucket}/${key}`;
-  }
-  if (MINIO_PUBLIC_URL) {
-    const baseUrl = MINIO_PUBLIC_URL.replace(/\/$/, "");
-    return `${baseUrl}/${bucket}/${key}`;
-  }
-  const useSSL = parseBooleanEnv(MINIO_USE_SSL, false);
-  const protocol = useSSL ? "https" : "http";
-  return `${protocol}://${MINIO_ENDPOINT}/${bucket}/${key}`;
+  return getPublicFileUrl(key, bucket);
 }
 
 /**
@@ -262,7 +273,7 @@ async function uploadBuffer(buffer, key, contentType) {
     buffer.length,
     metadata,
   );
-  return getPublicUrl(key);
+  return getPublicFileUrl(key, MINIO_BUCKET);
 }
 
 /**
@@ -307,6 +318,7 @@ module.exports = {
   generateSignedUploadUrl,
   deleteObject,
   deleteObjects,
+  getPublicFileUrl,
   getPublicUrl,
   uploadBuffer,
   getStorageHealth,
