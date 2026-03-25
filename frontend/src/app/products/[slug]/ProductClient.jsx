@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -105,7 +104,7 @@ export default function ProductClient({ product }) {
     // Preload all gallery images on mount / color change for instant switching
     useEffect(() => {
         filteredImages.forEach((image) => {
-            const src = image?.url || image || '/placeholder.svg';
+            const src = normalizeCdnMediaUrl(image?.url || image || '/placeholder.svg');
             if (preloadedRef.current.has(src)) return;
             preloadedRef.current.add(src);
             const img = new window.Image();
@@ -178,6 +177,21 @@ export default function ProductClient({ product }) {
 
     const prevImage = () => {
         setSelectedImage((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
+    };
+
+    const handleImageError = (e) => {
+        const img = e.currentTarget;
+        if (img.dataset.fallbackApplied === '1') {
+            img.src = '/placeholder.svg';
+            return;
+        }
+        const fallback = getAlternateCdnMediaUrl(img.currentSrc || img.src);
+        if (fallback) {
+            img.dataset.fallbackApplied = '1';
+            img.src = fallback;
+        } else {
+            img.src = '/placeholder.svg';
+        }
     };
 
     return (
@@ -280,16 +294,16 @@ export default function ProductClient({ product }) {
                                                     }}
                                                 />
                                             </div>
-                                            <Image
+                                            <img
                                                 src={src}
                                                 alt={`${product.name}${galleryItems.length > 1 ? ` — view ${idx + 1}` : ''}`}
-                                                fill
-                                                sizes="(max-width: 1024px) 100vw, 50vw"
-                                                className="object-contain cursor-zoom-in"
-                                                priority={idx === 0}
+                                                className="w-full h-full object-contain cursor-zoom-in"
                                                 loading={idx === 0 ? 'eager' : 'lazy'}
                                                 fetchPriority={idx === 0 ? 'high' : 'auto'}
+                                                decoding="async"
+                                                referrerPolicy="no-referrer"
                                                 onLoad={() => handleImageLoad(src)}
+                                                onError={handleImageError}
                                             />
                                         </div>
                                     );
@@ -384,13 +398,14 @@ export default function ProductClient({ product }) {
                                                         : 'border-transparent hover:border-[#e8e0d0]'
                                                 }`}
                                             >
-                                                <Image
+                                                <img
                                                     src={src}
                                                     alt={`${product.name} — thumbnail ${idx + 1}`}
-                                                    fill
-                                                    sizes="(max-width: 1024px) 25vw, 12vw"
-                                                    className="object-contain"
+                                                    className="w-full h-full object-contain"
                                                     loading="lazy"
+                                                    decoding="async"
+                                                    referrerPolicy="no-referrer"
+                                                    onError={handleImageError}
                                                 />
                                             </button>
                                         );
