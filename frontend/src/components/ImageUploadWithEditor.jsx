@@ -163,7 +163,7 @@ const ImageUploadWithEditor = ({ images = [], imagePreviews = [], existingImages
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-4">
           {imagePreviews.map((preview, index) => (
             <div key={index} className="relative aspect-square bg-gray-100 rounded-lg border border-gray-200 group">
-              <Image
+              <img
                 src={preview}
                 alt={`Preview ${index + 1}`}
                 className="w-full h-full object-contain rounded-lg p-2"
