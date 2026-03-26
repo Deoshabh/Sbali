@@ -497,8 +497,12 @@ function ProductFormContent() {
       // For now, let's just save them.
       const allImages360 = [...existingImages360, ...uploaded360Images];
 
-      // Combine existing and new images
-      const allImages = [...existingImages, ...uploadedImages];
+      // Combine existing and new images and enforce deterministic primary image
+      const allImages = [...existingImages, ...uploadedImages].map((img, index) => ({
+        ...img,
+        isPrimary: index === 0,
+        order: index,
+      }));
 
       // Step 1.75: Upload video (if any)
       let videoData = existingVideo || null;

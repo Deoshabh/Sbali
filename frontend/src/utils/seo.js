@@ -13,6 +13,35 @@ const SITE_DESCRIPTION =
   "Sbali offers handcrafted genuine leather shoes and goods from Agra, India, including premium bags, wallets, belts, and sandals.";
 const SITE_IMAGE = `${SITE_URL}/og-image.jpg`;
 
+const resolveProductOgImage = (product) => {
+  const rawImages = Array.isArray(product?.images) ? product.images : [];
+  if (rawImages.length === 0) return SITE_IMAGE;
+
+  const normalized = rawImages
+    .map((img, index) => {
+      if (typeof img === 'string') {
+        return { url: img, isPrimary: false, order: index, index };
+      }
+
+      const order = Number(img?.order);
+      return {
+        url: img?.url,
+        isPrimary: Boolean(img?.isPrimary),
+        order: Number.isFinite(order) ? order : index,
+        index,
+      };
+    })
+    .filter((img) => Boolean(img.url));
+
+  if (normalized.length === 0) return SITE_IMAGE;
+
+  const explicitPrimary = normalized.find((img) => img.isPrimary);
+  if (explicitPrimary?.url) return explicitPrimary.url;
+
+  normalized.sort((a, b) => (a.order - b.order) || (a.index - b.index));
+  return normalized[0].url;
+};
+
 const buildAlternateUrl = (baseUrl, path = "") => {
   try {
     const base = new URL(baseUrl || SITE_URL);
@@ -161,9 +190,7 @@ export const generateMetadata = ({
  * Generate product page metadata
  */
 export const generateProductMetadata = (product) => {
-  const imageUrl = typeof product.images?.[0] === 'string'
-    ? product.images[0]
-    : product.images?.[0]?.url || SITE_IMAGE;
+  const imageUrl = resolveProductOgImage(product);
 
   return generateMetadata({
     title: product.name,

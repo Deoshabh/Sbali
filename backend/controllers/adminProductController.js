@@ -7,6 +7,19 @@ const { invalidateCache } = require("../utils/cache");
 
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+function normalizeProductImages(images = []) {
+  if (!Array.isArray(images)) return [];
+
+  return images.map((img, index) => {
+    if (!img || typeof img !== "object") return img;
+    return {
+      ...img,
+      isPrimary: index === 0,
+      order: index,
+    };
+  });
+}
+
 // @desc    Get all products (admin view)
 // @route   GET /api/admin/products
 // @access  Private/Admin
@@ -358,7 +371,9 @@ exports.createProduct = async (req, res) => {
       }
     }
 
-    // Validate images have required fields
+    // Normalize + validate images have required fields
+    parsedImages = normalizeProductImages(parsedImages);
+
     if (parsedImages.length > 0) {
       const validImages = parsedImages.every((img) => img.url && img.key);
       if (!validImages) {
@@ -521,7 +536,9 @@ exports.updateProduct = async (req, res) => {
     if (sizes !== undefined) product.sizes = sizes;
     if (colors !== undefined) product.colors = colors;
     if (tags !== undefined) product.tags = tags;
-    if (images !== undefined) product.images = images;
+    if (images !== undefined) {
+      product.images = normalizeProductImages(images);
+    }
     if (images360 !== undefined) product.images360 = images360;
     if (hotspots360 !== undefined) product.hotspots360 = hotspots360;
     if (video !== undefined) product.video = video || null;

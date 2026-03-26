@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import ImageEditor from './ImageEditor';
-import { FiUpload, FiX, FiEdit2 } from 'react-icons/fi';
+import { FiUpload, FiX, FiEdit2, FiStar } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { validateImage, autoOptimize } from '@/utils/imageUtils';
 
@@ -155,6 +155,49 @@ const ImageUploadWithEditor = ({ images = [], imagePreviews = [], existingImages
     }
   };
 
+  const handleSetMainImage = (index) => {
+    if (index === 0) {
+      toast.success('This image is already the main image');
+      return;
+    }
+
+    const combined = [
+      ...existingImages.map((item, i) => ({
+        type: 'existing',
+        item,
+        preview: imagePreviews[i],
+      })),
+      ...images.map((item, i) => ({
+        type: 'new',
+        item,
+        preview: imagePreviews[existingImages.length + i],
+      })),
+    ];
+
+    if (!combined[index]) return;
+
+    const [selected] = combined.splice(index, 1);
+    combined.unshift(selected);
+
+    const newExistingImages = combined
+      .filter((entry) => entry.type === 'existing')
+      .map((entry) => entry.item);
+
+    const newImages = combined
+      .filter((entry) => entry.type === 'new')
+      .map((entry) => entry.item);
+
+    const newPreviews = combined.map((entry) => entry.preview).filter(Boolean);
+
+    onImagesChange({
+      images: newImages,
+      imagePreviews: newPreviews,
+      existingImages: newExistingImages,
+    });
+
+    toast.success('Main image updated');
+  };
+
   return (
     <>
       <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
@@ -186,6 +229,14 @@ const ImageUploadWithEditor = ({ images = [], imagePreviews = [], existingImages
               
               {/* Hover Overlay with Actions */}
               <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all rounded-lg flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+                <button
+                  type="button"
+                  onClick={() => handleSetMainImage(index)}
+                  className="bg-amber-500 text-white p-2 rounded-full hover:bg-amber-600 transition-colors shadow-lg"
+                  title="Set as Main Image"
+                >
+                  <FiStar className="w-4 h-4" />
+                </button>
                 <button
                   type="button"
                   onClick={() => handleEditImage(index)}
