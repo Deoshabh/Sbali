@@ -56,8 +56,36 @@ export default function ProductClient({ product }) {
 
     const [selectedImage, setSelectedImage] = useState(0);
     const [activeTab, setActiveTab] = useState('description');
+    const [showSizeChart, setShowSizeChart] = useState(false);
     const [loadedImages, setLoadedImages] = useState({});
     const preloadedRef = useRef(new Set());
+
+    const sizeChartRows = useMemo(() => {
+        if (!product?.sizes?.length) return [];
+
+        const toUkLabel = (sizeItem) => (typeof sizeItem === 'object' ? sizeItem.size : sizeItem);
+        const toFootLengthCm = (ukSize) => {
+            const value = Number(ukSize);
+            if (!Number.isFinite(value)) return null;
+            // Approximation for quick in-page guidance.
+            return Number((19.1 + (value * 0.9)).toFixed(1));
+        };
+
+        return product.sizes
+            .map((sizeItem) => {
+                const uk = toUkLabel(sizeItem);
+                return {
+                    uk,
+                    footLengthCm: toFootLengthCm(uk),
+                };
+            })
+            .sort((a, b) => {
+                const an = Number(a.uk);
+                const bn = Number(b.uk);
+                if (Number.isFinite(an) && Number.isFinite(bn)) return an - bn;
+                return String(a.uk).localeCompare(String(b.uk));
+            });
+    }, [product?.sizes]);
 
     // Filter images based on selected color
     const filteredImages = useMemo(() => {
@@ -491,9 +519,19 @@ export default function ProductClient({ product }) {
                             {/* Size Selection */}
                             {product.sizes && product.sizes.length > 0 && (
                                 <div>
-                                    <label className="block text-[11px] font-medium text-[#2a1a0a] mb-3 uppercase tracking-[0.15em]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
-                                        Size (UK)
-                                    </label>
+                                    <div className="flex items-center justify-between gap-3 mb-3">
+                                        <label className="block text-[11px] font-medium text-[#2a1a0a] uppercase tracking-[0.15em]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                            Size (UK)
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowSizeChart(true)}
+                                            className="text-[10px] uppercase tracking-[0.14em] text-[#8a7460] hover:text-[#2a1a0a] underline underline-offset-2"
+                                            style={{ fontFamily: "var(--font-dm-mono, monospace)" }}
+                                        >
+                                            Size Chart
+                                        </button>
+                                    </div>
                                     <div className="flex flex-wrap gap-3">
                                         {product.sizes.map((sizeItem, idx) => {
                                             const sizeValue = typeof sizeItem === 'object' ? sizeItem.size : sizeItem;
@@ -612,6 +650,62 @@ export default function ProductClient({ product }) {
                             </div>
                         </div>
                     </div>
+
+                    {showSizeChart && (
+                        <div
+                            className="fixed inset-0 z-50 bg-black/45 flex items-end sm:items-center justify-center"
+                            onClick={() => setShowSizeChart(false)}
+                        >
+                            <div
+                                className="w-full sm:max-w-md bg-white border border-[#e8e0d0] p-5 sm:p-6"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <div className="flex items-start justify-between gap-4 mb-4">
+                                    <div>
+                                        <h3 className="text-lg text-[#2a1a0a]" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>
+                                            Size Chart
+                                        </h3>
+                                        <p className="text-[11px] uppercase tracking-[0.12em] text-[#8a7460]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                            Foot length conversion
+                                        </p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowSizeChart(false)}
+                                        className="text-sm uppercase tracking-[0.12em] text-[#8a7460] hover:text-[#2a1a0a]"
+                                        style={{ fontFamily: "var(--font-dm-mono, monospace)" }}
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+
+                                <div className="border border-[#e8e0d0]">
+                                    <div className="grid grid-cols-2 bg-[#f8f4ee] border-b border-[#e8e0d0]">
+                                        <div className="px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                            UK Size
+                                        </div>
+                                        <div className="px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a] border-l border-[#e8e0d0]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                            Foot Length (cm)
+                                        </div>
+                                    </div>
+                                    {sizeChartRows.map((row, idx) => (
+                                        <div key={`${row.uk}-${idx}`} className="grid grid-cols-2 border-b last:border-b-0 border-[#f0e8dd]">
+                                            <div className="px-3 py-2 text-sm text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                                {row.uk}
+                                            </div>
+                                            <div className="px-3 py-2 text-sm text-[#5c3d1e] border-l border-[#f0e8dd]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                                {row.footLengthCm ? `${row.footLengthCm} cm` : '—'}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <p className="mt-3 text-xs text-[#8a7460]" style={{ fontFamily: "var(--font-cormorant, 'Libre Baskerville', serif)" }}>
+                                    Sizes are approximate. If your foot length is between two values, choose the larger size for a more comfortable fit.
+                                </p>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Product Details Tabs */}
                     <div className="mt-16">

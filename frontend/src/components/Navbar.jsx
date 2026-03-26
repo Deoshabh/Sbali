@@ -14,6 +14,36 @@ import { useSiteSettings } from '@/context/SiteSettingsContext';
 import { productAPI, categoryAPI } from '@/utils/api';
 import { formatPrice } from '@/utils/helpers';
 
+const normalizeCategoryImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+
+  if (trimmed.includes('https://cdn.sbali.in/product-media/')) {
+    return trimmed.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+
+  return trimmed;
+};
+
+const getAlternateCategoryImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+  if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+    return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+  }
+  return null;
+};
+
+const getCategoryName = (category) => {
+  if (typeof category?.name === 'string' && category.name.trim()) {
+    return category.name.trim();
+  }
+  return 'Category';
+};
+
 /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
    SBALI NAVBAR â€” Luxury Minimal Navigation
    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
@@ -252,28 +282,56 @@ export default function Navbar() {
                     All Categories
                   </Link>
                   <div className="max-h-80 overflow-y-auto">
-                    {categories.map(cat => (
+                    {categories.map((cat, index) => {
+                      const categoryName = getCategoryName(cat);
+                      const categoryImage = normalizeCategoryImageUrl(cat?.image?.url);
+                      const categoryKey = cat?._id || cat?.slug || `navbar-category-${index}`;
+
+                      return (
                       <Link
-                        key={cat._id}
+                        key={categoryKey}
                         href={`/products?category=${cat.slug}`}
                         className="flex items-center gap-3 px-5 py-3 hover:bg-[color:var(--color-page-bg)] transition-colors group"
                         onClick={() => setIsCategoriesOpen(false)}
                       >
-                        {cat.image?.url ? (
+                        {categoryImage ? (
                           <div className="w-10 h-10 rounded overflow-hidden flex-shrink-0 bg-gray-50">
-                            <Image src={cat.image.url} alt={cat.name} width={40} height={40} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200" />
+                            <img
+                              src={categoryImage}
+                              alt={categoryName}
+                              width={40}
+                              height={40}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-200"
+                              onError={(e) => {
+                                const img = e.currentTarget;
+                                if (img.dataset.fallbackApplied === '1') {
+                                  img.style.display = 'none';
+                                  return;
+                                }
+                                const fallback = getAlternateCategoryImageUrl(img.currentSrc || img.src);
+                                if (fallback) {
+                                  img.dataset.fallbackApplied = '1';
+                                  img.src = fallback;
+                                } else {
+                                  img.style.display = 'none';
+                                }
+                              }}
+                            />
                           </div>
                         ) : (
                           <div className="w-10 h-10 rounded bg-[color:var(--color-subtle-bg)] flex items-center justify-center flex-shrink-0">
-                            <span className="text-[color:var(--color-muted)] font-bold text-sm" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>{cat.name.charAt(0)}</span>
+                            <span className="text-[color:var(--color-muted)] font-bold text-sm" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>{categoryName.charAt(0).toUpperCase()}</span>
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-[color:var(--color-heading)] group-hover:text-[color:var(--color-accent-hover)] transition-colors">{cat.name}</div>
+                          <div className="text-sm font-medium text-[color:var(--color-heading)] group-hover:text-[color:var(--color-accent-hover)] transition-colors">{categoryName}</div>
                           {cat.description && <div className="text-xs text-[color:var(--color-body)] truncate">{cat.description}</div>}
                         </div>
                       </Link>
-                    ))}
+                    );
+                    })}
                   </div>
                   </div>
                 </div>
@@ -605,9 +663,14 @@ export default function Navbar() {
           >
             All Categories
           </Link>
-          {categories.map(cat => (
+          {categories.map((cat, index) => {
+            const categoryName = getCategoryName(cat);
+            const categoryImage = normalizeCategoryImageUrl(cat?.image?.url);
+            const categoryKey = cat?._id || cat?.slug || `mobile-category-${index}`;
+
+            return (
             <Link
-              key={cat._id}
+              key={categoryKey}
               href={`/products?category=${cat.slug}`}
               onClick={() => setIsMobileMenuOpen(false)}
               className="flex items-center gap-3 transition-colors"
@@ -618,18 +681,41 @@ export default function Navbar() {
                 fontFamily: "'DM Sans', sans-serif",
               }}
             >
-              {cat.image?.url ? (
+              {categoryImage ? (
                 <div className="relative flex-shrink-0 overflow-hidden" style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#EDE9E2' }}>
-                  <Image src={cat.image.url} alt={cat.name} fill sizes="32px" className="object-cover" />
+                  <img
+                    src={categoryImage}
+                    alt={categoryName}
+                    width={32}
+                    height={32}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      if (img.dataset.fallbackApplied === '1') {
+                        img.style.display = 'none';
+                        return;
+                      }
+                      const fallback = getAlternateCategoryImageUrl(img.currentSrc || img.src);
+                      if (fallback) {
+                        img.dataset.fallbackApplied = '1';
+                        img.src = fallback;
+                      } else {
+                        img.style.display = 'none';
+                      }
+                    }}
+                  />
                 </div>
               ) : (
                 <div className="flex items-center justify-center flex-shrink-0" style={{ width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#EDE9E2' }}>
-                  <span className="font-bold text-sm" style={{ color: '#A09890', fontFamily: "var(--font-playfair, 'Lora', serif)" }}>{cat.name.charAt(0)}</span>
+                  <span className="font-bold text-sm" style={{ color: '#A09890', fontFamily: "var(--font-playfair, 'Lora', serif)" }}>{categoryName.charAt(0).toUpperCase()}</span>
                 </div>
               )}
-              <span>{cat.name}</span>
+              <span>{categoryName}</span>
             </Link>
-          ))}
+          );
+          })}
         </div>
 
         {/* Auth actions */}

@@ -2,8 +2,40 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { productAPI } from '@/utils/api';
+
+const normalizeCategoryImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+
+  // Canonicalize legacy CDN paths used by older uploads.
+  if (trimmed.includes('https://cdn.sbali.in/product-media/')) {
+    return trimmed.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+
+  return trimmed;
+};
+
+const getAlternateCategoryImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+  if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+    return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+  }
+  return null;
+};
+
+const getCategoryName = (category) => {
+  if (typeof category?.name === 'string' && category.name.trim()) {
+    return category.name.trim();
+  }
+  return 'Category';
+};
+
+const getCategoryKey = (category, index) => category?._id || category?.slug || `category-${index}`;
 
 export default function CategoriesClient({ categories: initialCategories = [] }) {
   const router = useRouter();
@@ -21,13 +53,15 @@ export default function CategoriesClient({ categories: initialCategories = [] })
       setStatsLoading(true);
       const stats = {};
       await Promise.all(
-        categories.map(async (category) => {
+        categories.map(async (category, index) => {
           try {
             const productsResponse = await productAPI.getAllProducts({ category: category.slug, limit: 0 });
-            stats[category._id] = productsResponse.data?.totalProducts
+            const statsKey = getCategoryKey(category, index);
+            stats[statsKey] = productsResponse.data?.totalProducts
               ?? (Array.isArray(productsResponse.data) ? productsResponse.data : productsResponse.data?.products || []).length;
           } catch {
-            stats[category._id] = 0;
+            const statsKey = getCategoryKey(category, index);
+            stats[statsKey] = 0;
           }
         })
       );
@@ -68,9 +102,12 @@ export default function CategoriesClient({ categories: initialCategories = [] })
       >
         {categories.map((category, index) => {
           const isFirstFeatured = index === 0 && categories.length <= 3;
+          const categoryName = getCategoryName(category);
+          const categoryImage = normalizeCategoryImageUrl(category?.image?.url);
+          const statsKey = getCategoryKey(category, index);
           return (
             <button
-              key={category._id}
+              key={getCategoryKey(category, index)}
               onClick={() => router.push(`/products?category=${category.slug}`)}
               className="group text-left overflow-hidden transition-shadow duration-300"
               style={{
@@ -88,13 +125,27 @@ export default function CategoriesClient({ categories: initialCategories = [] })
                   background: '#F0EBE1',
                 }}
               >
-                {category.image?.url ? (
-                  <Image
-                    src={category.image.url}
-                    alt={category.name}
-                    fill
-                    sizes={isFirstFeatured ? '(max-width: 1024px) 100vw, 66vw' : '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'}
-                    className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                {categoryImage ? (
+                  <img
+                    src={categoryImage}
+                    alt={categoryName}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      if (img.dataset.fallbackApplied === '1') {
+                        img.style.display = 'none';
+                        return;
+                      }
+                      const fallback = getAlternateCategoryImageUrl(img.currentSrc || img.src);
+                      if (fallback) {
+                        img.dataset.fallbackApplied = '1';
+                        img.src = fallback;
+                      } else {
+                        img.style.display = 'none';
+                      }
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
@@ -107,7 +158,7 @@ export default function CategoriesClient({ categories: initialCategories = [] })
                         opacity: 0.5,
                       }}
                     >
-                      {category.name.charAt(0)}
+                      {categoryName.charAt(0).toUpperCase()}
                     </span>
                   </div>
                 )}
@@ -156,7 +207,7 @@ export default function CategoriesClient({ categories: initialCategories = [] })
                         color: '#6B6560',
                       }}
                     >
-                      {statsLoading ? '...' : (categoryStats[category._id] || 0)} Products
+                        {statsLoading ? '...' : (categoryStats[statsKey] || 0)} Products
                     </p>
                   </div>
                   <div
