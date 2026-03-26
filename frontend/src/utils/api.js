@@ -29,6 +29,10 @@ function isRetryable(error) {
   if (!error.response && (error.code === 'ERR_NETWORK' || error.message === 'Network Error')) {
     return true;
   }
+  // Timeout errors are typically transient on slow networks.
+  if (error.code === 'ECONNABORTED' || /timeout/i.test(error.message || '')) {
+    return true;
+  }
   // Server error responses that indicate temporary outage
   if (error.response && RETRY_CONFIG.retryableStatuses.includes(error.response.status)) {
     return true;
@@ -49,6 +53,11 @@ export function getFriendlyError(error) {
   // Server returned an error message
   if (error.response?.data?.message) {
     return error.response.data.message;
+  }
+
+  // Network / CORS / Server down
+  if (error.code === 'ECONNABORTED' || /timeout/i.test(error.message || '')) {
+    return 'Request timed out. Please try again.';
   }
 
   // Network / CORS / Server down

@@ -305,7 +305,7 @@ export default function Navbar() {
           <Link href="/" aria-label="Sbali — Home" className="flex items-center justify-center shrink-0">
             {settings?.branding?.logo?.url ? (
               <div className="relative" style={{ width: `${logoWidth}px`, height: `${logoHeight}px` }}>
-                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Sbali'} fill className="object-contain object-center" priority />
+                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Sbali'} fill sizes="(max-width: 1024px) 96px, 140px" className="object-contain object-center" priority />
               </div>
             ) : (
               <span
@@ -493,7 +493,7 @@ export default function Navbar() {
           <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
             {settings?.branding?.logo?.url ? (
               <div className="relative" style={{ width: `${Math.min(logoWidth, 100)}px`, height: `${Math.min(logoHeight, 32)}px` }}>
-                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Sbali'} fill className="object-contain object-left" />
+                <Image src={settings.branding.logo.url} alt={settings.branding.logo.alt || 'Sbali'} fill sizes="100px" className="object-contain object-left" />
               </div>
             ) : (
               <span

@@ -1,6 +1,5 @@
 // Firebase Configuration and Initialization
 import { initializeApp, getApps } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 
 // Firebase configuration
@@ -37,21 +36,40 @@ if (typeof window !== "undefined" && !firebaseConfig.apiKey) {
 let app;
 let auth;
 let analytics;
+let analyticsInitPromise;
 
 if (typeof window !== "undefined") {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
   auth = getAuth(app);
+}
 
-  // Analytics is only available in supported browser environments.
-  isSupported()
-    .then((supported) => {
-      if (supported) {
-        analytics = getAnalytics(app);
-      }
+// Lazily initialize analytics only when explicitly requested.
+export async function initFirebaseAnalytics() {
+  if (typeof window === "undefined" || !app) {
+    return undefined;
+  }
+  if (analytics) {
+    return analytics;
+  }
+  if (analyticsInitPromise) {
+    return analyticsInitPromise;
+  }
+
+  analyticsInitPromise = import("firebase/analytics")
+    .then(async ({ getAnalytics, isSupported }) => {
+      const supported = await isSupported();
+      analytics = supported ? getAnalytics(app) : undefined;
+      return analytics;
     })
     .catch(() => {
       analytics = undefined;
+      return analytics;
+    })
+    .finally(() => {
+      analyticsInitPromise = undefined;
     });
+
+  return analyticsInitPromise;
 }
 
 export { app, auth, analytics };

@@ -1,5 +1,6 @@
 import { Plus_Jakarta_Sans, Lora, Libre_Baskerville, Space_Mono, Cormorant_Garamond, DM_Sans } from 'next/font/google';
 import { headers } from 'next/headers';
+import Script from 'next/script';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/context/AuthContext';
@@ -93,8 +94,9 @@ export default async function RootLayout({ children }) {
     <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${jakarta.variable} ${lora.variable} ${baskerville.variable} ${spaceMono.variable}`}>
       <head>
         {/* Critical preconnects: resolved early so TLS handshakes don't delay LCP images */}
-        <link rel="preconnect" href="https://api.sbali.in" />
         <link rel="preconnect" href="https://cdn.sbali.in" />
+        <link rel="preconnect" href="https://www.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://securetoken.googleapis.com" crossOrigin="anonymous" />
         {/* Unsplash is used for demo hero images — preconnect reduces TTFB during dev/staging */}
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         {/*
@@ -133,10 +135,9 @@ if(window.trustedTypes&&window.trustedTypes.createPolicy){
           }}
         />
         {hasTurnstileSiteKey && (
-          <script
+          <Script
             src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-            async
-            defer
+            strategy="lazyOnload"
             nonce={nonce}
           />
         )}
