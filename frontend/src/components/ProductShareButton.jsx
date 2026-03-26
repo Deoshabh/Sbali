@@ -6,7 +6,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 function IconShare() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M18 8a3 3 0 0 0-2.816 2H8.816a3 3 0 1 0 0 4h6.368A3 3 0 1 0 18 8Zm0 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM6 11a1 1 0 1 1 0 2 1 1 0 0 1 0-2Zm12 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z" fill="currentColor" />
+      <path
+        fill="currentColor"
+        d="M12 2.25a.75.75 0 0 1 .75.75v9.19l2.72-2.72a.75.75 0 1 1 1.06 1.06l-4 4a.75.75 0 0 1-1.06 0l-4-4a.75.75 0 1 1 1.06-1.06l2.72 2.72V3a.75.75 0 0 1 .75-.75Zm-8.25 12a.75.75 0 0 1 .75.75v3.25c0 .69.56 1.25 1.25 1.25h12.5c.69 0 1.25-.56 1.25-1.25V15a.75.75 0 0 1 1.5 0v3.25A2.75 2.75 0 0 1 18.25 21H5.75A2.75 2.75 0 0 1 3 18.25V15a.75.75 0 0 1 .75-.75Z"
+      />
     </svg>
   );
 }
@@ -88,19 +91,6 @@ async function safeCopy(text) {
   }
 }
 
-async function fileFromImageUrl(imageUrl) {
-  if (!imageUrl) return null;
-  try {
-    const res = await fetch(imageUrl, { mode: 'cors' });
-    if (!res.ok) return null;
-    const blob = await res.blob();
-    const ext = blob.type && blob.type.includes('/') ? blob.type.split('/')[1] : 'jpg';
-    return new File([blob], `product-image.${ext}`, { type: blob.type || 'image/jpeg' });
-  } catch {
-    return null;
-  }
-}
-
 function getSafeUrl(url) {
   if (url && typeof url === 'string' && url.trim()) return url.trim();
   if (typeof window !== 'undefined') return window.location.href;
@@ -131,9 +121,8 @@ export default function ProductShareButton({
   }, [formattedPrice, productName]);
 
   const whatsAppMessage = useMemo(() => {
-    const text = `${shareText}\n${resolvedUrl}`.trim();
-    return encodeURIComponent(text);
-  }, [resolvedUrl, shareText]);
+    return encodeURIComponent(resolvedUrl);
+  }, [resolvedUrl]);
 
   useEffect(() => {
     setResolvedUrl(getSafeUrl(productUrl));
@@ -190,14 +179,6 @@ export default function ProductShareButton({
         text: shareText,
         url: resolvedUrl,
       };
-
-      if (productImage && typeof navigator.canShare === 'function') {
-        const imageFile = await fileFromImageUrl(productImage);
-        if (imageFile && navigator.canShare({ files: [imageFile] })) {
-          await navigator.share({ ...baseData, files: [imageFile] });
-          return true;
-        }
-      }
 
       await navigator.share(baseData);
       return true;
