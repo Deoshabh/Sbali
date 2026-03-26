@@ -61,16 +61,14 @@ const subtotal = cartTotal || 0;
 **Problem:** Users couldn't cancel orders - feature was completely missing
 **Implementation:**
 
-#### Frontend API:
-
+#### Frontend API
 **File:** `frontend/src/utils/api.js`
 
 ```javascript
 cancelOrder: (id) => api.patch(`/orders/${id}/cancel`);
 ```
 
-#### Frontend UI:
-
+#### Frontend UI
 **File:** `frontend/src/app/orders/[id]/page.jsx`
 
 - Added cancel button with confirmation dialog
@@ -78,16 +76,14 @@ cancelOrder: (id) => api.patch(`/orders/${id}/cancel`);
 - Displays loading state during cancellation
 - Shows toast notifications for success/error
 
-#### Backend Route:
-
+#### Backend Route
 **File:** `backend/routes/orderRoutes.js`
 
 ```javascript
 router.patch("/:id/cancel", cancelOrder);
 ```
 
-#### Backend Controller:
-
+#### Backend Controller
 **File:** `backend/controllers/orderController.js`
 
 - Added `cancelOrder` method with proper validation
@@ -181,37 +177,24 @@ The Order model uses specific field names that weren't being used consistently:
 ### Frontend Testing
 
 ```bash
-# Test checkout flow
-1. Add items to cart
-2. Navigate to checkout
-3. Verify total shows correct amount (not ₹0)
+# Test checkout flow`r`n`r`n1. Add items to cart`r`n`r`n2. Navigate to checkout`r`n`r`n3. Verify total shows correct amount (not ₹0)
 
-# Test order details
-1. Place an order
-2. View order details
-3. Verify total amount displays correctly
-4. Verify cancel button appears for pending/processing orders
+# Test order details`r`n`r`n1. Place an order`r`n`r`n2. View order details`r`n`r`n3. Verify total amount displays correctly`r`n`r`n4. Verify cancel button appears for pending/processing orders
 
-# Test cancel order
-1. Create a new order
-2. Click "Cancel Order" button
-3. Confirm cancellation
-4. Verify order status changes to "cancelled"
+# Test cancel order`r`n`r`n1. Create a new order`r`n`r`n2. Click "Cancel Order" button`r`n`r`n3. Confirm cancellation`r`n`r`n4. Verify order status changes to "cancelled"
 
-# Test new pages
-1. Navigate to /privacy - should load without 404
-2. Navigate to /terms - should load without 404
+# Test new pages`r`n`r`n1. Navigate to /privacy - should load without 404`r`n`r`n2. Navigate to /terms - should load without 404
 ```
 
 ### Backend Testing
 
 ```bash
 # Test order cancellation endpoint
-curl -X PATCH https://api.sbali.in/api/v1/orders/{orderId}/cancel \
+curl -X PATCH <https://api.sbali.in/api/v1/orders/{orderId}/cancel> \
   -H "Cookie: token=YOUR_TOKEN"
 
 # Test admin stats
-curl -X GET https://api.sbali.in/api/v1/admin/stats \
+curl -X GET <https://api.sbali.in/api/v1/admin/stats> \
   -H "Cookie: token=ADMIN_TOKEN"
 ```
 
@@ -271,3 +254,4 @@ cd frontend
 ## Status: ✅ ALL ISSUES RESOLVED
 
 All 8 reported issues have been successfully fixed and are ready for deployment.
+

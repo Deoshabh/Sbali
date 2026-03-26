@@ -17,11 +17,11 @@ cp .env.traefik.example .env
 ### Step 2: Deploy
 
 ```bash
-# On Linux/Mac:
+# On Linux/Mac
 chmod +x deploy.sh
 ./deploy.sh
 
-# On Windows:
+# On Windows
 deploy.bat
 ```
 
@@ -32,8 +32,8 @@ deploy.bat
 docker-compose -f docker-compose.traefik.yml ps
 
 # Test CORS preflight
-curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
-  -H 'Origin: https://sbali.in' \
+curl -X OPTIONS <https://api.sbali.in/api/v1/auth/login> \
+  -H 'Origin: <https://sbali.in'> \
   -H 'Access-Control-Request-Method: POST' \
   -i
 ```
@@ -42,7 +42,7 @@ curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
 
 ```
 HTTP/2 204
-access-control-allow-origin: https://sbali.in
+access-control-allow-origin: <https://sbali.in>
 access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 access-control-allow-credentials: true
 ```
@@ -128,12 +128,11 @@ access-control-allow-credentials: true
 
 ```bash
 # 1. Verify frontend domain matches CORS config
-# Edit docker-compose.traefik.yml, check:
-- "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=https://sbali.in,https://www.sbali.in"
+# Edit docker-compose.traefik.yml, check`r`n`r`n- "traefik.http.middlewares.cors-headers.headers.accesscontrolalloworiginlist=<https://sbali.in,<https://www.sbali.in>">
 
 # 2. Test CORS headers are present
-curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
-  -H 'Origin: https://sbali.in' \
+curl -X OPTIONS <https://api.sbali.in/api/v1/auth/login> \
+  -H 'Origin: <https://sbali.in'> \
   -v
 
 # 3. Check if backend service is healthy
@@ -189,8 +188,7 @@ docker-compose -f docker-compose.traefik.yml restart traefik
 **Solution:**
 
 ```bash
-# This shouldn't happen with the current setup, but if it does:
-
+# This shouldn't happen with the current setup, but if it does
 # 1. Check backend router config
 # Verify: app.options("*", cors()) exists in server.js
 
@@ -198,7 +196,7 @@ docker-compose -f docker-compose.traefik.yml restart traefik
 # Search for middleware that handles OPTIONS
 
 # 3. Test OPTIONS directly on backend
-docker exec sbali-backend curl -X OPTIONS http://localhost:5000/api/v1/auth/login -v
+docker exec sbali-backend curl -X OPTIONS <http://localhost:5000/api/v1/auth/login> -v
 
 # 4. Check Traefik middleware attachment
 docker exec traefik traefik --version  # Check version
@@ -243,7 +241,7 @@ docker-compose -f docker-compose.traefik.yml down -v
 
 ### Traefik Dashboard
 
-- URL: `http://localhost:8080`
+- URL: `<http://localhost:8080`>
 - Shows all routes configured
 - Displays middleware status
 - Shows certificate information
@@ -253,8 +251,8 @@ docker-compose -f docker-compose.traefik.yml down -v
 
 Before going to production, verify:
 
-- [ ] Frontend loads at https://sbali.in
-- [ ] Backend health check passes: `curl https://api.sbali.in/health`
+- [ ] Frontend loads at <https://sbali.in>
+- [ ] Backend health check passes: `curl <https://api.sbali.in/health`>
 - [ ] OPTIONS preflight returns 204/200: See "Test CORS" above
 - [ ] Login works: POST to `/api/v1/auth/login`
 - [ ] Register works: POST to `/api/v1/auth/register`
@@ -282,7 +280,7 @@ MINIO_SECRET_KEY=minioadmin
 MINIO_BUCKET=sbali-images
 MINIO_USE_SSL=true
 
-# Traefik will auto-configure:
+# Traefik will auto-configure
 # - SSL certificates via Let's Encrypt
 # - Routing based on domain
 # - CORS headers
@@ -337,11 +335,11 @@ Add to docker-compose.traefik.yml backend labels:
 
 ## Support & Documentation
 
-- **Traefik Docs**: https://doc.traefik.io/
-- **Docker Compose**: https://docs.docker.com/compose/
-- **CORS Policy**: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-- **Let's Encrypt**: https://letsencrypt.org/
-- **Express CORS**: https://expressjs.com/en/resources/middleware/cors.html
+- **Traefik Docs**: <https://doc.traefik.io/>
+- **Docker Compose**: <https://docs.docker.com/compose/>
+- **CORS Policy**: <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>
+- **Let's Encrypt**: <https://letsencrypt.org/>
+- **Express CORS**: <https://expressjs.com/en/resources/middleware/cors.html>
 
 ## What's Next?
 
@@ -383,3 +381,5 @@ Your CORS and preflight issues are now fixed by:
 **Status**: ✅ Ready for Production
 
 Need help? Check the logs or refer to TRAEFIK_CORS_FIX.md for technical details.
+
+

@@ -1,137 +1,79 @@
-import { SITE_URL, API_BASE_URL } from '@/lib/constants';
+const SITE_URL = 'https://sbali.in';
+const API_BASE = 'https://sbali.in/api/v1';
+
+async function fetchJson(url) {
+  const res = await globalThis.fetch(url, { next: { revalidate: 3600 } });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+function pickArray(payload, keys) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+
+  for (const key of keys) {
+    if (Array.isArray(payload[key])) return payload[key];
+  }
+
+  if (payload.data && typeof payload.data === 'object') {
+    for (const key of keys) {
+      if (Array.isArray(payload.data[key])) return payload.data[key];
+    }
+    if (Array.isArray(payload.data)) return payload.data;
+  }
+
+  return [];
+}
 
 export default async function sitemap() {
-  const API_URL = API_BASE_URL;
-  const BASE_URL = SITE_URL;
+  const [productsPayload, categoriesPayload] = await Promise.all([
+    fetchJson(`${API_BASE}/products`),
+    fetchJson(`${API_BASE}/categories`)
+  ]);
 
-  // Static pages that always exist
-  const staticPages = [
+  const products = pickArray(productsPayload, ['products', 'items']);
+  const categories = pickArray(categoriesPayload, ['categories', 'items']);
+
+  const now = new Date();
+
+  const staticRoutes = [
     {
-      url: BASE_URL,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "daily",
-      priority: 1,
+      url: SITE_URL,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 1
     },
     {
-      url: `${BASE_URL}/products`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "daily",
-      priority: 0.9,
+      url: `${SITE_URL}/products`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9
     },
     {
-      url: `${BASE_URL}/categories`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/about`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/contact`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${BASE_URL}/faq`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${BASE_URL}/shipping`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/returns`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${BASE_URL}/privacy`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${BASE_URL}/terms`,
-      lastModified: new Date().toISOString(),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+      url: `${SITE_URL}/categories`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8
+    }
   ];
 
-  try {
-    // Fetch all active products
-    const [productsRes, categoriesRes] = await Promise.all([
-      fetch(`${API_URL}/products`, { next: { revalidate: 3600 } }),
-      fetch(`${API_URL}/categories`, { next: { revalidate: 86400 } }),
-    ]);
+  const productRoutes = products
+    .filter((product) => product?.slug)
+    .map((product) => ({
+      url: `${SITE_URL}/products/${product.slug}`,
+      lastModified: product.updatedAt ? new Date(product.updatedAt) : now,
+      changeFrequency: 'weekly',
+      priority: 0.7
+    }));
 
-    // --- Products ---
-    let productUrls = [];
-    if (productsRes.ok) {
-      const products = await productsRes.json();
-      const productsData = Array.isArray(products)
-        ? products
-        : products.products || [];
+  const categoryRoutes = categories
+    .filter((category) => category?.slug)
+    .map((category) => ({
+      url: `${SITE_URL}/categories/${category.slug}`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.6
+    }));
 
-      productUrls = productsData
-        .filter((p) => p.isActive)
-        .map((product) => ({
-          url: `${BASE_URL}/products/${product.slug}`,
-          lastModified: product.updatedAt || new Date().toISOString(),
-          changeFrequency: "weekly",
-          priority: 0.8,
-        }));
-    }
-
-    // --- Categories ---
-    let categoryUrls = [];
-    if (categoriesRes.ok) {
-      const categoriesPayload = await categoriesRes.json();
-      const categories = Array.isArray(categoriesPayload)
-        ? categoriesPayload
-        : categoriesPayload.categories || [];
-
-      if (Array.isArray(categories)) {
-        categoryUrls = categories
-          .map((cat) => {
-            const slug = typeof cat === 'string' ? cat : cat.slug;
-            if (!slug) return null;
-
-            return {
-              url: `${BASE_URL}/categories/${encodeURIComponent(slug)}`,
-              lastModified: cat?.updatedAt || new Date().toISOString(),
-              changeFrequency: "weekly",
-              priority: 0.7,
-            };
-          })
-          .filter(Boolean);
-
-        // Dedupe in case API contains repeated slugs.
-        const seen = new Set();
-        categoryUrls = categoryUrls.filter((entry) => {
-          if (seen.has(entry.url)) return false;
-          seen.add(entry.url);
-          return true;
-        });
-      }
-    }
-
-    return [...staticPages, ...categoryUrls, ...productUrls];
-  } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("Error generating sitemap:", error);
-    }
-    // Return static-only sitemap if API fails
-    return staticPages;
-  }
+  return [...staticRoutes, ...categoryRoutes, ...productRoutes];
 }

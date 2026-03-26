@@ -25,7 +25,7 @@ FIREBASE_SERVICE_ACCOUNT_PATH=./firebase-service-account.json
 
 ```env
 FIREBASE_PROJECT_ID=sbali-2026
-FIREBASE_CLIENT_EMAIL=firebase-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount.com
+FIREBASE_CLIENT_EMAIL=<firebase<-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount>.com>
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
@@ -45,8 +45,7 @@ Uses only project ID, no token verification available.
 
 ## Testing the Configuration
 
-### 1. Start the backend server:
-
+### 1. Start the backend server
 ```bash
 cd backend
 npm start
@@ -58,9 +57,8 @@ You should see:
 ✅ Firebase Admin initialized with service account file
 ```
 
-### 2. Test Firebase authentication flow:
-
-On the frontend, go to: `http://localhost:3000/auth/firebase-login`
+### 2. Test Firebase authentication flow
+On the frontend, go to: `<http://localhost:3000/auth/firebase-login`>
 
 Try any authentication method (Email, Phone, or Google), then check backend logs for:
 
@@ -69,8 +67,7 @@ POST /api/v1/auth/firebase-login
 User authenticated via Firebase: [uid]
 ```
 
-### 3. Verify token verification:
-
+### 3. Verify token verification
 The backend should successfully verify Firebase ID tokens and create/sync users in MongoDB.
 
 ## Production Deployment
@@ -91,7 +88,7 @@ Extract the credentials from the JSON file and set:
 
 ```bash
 export FIREBASE_PROJECT_ID="sbali-2026"
-export FIREBASE_CLIENT_EMAIL="firebase-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount.com"
+export FIREBASE_CLIENT_EMAIL="<firebase<-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount>.com>"
 export FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
 MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCzNu6Qw4sfxWWg
 ...
@@ -104,14 +101,13 @@ MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCzNu6Qw4sfxWWg
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEv...\n-----END PRIVATE KEY-----\n"
 ```
 
-### Docker Compose Example:
-
+### Docker Compose Example
 ```yaml
 services:
   backend:
     environment:
       - FIREBASE_PROJECT_ID=sbali-2026
-      - FIREBASE_CLIENT_EMAIL=firebase-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount.com
+      - FIREBASE_CLIENT_EMAIL=<firebase<-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount>.com>
       - FIREBASE_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\nMIIEv...\n-----END PRIVATE KEY-----\n
 ```
 
@@ -155,8 +151,8 @@ Ensure these are enabled in Firebase Console:
    - Add localhost for development
 
 3. **OAuth Redirect URIs** (for Google Sign-In):
-   - `http://localhost:3000` (development)
-   - `https://yourdomain.com` (production)
+   - `<http://localhost:3000`> (development)
+   - `<https://yourdomain.com`> (production)
 
 ## Troubleshooting
 
@@ -194,12 +190,14 @@ Ensure these are enabled in Firebase Console:
 
 ## Additional Resources
 
-- [Firebase Admin SDK Documentation](https://firebase.google.com/docs/admin/setup)
-- [Service Account Key Management](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)
-- [Firebase Authentication Best Practices](https://firebase.google.com/docs/auth/admin/manage-users)
+- [Firebase Admin SDK Documentation](<https://firebase.google.com/docs/admin/setup>)
+- [Service Account Key Management](<https://cloud.google.com/iam/docs/creating-managing-service-account-keys>)
+- [Firebase Authentication Best Practices](<https://firebase.google.com/docs/auth/admin/manage-users>)
 
 ---
 
 **Configuration completed at:** ${new Date().toISOString()}
 **Project:** sbali-2026
-**Service Account:** firebase-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount.com
+**Service Account:** <firebase<-adminsdk-fbsvc@sbali-2026.iam.gserviceaccount>.com>
+
+

@@ -54,7 +54,7 @@ A modern, fully-featured e-commerce frontend built with Next.js 14 and Tailwind 
 ### Prerequisites
 
 - Node.js 18+ installed
-- Backend API running on `http://localhost:5000`
+- Backend API running on `<http://localhost:5000`>
 
 ### Installation
 
@@ -73,7 +73,7 @@ npm install
 3. Create a `.env.local` file (already created):
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_URL=<http://localhost:5000/api>
 ```
 
 4. Run the development server:
@@ -82,7 +82,7 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. Open [<http://localhost:3000](<http://localhost:300>0>) in your browser
 
 ### Build for Production
 
@@ -166,7 +166,7 @@ Custom Tailwind configuration includes:
 ## Environment Variables
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_URL=<http://localhost:5000/api>
 ```
 
 ## Available Scripts
@@ -216,8 +216,10 @@ MIT License - see LICENSE file for details
 
 ## Support
 
-For issues or questions, please contact: info@sbali.com
+For issues or questions, please contact: <info@sbali.com>
 
 ---
 
 Built with ❤️ using Next.js and Tailwind CSS
+
+

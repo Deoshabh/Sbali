@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
@@ -12,7 +11,27 @@ import toast from 'react-hot-toast';
 import ProductMetadata from '@/components/ProductMetadata';
 import ReviewSection from '@/components/ReviewSection';
 import Product360Viewer from '@/components/products/Product360Viewer';
+import ProductShareButton from '@/components/ProductShareButton';
 import { formatPrice } from '@/utils/helpers';
+
+const normalizeCdnMediaUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.includes('https://cdn.sbali.in/product-media/')) {
+        return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+    }
+    return url;
+};
+
+const getAlternateCdnMediaUrl = (url) => {
+    if (!url || typeof url !== 'string') return null;
+    if (url.includes('https://cdn.sbali.in/product-media/')) {
+        return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+    }
+    if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+        return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+    }
+    return null;
+};
 
 export default function ProductClient({ product }) {
     const router = useRouter();
@@ -37,8 +56,52 @@ export default function ProductClient({ product }) {
 
     const [selectedImage, setSelectedImage] = useState(0);
     const [activeTab, setActiveTab] = useState('description');
+    const [showSizeChart, setShowSizeChart] = useState(true);
     const [loadedImages, setLoadedImages] = useState({});
     const preloadedRef = useRef(new Set());
+
+    const sizeChartRows = useMemo(() => {
+        const sourceSizes = Array.isArray(product?.sizes) && product.sizes.length > 0
+            ? product.sizes
+            : [6, 7, 8, 9, 10];
+
+        const toUkLabel = (sizeItem) => (typeof sizeItem === 'object' ? sizeItem.size : sizeItem);
+        const toFootLengthCm = (ukSize) => {
+            const value = Number(ukSize);
+            if (!Number.isFinite(value)) return null;
+            // Approximation for quick in-page guidance.
+            return Number((19.1 + (value * 0.9)).toFixed(1));
+        };
+
+        const toUsSize = (ukSize) => {
+            const value = Number(ukSize);
+            if (!Number.isFinite(value)) return null;
+            return Number((value + 1).toFixed(1));
+        };
+
+        const toEuSize = (ukSize) => {
+            const value = Number(ukSize);
+            if (!Number.isFinite(value)) return null;
+            return Number((value + 34).toFixed(0));
+        };
+
+        return sourceSizes
+            .map((sizeItem) => {
+                const uk = toUkLabel(sizeItem);
+                return {
+                    uk,
+                    us: toUsSize(uk),
+                    eu: toEuSize(uk),
+                    footLengthCm: toFootLengthCm(uk),
+                };
+            })
+            .sort((a, b) => {
+                const an = Number(a.uk);
+                const bn = Number(b.uk);
+                if (Number.isFinite(an) && Number.isFinite(bn)) return an - bn;
+                return String(a.uk).localeCompare(String(b.uk));
+            });
+    }, [product?.sizes]);
 
     // Filter images based on selected color
     const filteredImages = useMemo(() => {
@@ -69,11 +132,11 @@ export default function ProductClient({ product }) {
     const galleryItems = useMemo(() => {
         const items = filteredImages.map((img) => ({
             type: 'image',
-            src: img?.url || img || '/placeholder.svg',
+            src: normalizeCdnMediaUrl(img?.url || img || '/placeholder.svg'),
             image: img,
         }));
         if (hasVideo) {
-            items.push({ type: 'video', src: product.video.url, duration: product.video.duration });
+            items.push({ type: 'video', src: normalizeCdnMediaUrl(product.video.url), duration: product.video.duration });
         }
         return items;
     }, [filteredImages, hasVideo, product?.video]);
@@ -86,7 +149,7 @@ export default function ProductClient({ product }) {
     // Preload all gallery images on mount / color change for instant switching
     useEffect(() => {
         filteredImages.forEach((image) => {
-            const src = image?.url || image || '/placeholder.svg';
+            const src = normalizeCdnMediaUrl(image?.url || image || '/placeholder.svg');
             if (preloadedRef.current.has(src)) return;
             preloadedRef.current.add(src);
             const img = new window.Image();
@@ -152,6 +215,11 @@ export default function ProductClient({ product }) {
     };
 
     const inWishlist = isInWishlist(product._id);
+    const shareImage = normalizeCdnMediaUrl(
+        (typeof filteredImages?.[0] === 'string'
+            ? filteredImages[0]
+            : filteredImages?.[0]?.url) || ''
+    );
 
     const nextImage = () => {
         setSelectedImage((prev) => (prev + 1) % galleryItems.length);
@@ -161,12 +229,27 @@ export default function ProductClient({ product }) {
         setSelectedImage((prev) => (prev - 1 + galleryItems.length) % galleryItems.length);
     };
 
+    const handleImageError = (e) => {
+        const img = e.currentTarget;
+        if (img.dataset.fallbackApplied === '1') {
+            img.src = '/placeholder.svg';
+            return;
+        }
+        const fallback = getAlternateCdnMediaUrl(img.currentSrc || img.src);
+        if (fallback) {
+            img.dataset.fallbackApplied = '1';
+            img.src = fallback;
+        } else {
+            img.src = '/placeholder.svg';
+        }
+    };
+
     return (
         <>
             <ProductMetadata product={product} />
             <div className="min-h-screen bg-[#faf8f4] pt-6">
-                <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 lg:py-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 lg:py-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16">
                         {/* Image Gallery */}
                         <div className="space-y-4">
                             {/* Main Image / Video — all items stacked, opacity-swap cross-fade */}
@@ -200,6 +283,16 @@ export default function ProductClient({ product }) {
                                                         preload="metadata"
                                                         className="w-full h-full object-contain"
                                                         style={{ maxHeight: '100%' }}
+                                                        onError={(e) => {
+                                                            const video = e.currentTarget;
+                                                            if (video.dataset.fallbackApplied === '1') return;
+                                                            const fallback = getAlternateCdnMediaUrl(video.currentSrc || video.src);
+                                                            if (fallback) {
+                                                                video.dataset.fallbackApplied = '1';
+                                                                video.src = fallback;
+                                                                video.load();
+                                                            }
+                                                        }}
                                                     >
                                                         Your browser does not support video playback.
                                                     </video>
@@ -251,16 +344,16 @@ export default function ProductClient({ product }) {
                                                     }}
                                                 />
                                             </div>
-                                            <Image
+                                            <img
                                                 src={src}
                                                 alt={`${product.name}${galleryItems.length > 1 ? ` — view ${idx + 1}` : ''}`}
-                                                fill
-                                                sizes="(max-width: 1024px) 100vw, 50vw"
-                                                className="object-contain cursor-zoom-in"
-                                                priority={idx === 0}
+                                                className="w-full h-full object-contain cursor-zoom-in"
                                                 loading={idx === 0 ? 'eager' : 'lazy'}
                                                 fetchPriority={idx === 0 ? 'high' : 'auto'}
+                                                decoding="async"
+                                                referrerPolicy="no-referrer"
                                                 onLoad={() => handleImageLoad(src)}
+                                                onError={handleImageError}
                                             />
                                         </div>
                                     );
@@ -327,6 +420,16 @@ export default function ProductClient({ product }) {
                                                         muted
                                                         preload="metadata"
                                                         className="absolute inset-0 w-full h-full object-contain"
+                                                        onError={(e) => {
+                                                            const video = e.currentTarget;
+                                                            if (video.dataset.fallbackApplied === '1') return;
+                                                            const fallback = getAlternateCdnMediaUrl(video.currentSrc || video.src);
+                                                            if (fallback) {
+                                                                video.dataset.fallbackApplied = '1';
+                                                                video.src = fallback;
+                                                                video.load();
+                                                            }
+                                                        }}
                                                     />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                                                         <FiPlay className="w-6 h-6 text-white drop-shadow-lg" />
@@ -345,13 +448,14 @@ export default function ProductClient({ product }) {
                                                         : 'border-transparent hover:border-[#e8e0d0]'
                                                 }`}
                                             >
-                                                <Image
+                                                <img
                                                     src={src}
                                                     alt={`${product.name} — thumbnail ${idx + 1}`}
-                                                    fill
-                                                    sizes="(max-width: 1024px) 25vw, 12vw"
-                                                    className="object-contain"
+                                                    className="w-full h-full object-contain"
                                                     loading="lazy"
+                                                    decoding="async"
+                                                    referrerPolicy="no-referrer"
+                                                    onError={handleImageError}
                                                 />
                                             </button>
                                         );
@@ -361,13 +465,13 @@ export default function ProductClient({ product }) {
                         </div>
 
                         {/* Product Info */}
-                        <div className="space-y-6">
+                        <div className="space-y-6 min-w-0">
                             {/* Category & Name */}
                             <div>
                                 <p className="text-[11px] uppercase tracking-[0.2em] text-[#c9a96e] mb-3 font-medium" style={{ fontFamily: "var(--font-dm-mono, 'Space Mono', monospace)" }}>
                                     {product.category?.name}
                                 </p>
-                                <h1 className="text-3xl lg:text-4xl font-bold text-[#2a1a0a] mb-4" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>
+                                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2a1a0a] mb-4 break-words" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>
                                     {product.name}
                                 </h1>
 
@@ -431,9 +535,19 @@ export default function ProductClient({ product }) {
                             {/* Size Selection */}
                             {product.sizes && product.sizes.length > 0 && (
                                 <div>
-                                    <label className="block text-[11px] font-medium text-[#2a1a0a] mb-3 uppercase tracking-[0.15em]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
-                                        Size (UK)
-                                    </label>
+                                    <div className="flex items-center justify-between gap-3 mb-3">
+                                        <label className="block text-[11px] font-medium text-[#2a1a0a] uppercase tracking-[0.15em]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                            Size (UK)
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowSizeChart((prev) => !prev)}
+                                            className="text-[10px] uppercase tracking-[0.14em] text-[#8a7460] hover:text-[#2a1a0a] underline underline-offset-2"
+                                            style={{ fontFamily: "var(--font-dm-mono, monospace)" }}
+                                        >
+                                            {showSizeChart ? 'Hide Size Chart' : 'View Size Chart'}
+                                        </button>
+                                    </div>
                                     <div className="flex flex-wrap gap-3">
                                         {product.sizes.map((sizeItem, idx) => {
                                             const sizeValue = typeof sizeItem === 'object' ? sizeItem.size : sizeItem;
@@ -457,6 +571,49 @@ export default function ProductClient({ product }) {
                                             );
                                         })}
                                     </div>
+
+                                    {showSizeChart && (
+                                        <div className="mt-5 border border-[#e8e0d0] bg-[#fffdf9]">
+                                            <div className="px-4 py-3 border-b border-[#e8e0d0] bg-[#f8f4ee]">
+                                                <p className="text-[11px] uppercase tracking-[0.14em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                                    Size Chart (Standard Fit Guide)
+                                                </p>
+                                                <p className="text-xs text-[#8a7460] mt-1" style={{ fontFamily: "var(--font-cormorant, 'Libre Baskerville', serif)" }}>
+                                                    Size chart means foot length converted to size number.
+                                                </p>
+                                            </div>
+
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full min-w-[520px] border-collapse">
+                                                    <thead>
+                                                        <tr className="border-b border-[#e8e0d0]">
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>UK</th>
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>US</th>
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>EU</th>
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>Foot Length (cm)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {sizeChartRows.map((row, idx) => {
+                                                            const isSelected = String(selectedSize) === String(row.uk);
+                                                            return (
+                                                                <tr key={`${row.uk}-${idx}`} className={`border-b border-[#f0e8dd] ${isSelected ? 'bg-[#f5efe4]' : ''}`}>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.uk}</td>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#5c3d1e]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.us ?? '—'}</td>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#5c3d1e]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.eu ?? '—'}</td>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#5c3d1e]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.footLengthCm ? `${row.footLengthCm} cm` : '—'}</td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <p className="px-4 py-3 text-xs text-[#8a7460]" style={{ fontFamily: "var(--font-cormorant, 'Libre Baskerville', serif)" }}>
+                                                If your foot length is between two sizes, choose the larger size for comfort.
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
@@ -473,11 +630,11 @@ export default function ProductClient({ product }) {
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex gap-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 <button
                                     onClick={handleBuyNow}
                                     disabled={!product.inStock}
-                                    className={`flex-1 py-4 text-[12px] uppercase tracking-[0.2em] font-medium transition-all ${product.inStock
+                                    className={`col-span-2 sm:col-span-1 py-4 text-[12px] uppercase tracking-[0.18em] font-medium transition-all ${product.inStock
                                         ? 'bg-[#2a1a0a] text-[#f2ede4] hover:bg-[#5c3d1e]'
                                         : 'bg-[#e8e0d0] text-[#8a7460] cursor-not-allowed'
                                         }`}
@@ -488,7 +645,7 @@ export default function ProductClient({ product }) {
                                 <button
                                     onClick={handleAddToCart}
                                     disabled={!product.inStock}
-                                    className={`flex-1 py-4 text-[12px] uppercase tracking-[0.2em] font-medium flex items-center justify-center gap-2 transition-all ${product.inStock
+                                    className={`col-span-2 sm:col-span-1 py-4 text-[12px] uppercase tracking-[0.18em] font-medium flex items-center justify-center gap-2 transition-all ${product.inStock
                                         ? 'border border-[#2a1a0a] text-[#2a1a0a] hover:bg-[#2a1a0a] hover:text-[#f2ede4]'
                                         : 'border border-[#e8e0d0] text-[#8a7460] cursor-not-allowed'
                                         }`}
@@ -499,10 +656,17 @@ export default function ProductClient({ product }) {
                                 </button>
                                 <button
                                     onClick={handleToggleWishlist}
-                                    className={`px-5 py-4 border transition-all ${inWishlist ? 'bg-[#2a1a0a] text-[#f2ede4] border-[#2a1a0a]' : 'border-[#e8e0d0] text-[#8a7460] hover:border-[#2a1a0a] hover:text-[#2a1a0a]'}`}
+                                    className={`py-4 border transition-all flex items-center justify-center ${inWishlist ? 'bg-[#2a1a0a] text-[#f2ede4] border-[#2a1a0a]' : 'border-[#e8e0d0] text-[#8a7460] hover:border-[#2a1a0a] hover:text-[#2a1a0a]'}`}
                                 >
                                     <FiHeart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
                                 </button>
+                                <ProductShareButton
+                                    productName={product.name}
+                                    productPrice={product.price}
+                                    productImage={shareImage}
+                                    variant="icon"
+                                    className="shrink-0"
+                                />
                             </div>
 
                             {/* Trust Badges */}
@@ -549,12 +713,12 @@ export default function ProductClient({ product }) {
                     {/* Product Details Tabs */}
                     <div className="mt-16">
                         <div className="border-b border-[#e8e0d0] mb-8">
-                            <div className="flex gap-8">
+                            <div className="flex gap-5 sm:gap-8 overflow-x-auto pb-1">
                                 {['description', 'specifications', 'care', 'reviews'].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`pb-4 text-[11px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === tab
+                                        className={`pb-4 text-[11px] uppercase tracking-[0.2em] font-medium transition-colors whitespace-nowrap flex-shrink-0 ${activeTab === tab
                                             ? 'border-b-2 border-[#2a1a0a] text-[#2a1a0a]'
                                             : 'text-[#8a7460] hover:text-[#2a1a0a]'
                                             }`}

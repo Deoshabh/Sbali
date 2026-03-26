@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FiHeart, FiShoppingCart, FiStar } from 'react-icons/fi';
 import { useCart } from '@/context/CartContext';
@@ -12,7 +11,24 @@ import { formatPrice } from '@/utils/helpers';
 import { toast } from 'react-hot-toast';
 import anime from 'animejs';
 
-const BLUR_DATA_URL = 'data:image/gray;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
+const normalizeCdnMediaUrl = (url) => {
+  if (!url || typeof url !== 'string') return '/placeholder.svg';
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+  return url;
+};
+
+const getAlternateCdnMediaUrl = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+  if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+    return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+  }
+  return null;
+};
 
 export default function ProductCard({ product, priority = false }) {
   const router = useRouter();
@@ -34,6 +50,7 @@ export default function ProductCard({ product, priority = false }) {
   const hasDiscount = product.comparePrice && product.comparePrice > product.price;
   const discountPercent = hasDiscount ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) : 0;
   const isProductInWishlist = isInWishlist(product._id);
+  const cardImageSrc = normalizeCdnMediaUrl(product.images?.[0]?.url || product.images?.[0] || '/placeholder.svg');
 
   const flyToCart = (e) => {
     try {
@@ -85,15 +102,27 @@ export default function ProductCard({ product, priority = false }) {
 
         {/* â”€â”€ Image â”€â”€ */}
         <div className="relative aspect-[3/4] overflow-hidden bg-[color:var(--color-subtle-bg)]">
-          <Image
-            src={product.images?.[0]?.url || product.images?.[0] || '/placeholder.svg'}
+          <img
+            src={cardImageSrc}
             alt={product.name}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-            placeholder="blur"
-            blurDataURL={BLUR_DATA_URL}
-            priority={priority}
+            className="w-full h-full object-contain p-2 transition-transform duration-700 group-hover:scale-105"
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              const img = e.currentTarget;
+              if (img.dataset.fallbackApplied === '1') {
+                img.src = '/placeholder.svg';
+                return;
+              }
+              const fallback = getAlternateCdnMediaUrl(img.currentSrc || img.src);
+              if (fallback) {
+                img.dataset.fallbackApplied = '1';
+                img.src = fallback;
+              } else {
+                img.src = '/placeholder.svg';
+              }
+            }}
           />
 
           {/* Discount badge â€” top left */}

@@ -76,9 +76,7 @@ When customers click "View Details", they see comprehensive tracking:
 
 ## 🔄 How Automatic Updates Work
 
-### Step-by-Step Flow:
-
-1. **Admin Creates Shipment** (from admin panel)
+### Step-by-Step Flow`r`n`r`n1. **Admin Creates Shipment** (from admin panel)
    - Shiprocket assigns AWB
    - Order status → "Processing"
    - Customer sees: "Processing" with AWB number
@@ -153,9 +151,7 @@ exports.handleWebhook = async (req, res) => {
 
 ## 📱 Customer Experience
 
-### What Customers Can Do:
-
-1. **Check Order Status Anytime**
+### What Customers Can Do`r`n`r`n1. **Check Order Status Anytime**
    - Go to "My Orders" page
    - See real-time shipping status
 
@@ -179,29 +175,15 @@ exports.handleWebhook = async (req, res) => {
 
 ## 🎨 Customer UI Updates
 
-### Orders List - NEW FEATURES:
+### Orders List - NEW FEATURES`r`n`r`n- ✅ Shipping info row under each order`r`n`r`n- ✅ Courier partner name with truck icon 🚚`r`n`r`n- ✅ AWB number in monospace font`r`n`r`n- ✅ Current status in green/blue color
 
-- ✅ Shipping info row under each order
-- ✅ Courier partner name with truck icon 🚚
-- ✅ AWB number in monospace font
-- ✅ Current status in green/blue color
-
-### Order Detail - NEW FEATURES:
-
-- ✅ Blue highlighted "Shipping Details" section
-- ✅ Courier partner
-- ✅ Tracking number (AWB)
-- ✅ Current status badge
-- ✅ Last updated timestamp
-- ✅ Estimated delivery date
-- ✅ Visual progress tracker (existing, now enhanced)
+### Order Detail - NEW FEATURES`r`n`r`n- ✅ Blue highlighted "Shipping Details" section`r`n`r`n- ✅ Courier partner`r`n`r`n- ✅ Tracking number (AWB)`r`n`r`n- ✅ Current status badge`r`n`r`n- ✅ Last updated timestamp`r`n`r`n- ✅ Estimated delivery date`r`n`r`n- ✅ Visual progress tracker (existing, now enhanced)
 
 ---
 
 ## 🔔 Update Frequency
 
-### Automatic Updates Via Webhook:
-
+### Automatic Updates Via Webhook
 | Event              | Webhook Trigger     | Customer Sees        |
 | ------------------ | ------------------- | -------------------- |
 | Manifest Generated | Within 1 hour       | "MANIFEST GENERATED" |
@@ -237,8 +219,7 @@ Shiprocket sends detailed statuses that map to your order statuses:
 
 ## 🚀 Real-World Example
 
-### Timeline from Customer Perspective:
-
+### Timeline from Customer Perspective
 **Feb 4, 2026 - 10:00 AM**
 
 ```
@@ -349,3 +330,4 @@ Customers can now answer their own questions:
 ✅ Visual progress tracker
 
 **Everything updates automatically - no action needed from customers!** 🚀
+

@@ -86,14 +86,9 @@ No standalone dead variables or functions found beyond the import removals above
 
 ## Section 4: Duplicate Components
 
-### Resolved ✅
-- `UserContactModal.jsx` — orphaned, **deleted**
-- `OrderDetailsModal.jsx` — orphaned, **deleted**
-- `AnimatedEntry.jsx` — orphaned, **deleted**
-- `EditSectionPanel.jsx` — orphaned, **deleted**
+### Resolved ✅`r`n`r`n- `UserContactModal.jsx` — orphaned, **deleted**`r`n`r`n- `OrderDetailsModal.jsx` — orphaned, **deleted**`r`n`r`n- `AnimatedEntry.jsx` — orphaned, **deleted**`r`n`r`n- `EditSectionPanel.jsx` — orphaned, **deleted**
 
-### Documented (not duplicates)
-- `Product360Viewer.jsx` vs `ProductViewer360.jsx` — different feature sets (consumer zoom vs admin hotspot editor), both actively used. Could be merged long-term but not true duplicates.
+### Documented (not duplicates)`r`n`r`n- `Product360Viewer.jsx` vs `ProductViewer360.jsx` — different feature sets (consumer zoom vs admin hotspot editor), both actively used. Could be merged long-term but not true duplicates.
 
 ---
 
@@ -111,17 +106,13 @@ Covered by Section 3 — no duplicate API endpoints exist. The 36 removed functi
 
 ## Section 7: Dead CSS/Styles — FIXED ✅
 
-### Removed from `globals.css` (~80 lines):
-
+### Removed from `globals.css` (~80 lines)
 **Dead utility classes:** `.text-balance`, `.glass`, `.gradient-primary`, `.gradient-overlay`  
 **Dead component classes:** `.btn-ghost`, `.input`, `.card`, `.badge`, `.page-padding`, `.page-content`, `.heading-editorial`, `.card-accent-left`  
 **Dead keyframes + animation classes:** `slideDown`, `slideUpFade`, `goldUnderline`, `shimmer`  
 **Dead CSS custom properties:** `--spacing-xs` through `--spacing-3xl` (7), `--radius-sm` through `--radius-xl` (4), `--color-gold`, `--color-gold-light`
 
-### Removed from `tailwind.config.js`:
-- `boxShadow.editorial`
-- `transitionTimingFunction.spring`
-- `animation/keyframes` for `slide-down`, `slide-up-fade`, `shimmer`
+### Removed from `tailwind.config.js``r`n`r`n- `boxShadow.editorial``r`n`r`n- `transitionTimingFunction.spring``r`n`r`n- `animation/keyframes` for `slide-down`, `slide-up-fade`, `shimmer`
 
 ---
 
@@ -159,20 +150,9 @@ Covered by Section 3 — no duplicate API endpoints exist. The 36 removed functi
 
 ## Section 10: Unused Dependencies — FIXED ✅
 
-### Uninstalled (8 packages, 133 sub-dependencies):
-- `@radix-ui/react-slider`
-- `@radix-ui/react-tabs`
-- `cmdk`
-- `react-colorful`
-- `react-hotkeys-hook`
-- `react-markdown`
-- `remark-gfm`
-- `use-gesture`
+### Uninstalled (8 packages, 133 sub-dependencies)`r`n`r`n- `@radix-ui/react-slider``r`n`r`n- `@radix-ui/react-tabs``r`n`r`n- `cmdk``r`n`r`n- `react-colorful``r`n`r`n- `react-hotkeys-hook``r`n`r`n- `react-markdown``r`n`r`n- `remark-gfm``r`n`r`n- `use-gesture`
 
-### Kept (verified needed):
-- `@honeybadger-io/react` — peer dependency of `@honeybadger-io/nextjs`
-- `sharp` — used internally by Next.js image optimization
-- `react-dom` — required by React
+### Kept (verified needed)`r`n`r`n- `@honeybadger-io/react` — peer dependency of `@honeybadger-io/nextjs``r`n`r`n- `sharp` — used internally by Next.js image optimization`r`n`r`n- `react-dom` — required by React
 
 ---
 
@@ -209,8 +189,7 @@ No action needed — these are valid architectural patterns.
 
 ## Section 13: Console Statements — FIXED ✅
 
-### Removed (10 statements, 4 files):
-
+### Removed (10 statements, 4 files)
 | File | Severity | Issue |
 |---|---|---|
 | `UserDrawer.jsx:62` | **CRITICAL** | Leaked impersonation token to browser console |
@@ -219,11 +198,7 @@ No action needed — these are valid architectural patterns.
 | `OrderTracker.jsx:53,58,73` | MEDIUM | Soketi debug + tracking payload |
 | `orders/[id]/page.jsx:33` | MEDIUM | Full order response logged |
 
-### Kept (acceptable):
-- All `console.error` in catch blocks (client-side error reporting)
-- All `console.log` in `backend/scripts/` (CLI tools need stdout)
-- `backend/utils/makeAdmin.js` (CLI utility)
-- `backend/utils/logger.js` (IS the logger itself)
+### Kept (acceptable)`r`n`r`n- All `console.error` in catch blocks (client-side error reporting)`r`n`r`n- All `console.log` in `backend/scripts/` (CLI tools need stdout)`r`n`r`n- `backend/utils/makeAdmin.js` (CLI utility)`r`n`r`n- `backend/utils/logger.js` (IS the logger itself)
 
 ---
 
@@ -259,59 +234,19 @@ All critical and high-priority action items from the initial audit have been res
 
 8. **npm audit fix** — Safe fixes applied to both frontend and backend. Remaining vulnerabilities are in transitive deps of `jest`, `nodemon`, `eslint`, `next` (require major version bumps).
 
-### Low Priority (Future Sprint)
-- Upgrade Next.js to address remaining 37 frontend vulnerabilities (requires testing)
-- Upgrade Jest to v30+ to resolve `minimatch` / `glob` transitive vulns
-- Consider adding `firstOrderOnly` and `perUserLimit` fields to admin coupon form UI
+### Low Priority (Future Sprint)`r`n`r`n- Upgrade Next.js to address remaining 37 frontend vulnerabilities (requires testing)`r`n`r`n- Upgrade Jest to v30+ to resolve `minimatch` / `glob` transitive vulns`r`n`r`n- Consider adding `firstOrderOnly` and `perUserLimit` fields to admin coupon form UI
 
-### Monitoring
-- Run `npm audit` periodically after dependency upgrades
-- Re-run unused import checks after major feature additions
+### Monitoring`r`n`r`n- Run `npm audit` periodically after dependency upgrades`r`n`r`n- Re-run unused import checks after major feature additions
 
 ---
 
 ## Files Modified in This Cleanup
 
-### Phase 1: Initial Cleanup (35 files)
-- `frontend/src/utils/api.js` — 36 dead functions removed
-- `frontend/src/app/globals.css` — ~80 lines dead CSS removed
-- `frontend/tailwind.config.js` — 5 dead config entries removed
-- `.env.example` — ~28 missing variables added
-- 19 frontend files — unused imports removed
-- 5 backend files — unused imports removed
-- 4 frontend files — console.log statements removed
-- `frontend/src/app/products/page.jsx` — commented-out code removed
+### Phase 1: Initial Cleanup (35 files)`r`n`r`n- `frontend/src/utils/api.js` — 36 dead functions removed`r`n`r`n- `frontend/src/app/globals.css` — ~80 lines dead CSS removed`r`n`r`n- `frontend/tailwind.config.js` — 5 dead config entries removed`r`n`r`n- `.env.example` — ~28 missing variables added`r`n`r`n- 19 frontend files — unused imports removed`r`n`r`n- 5 backend files — unused imports removed`r`n`r`n- 4 frontend files — console.log statements removed`r`n`r`n- `frontend/src/app/products/page.jsx` — commented-out code removed
 
-### Phase 2: Post-Cleanup Action Items (19 files)
-- `backend/services/couponService.js` — applicableCategories validation added
-- `backend/controllers/orderController.js` — passes cart items to coupon validator
-- `frontend/src/app/admin/coupons/page.jsx` — category multi-select in form
-- `backend/scripts/cleanDeadFields.js` — NEW migration script
-- `backend/models/Address.js` — 3 dead fields removed
-- `backend/models/ContentPage.js` — 6 dead fields removed
-- `backend/models/Media.js` — 10 dead fields + 2 indexes removed
-- `backend/models/NavigationMenu.js` — 1 dead field removed
-- `frontend/src/hooks/use360Canvas.js` — NEW shared canvas hook
-- `frontend/src/components/products/Product360Viewer.jsx` — uses shared hook
-- `frontend/src/components/viewer/ProductViewer360.jsx` — uses shared hook
-- `backend/utils/shiprocket.js` — extracts estimated_delivery_days
-- `backend/controllers/shiprocketController.js` — saves estimatedDispatchDays
-- `backend/controllers/adminCMSController.js` — altText/caption/credit + updateMedia
-- `backend/routes/adminCMSRoutes.js` — PUT /media/:id route
-- `frontend/src/app/admin/cms/page.jsx` — media edit modal
-- `frontend/src/utils/api.js` — updateCmsMedia API call
-- `frontend/src/hooks/useAdmin.js` — useUpdateCmsMedia hook
-- `frontend/src/app/admin/orders/page.jsx` — renamed from page-enhanced.jsx
+### Phase 2: Post-Cleanup Action Items (19 files)`r`n`r`n- `backend/services/couponService.js` — applicableCategories validation added`r`n`r`n- `backend/controllers/orderController.js` — passes cart items to coupon validator`r`n`r`n- `frontend/src/app/admin/coupons/page.jsx` — category multi-select in form`r`n`r`n- `backend/scripts/cleanDeadFields.js` — NEW migration script`r`n`r`n- `backend/models/Address.js` — 3 dead fields removed`r`n`r`n- `backend/models/ContentPage.js` — 6 dead fields removed`r`n`r`n- `backend/models/Media.js` — 10 dead fields + 2 indexes removed`r`n`r`n- `backend/models/NavigationMenu.js` — 1 dead field removed`r`n`r`n- `frontend/src/hooks/use360Canvas.js` — NEW shared canvas hook`r`n`r`n- `frontend/src/components/products/Product360Viewer.jsx` — uses shared hook`r`n`r`n- `frontend/src/components/viewer/ProductViewer360.jsx` — uses shared hook`r`n`r`n- `backend/utils/shiprocket.js` — extracts estimated_delivery_days`r`n`r`n- `backend/controllers/shiprocketController.js` — saves estimatedDispatchDays`r`n`r`n- `backend/controllers/adminCMSController.js` — altText/caption/credit + updateMedia`r`n`r`n- `backend/routes/adminCMSRoutes.js` — PUT /media/:id route`r`n`r`n- `frontend/src/app/admin/cms/page.jsx` — media edit modal`r`n`r`n- `frontend/src/utils/api.js` — updateCmsMedia API call`r`n`r`n- `frontend/src/hooks/useAdmin.js` — useUpdateCmsMedia hook`r`n`r`n- `frontend/src/app/admin/orders/page.jsx` — renamed from page-enhanced.jsx
 
-### Deleted (7 files)
-- `frontend/src/components/UserContactModal.jsx`
-- `frontend/src/components/OrderDetailsModal.jsx`
-- `frontend/src/components/ui/AnimatedEntry.jsx`
-- `frontend/src/components/admin/cms/EditSectionPanel.jsx`
-- `backend/scripts/migrate-addresses.js`
-- `backend/scripts/db-backup.sh`
-- `frontend/src/app/admin/orders/page-enhanced.jsx` (renamed to page.jsx)
+### Deleted (7 files)`r`n`r`n- `frontend/src/components/UserContactModal.jsx``r`n`r`n- `frontend/src/components/OrderDetailsModal.jsx``r`n`r`n- `frontend/src/components/ui/AnimatedEntry.jsx``r`n`r`n- `frontend/src/components/admin/cms/EditSectionPanel.jsx``r`n`r`n- `backend/scripts/migrate-addresses.js``r`n`r`n- `backend/scripts/db-backup.sh``r`n`r`n- `frontend/src/app/admin/orders/page-enhanced.jsx` (renamed to page.jsx)
 
-### npm Changes
-- 8 unused packages uninstalled (133 sub-dependencies removed)
-- `npm audit fix` applied to both frontend and backend
+### npm Changes`r`n`r`n- 8 unused packages uninstalled (133 sub-dependencies removed)`r`n`r`n- `npm audit fix` applied to both frontend and backend
+

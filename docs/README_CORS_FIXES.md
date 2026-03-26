@@ -130,21 +130,21 @@ verify-cors-fixes.bat   # Windows
 **Test 1: Health Check**
 
 ```bash
-curl -i https://api.sbali.in/health
+curl -i <https://api.sbali.in/health>
 # Expected: HTTP/2 200 OK
 ```
 
 **Test 2: OPTIONS Preflight**
 
 ```bash
-curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
-  -H 'Origin: https://sbali.in' \
+curl -X OPTIONS <https://api.sbali.in/api/v1/auth/login> \
+  -H 'Origin: <https://sbali.in'> \
   -H 'Access-Control-Request-Method: POST' \
   -i
 
-# Expected:
+# Expected
 # HTTP/2 204 No Content (or 200)
-# access-control-allow-origin: https://sbali.in
+# access-control-allow-origin: <https://sbali.in>
 # access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, OPTIONS
 # access-control-allow-credentials: true
 # (NOT 401 or CORS error)
@@ -153,8 +153,8 @@ curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
 **Test 3: Browser Console**
 
 ```javascript
-// Run on https://sbali.in
-fetch("https://api.sbali.in/api/v1/categories")
+// Run on <https://sbali.in>
+fetch("<https://api.sbali.in/api/v1/categories">)
   .then((r) => r.json())
   .then((d) => console.log("✅ Success:", d))
   .catch((e) => console.error("❌ Error:", e.message));
@@ -166,12 +166,12 @@ fetch("https://api.sbali.in/api/v1/categories")
 **Test 4: Login**
 
 ```javascript
-// Run on https://sbali.in
-fetch("https://api.sbali.in/api/v1/auth/login", {
+// Run on <https://sbali.in>
+fetch("<https://api.sbali.in/api/v1/auth/login",> {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   credentials: "include",
-  body: JSON.stringify({ email: "test@example.com", password: "password" }),
+  body: JSON.stringify({ email: "<test@example.com>", password: "password" }),
 })
   .then((r) => r.json())
   .then((d) => {
@@ -330,7 +330,7 @@ docker-compose -f docker-compose.traefik.yml logs -f
 ## 🧪 Testing Checklist
 
 - [ ] `./verify-cors-fixes.sh` passes all 10 checks
-- [ ] `curl https://api.sbali.in/health` returns 200
+- [ ] `curl <https://api.sbali.in/health`> returns 200
 - [ ] OPTIONS preflight curl returns 204 with CORS headers
 - [ ] Browser fetch() to API endpoint works
 - [ ] Login form submits successfully
@@ -417,3 +417,4 @@ Your CORS and preflight issues are **completely fixed**. Three middleware files 
 **Ready**: ✅ YES  
 **Tested**: ✅ YES (manual tests provided)  
 **Verified**: ✅ YES (verification scripts provided)
+

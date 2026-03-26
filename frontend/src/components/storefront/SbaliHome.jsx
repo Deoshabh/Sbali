@@ -20,7 +20,7 @@ const FALLBACK = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' w
 const DEMO_IMAGES = {
   hero: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=1200&h=1600&fit=crop&q=80',
   craft: [
-    'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&h=800&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1200&h=800&fit=crop&q=80',
     'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1200&h=800&fit=crop&q=80',
     'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=1200&h=800&fit=crop&q=80',
     'https://images.unsplash.com/photo-1449505278894-297fdb3edbc1?w=1200&h=800&fit=crop&q=80',
@@ -49,6 +49,7 @@ function RImg({ src, alt, className, width, height, loading, style, fill, sizes,
       className={className}
       width={width || 800}
       height={height || 600}
+      sizes={sizes || `(max-width: 768px) 100vw, ${width || 800}px`}
       loading={priority ? undefined : loading}
       priority={priority}
       fetchPriority={fetchPriority}
@@ -255,6 +256,7 @@ export default function SbaliHome() {
               className={s.heroImg}
               width={1200}
               height={1600}
+              sizes="(max-width: 960px) 100vw, 50vw"
               priority
               fetchPriority="high"
             />
@@ -307,9 +309,9 @@ export default function SbaliHome() {
                 <Link href={`/products/${p.slug || p._id}`} key={p._id || i} className={s.productCardLink}>
                   <div className={`${s.productCard} ${s.revealCard}`} data-delay={i * 80}>
                     <div className={s.cardImgWrap}>
-                      <RImg src={getProductImage(p)} alt={p.name} className={s.cardImgMain} width={800} height={1000} loading="lazy" />
+                      <RImg src={getProductImage(p)} alt={p.name} className={s.cardImgMain} width={800} height={1000} sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 25vw" loading="lazy" />
                       {/* Second angle — alt describes the view, not just repeating the name */}
-                      <RImg src={getProductHoverImage(p)} alt={`${p.name} — side view`} className={s.cardImgHover} width={800} height={1000} loading="lazy" />
+                      <RImg src={getProductHoverImage(p)} alt={`${p.name} — side view`} className={s.cardImgHover} width={800} height={1000} sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 25vw" loading="lazy" />
                     </div>
                     <div className={s.cardInfo}>
                       <span className={s.cardTag}>{getProductTag(p)}</span>
@@ -348,7 +350,7 @@ export default function SbaliHome() {
             <div className={s.craftGrid}>
               {(hp.craft.images || []).map((img, i) => (
                 <div key={img.id || i} className={`${s.craftImgWrap} ${s.revealImg}`} data-delay={i * 120}>
-                  <RImg src={img.url || DEMO_IMAGES.craft[i] || FALLBACK} alt={img.alt} width={1200} height={800} loading="lazy" />
+                  <RImg src={img.url || DEMO_IMAGES.craft[i] || FALLBACK} alt={img.alt} width={1200} height={800} sizes="(max-width: 600px) 100vw, (max-width: 960px) 100vw, 50vw" loading="lazy" />
                 </div>
               ))}
             </div>
@@ -390,7 +392,7 @@ export default function SbaliHome() {
                 </div>
               </div>
               <div className={`${s.heritageImgWrap} ${s.revealSplitR}`}>
-                <RImg src={hp.heritage.image || DEMO_IMAGES.heritage} alt="SBALI atelier in Agra" width={1200} height={900} loading="lazy" />
+                <RImg src={hp.heritage.image || DEMO_IMAGES.heritage} alt="SBALI atelier in Agra" width={1200} height={900} sizes="(max-width: 960px) 100vw, 50vw" loading="lazy" />
                 <div className={s.heritageImgBadge}>
                   <span>🇮🇳</span>
                   <span>Made in India</span>
@@ -407,7 +409,7 @@ export default function SbaliHome() {
           <div className={s.container}>
             <div className={s.storyGrid}>
               <div className={`${s.storyImgWrap} ${s.revealSplitL}`}>
-                <RImg src={hp.story.image || DEMO_IMAGES.story} alt="SBALI founder" width={1200} height={900} loading="lazy" />
+                <RImg src={hp.story.image || DEMO_IMAGES.story} alt="SBALI founder" width={1200} height={900} sizes="(max-width: 960px) 100vw, 55vw" loading="lazy" />
               </div>
               <div className={`${s.storyContent} ${s.revealSplitR}`}>
                 <div className={s.sectionLabel}>{hp.story.label}</div>

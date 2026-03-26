@@ -53,7 +53,7 @@ cp .env.traefik.example .env
 deploy.bat          # Windows
 
 # 4. Verify it works
-curl https://api.sbali.in/health
+curl <https://api.sbali.in/health>
 ```
 
 ---
@@ -121,7 +121,7 @@ Browser ✅ allows POST request
 - [ ] Copy .env.traefik.example → .env
 - [ ] Fill environment variables
 - [ ] Run deploy script
-- [ ] Test: `curl https://api.sbali.in/health`
+- [ ] Test: `curl <https://api.sbali.in/health`>
 - [ ] Test CORS: See curl command in quick reference
 - [ ] Verify login works
 - [ ] Check browser console for errors
@@ -154,3 +154,4 @@ Everything is ready. Just:
 ---
 
 **Next**: Open TRAEFIK_QUICK_REFERENCE.md and follow the 3-minute setup! 🚀
+

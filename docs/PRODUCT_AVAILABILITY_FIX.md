@@ -105,18 +105,12 @@ Based on screenshot:
 - **Price**: ₹2,500
 - **Sizes**: 3 sizes available
 
-### To Fix This Product:
-
+### To Fix This Product
 ```bash
-# Option 1: Admin Panel (Recommended)
-1. Go to /admin/products
-2. Find "oxford" product
-3. Edit → Check "Active Product"
-4. Set stock quantity > 0
-5. Save
+# Option 1: Admin Panel (Recommended)`r`n`r`n1. Go to /admin/products`r`n`r`n2. Find "oxford" product`r`n`r`n3. Edit → Check "Active Product"`r`n`r`n4. Set stock quantity > 0`r`n`r`n5. Save
 
 # Option 2: Database (Quick)
-# Run in MongoDB:
+# Run in MongoDB
 db.products.updateOne(
   { slug: "oxford" },
   { $set: { inStock: true, stock: 100 } }
@@ -301,3 +295,4 @@ node fix-availability.js
 5. Save
 
 **Done!** Your product will now show "Buy Now" instead of "Out of Stock" 🎉
+

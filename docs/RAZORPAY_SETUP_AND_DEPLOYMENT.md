@@ -48,7 +48,7 @@ NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_SBfFobfvhPtFYL
 3. Add/Update:
    ```
    NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_SBfFobfvhPtFYL
-   NEXT_PUBLIC_API_URL=https://api.sbali.in/api/v1
+   NEXT_PUBLIC_API_URL=<https://api.sbali.in/api/v1>
    ```
 4. **Save** the changes
 5. **Redeploy** the frontend service
@@ -166,7 +166,7 @@ UPI ID: success@razorpay
 RAZORPAY_KEY_ID=rzp_test_...  # ✅ Correct
 RAZORPAY_KEY_SECRET=vTZJIY... # ✅ Correct
 
-# ❌ Wrong combination:
+# ❌ Wrong combination
 RAZORPAY_KEY_ID=rzp_live_...  # Live key
 RAZORPAY_KEY_SECRET=test_secret # Test secret
 ```
@@ -224,12 +224,13 @@ When ready for production:
 
 ## 📞 Support
 
-**Razorpay Documentation**: https://razorpay.com/docs/
+**Razorpay Documentation**: <https://razorpay.com/docs/>
 
-**Dashboard**: https://dashboard.razorpay.com/
+**Dashboard**: <https://dashboard.razorpay.com/>
 
 **Common Issues**:
 
 - Test mode vs Live mode mismatch
 - Webhook signature verification
 - Amount conversion (INR to paise: multiply by 100)
+

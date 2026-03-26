@@ -4,31 +4,17 @@ Apply these rules in the Cloudflare dashboard for `sbali.in`.
 
 ## Cache Rules
 
-### Rule 1: Public Settings API (Edge Cache)
-- **When**: URI Path starts with `/api/v1/settings/public`
-- **AND**: Request Header `Authorization` is empty
-- **Then**: Cache eligible, Edge TTL = 5 minutes, Browser TTL = 1 minute
-- **Bypass**: When `Authorization` header is present
+### Rule 1: Public Settings API (Edge Cache)`r`n`r`n- **When**: URI Path starts with `/api/v1/settings/public``r`n`r`n- **AND**: Request Header `Authorization` is empty`r`n`r`n- **Then**: Cache eligible, Edge TTL = 5 minutes, Browser TTL = 1 minute`r`n`r`n- **Bypass**: When `Authorization` header is present
 
-### Rule 2: Next.js Static Assets (Immutable)
-- **When**: URI Path starts with `/_next/static/`
-- **Then**: Cache eligible, Edge TTL = 1 year (31536000s)
-- **Browser TTL**: 1 year
+### Rule 2: Next.js Static Assets (Immutable)`r`n`r`n- **When**: URI Path starts with `/_next/static/``r`n`r`n- **Then**: Cache eligible, Edge TTL = 1 year (31536000s)`r`n`r`n- **Browser TTL**: 1 year
 
-### Rule 3: Next.js Image Optimization
-- **When**: URI Path starts with `/_next/image`
-- **Then**: Cache eligible, Edge TTL = 7 days
+### Rule 3: Next.js Image Optimization`r`n`r`n- **When**: URI Path starts with `/_next/image``r`n`r`n- **Then**: Cache eligible, Edge TTL = 7 days
 
-### Rule 4: MinIO/CDN Images
-- **When**: Hostname equals `cdn.sbali.in`
-- **AND**: Request Method equals `GET`
-- **Then**: Cache eligible, Edge TTL = 7 days
+### Rule 4: MinIO/CDN Images`r`n`r`n- **When**: Hostname equals `cdn.sbali.in``r`n`r`n- **AND**: Request Method equals `GET``r`n`r`n- **Then**: Cache eligible, Edge TTL = 7 days
 
 ## Transform Rules (Response Headers)
 
-### Rule 1: Immutable Static Assets
-- **When**: URI Path contains `/_next/static/`
-- **Set Response Header**: `Cache-Control` = `public, max-age=31536000, immutable`
+### Rule 1: Immutable Static Assets`r`n`r`n- **When**: URI Path contains `/_next/static/``r`n`r`n- **Set Response Header**: `Cache-Control` = `public, max-age=31536000, immutable`
 
 ## WAF Custom Rules
 
@@ -71,3 +57,4 @@ If migrating to R2:
 3. Connect custom domain `cdn.sbali.in` to R2 bucket
 4. Update `MINIO_ENDPOINT` and credentials to R2's S3-compatible API
 5. Zero egress fees, built-in Cloudflare CDN
+

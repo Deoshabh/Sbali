@@ -12,22 +12,21 @@ This guide will help you enable Google Sign-In using the OAuth Client ID from yo
 
 ### Step 1: Enable Google Sign-In in Firebase Console
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
+1. Go to [Firebase Console](<https://console.firebase.google.com/>)
 2. Select your project: **sbali-2026**
 3. Navigate to **Authentication** → **Sign-in method**
 4. Click on **Google** in the providers list
 5. Click **Enable** toggle to ON
 6. You'll see two fields:
 
-#### Configure Google Provider:
-
+#### Configure Google Provider
 ```
 Web SDK configuration
 ├─ Web client ID: Automatically filled by Firebase
 └─ Web client secret: Automatically filled by Firebase
 
 Public-facing name for project: Sbali
-Support email: your-email@example.com
+Support email: <your-email@example.com>
 ```
 
 ### Step 2: Add Your OAuth Client ID (Important!)
@@ -59,15 +58,15 @@ Firebase will automatically add these domains, but verify:
 
 ### Step 4: Add Authorized Redirect URIs in Google Cloud
 
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+1. Go to [Google Cloud Console](<https://console.cloud.google.com/>)
 2. Navigate to **APIs & Services** → **Credentials**
 3. Click on your OAuth 2.0 Client ID: `1016544530927-4lr457bua5ittrmfcu44lrjqqp9jjmq`
 4. Under **Authorized redirect URIs**, add:
 
 ```
-https://sbali-2026.firebaseapp.com/__/auth/handler
-https://sbali-2026.web.app/__/auth/handler
-http://localhost:3000/__/auth/handler (for testing)
+<https://sbali-2026.firebaseapp.com/__/auth/handler>
+<https://sbali-2026.web.app/__/auth/handler>
+<http://localhost:3000/__/auth/handler> (for testing)
 ```
 
 5. Click **Save**
@@ -104,8 +103,7 @@ The backend already verifies Firebase tokens, which includes Google sign-in user
 
 If you want to use environment variables instead of hardcoded config:
 
-### Update `frontend/src/config/firebase.js`:
-
+### Update `frontend/src/config/firebase.js`
 ```javascript
 const firebaseConfig = {
   apiKey:
@@ -141,7 +139,7 @@ const firebaseConfig = {
    npm run dev
    ```
 
-2. **Visit:** `http://localhost:3000/auth/firebase-login`
+2. **Visit:** `<http://localhost:3000/auth/firebase-login`>
 
 3. **Click:** "Continue with Google" button
 
@@ -160,7 +158,7 @@ const firebaseConfig = {
 #### Scenario 1: New User
 
 ```
-User: test.user@gmail.com (never signed up before)
+User: <test.user@gmail.com> (never signed up before)
 Expected:
   ✅ Google popup opens
   ✅ User selects account
@@ -172,10 +170,10 @@ Expected:
 #### Scenario 2: Existing User (Email)
 
 ```
-User: john@example.com (already registered via email)
+User: <john@example.com> (already registered via email)
 Expected:
   ✅ Google popup opens
-  ✅ Sign in with john@example.com Google account
+  ✅ Sign in with <john@example.com> Google account
   ✅ Accounts linked automatically
   ✅ User logged in
 ```
@@ -261,8 +259,7 @@ After setup, verify these:
 
 ## 📊 How It Works
 
-### Authentication Flow:
-
+### Authentication Flow
 ```
 ┌─────────────────────┐
 │  User clicks        │
@@ -327,23 +324,22 @@ After setup, verify these:
 └─────────────────────┘
 ```
 
-### Data Extracted from Google:
-
+### Data Extracted from Google
 When a user signs in with Google, Firebase provides:
 
 ```javascript
 {
   uid: "google_user_id_123",
-  email: "user@gmail.com",
+  email: "<user@gmail.com>",
   displayName: "John Doe",
-  photoURL: "https://lh3.googleusercontent.com/...",
+  photoURL: "<https://lh3.googleusercontent.com/...",>
   emailVerified: true,
   providerData: [{
     providerId: "google.com",
     uid: "google_user_id_123",
     displayName: "John Doe",
-    email: "user@gmail.com",
-    photoURL: "https://..."
+    email: "<user@gmail.com>",
+    photoURL: "<https://...">
   }]
 }
 ```
@@ -514,3 +510,4 @@ Common issues and quick fixes:
 ---
 
 **Your OAuth Client ID is ready to use!** Just follow the Firebase Console steps above. 🔥
+

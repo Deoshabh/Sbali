@@ -45,7 +45,7 @@ The Product model requires `description` as a **required field**, but it wasn't 
 **`[object Object]` error:**
 
 ```
-GET https://sbali.in/admin/[object%20Object] 404 (Not Found)
+GET <https://sbali.in/admin/[object%20Object]> 404 (Not Found)
 ```
 
 **Cause:** Edit button trying to navigate to non-existent edit route  
@@ -99,31 +99,13 @@ Wait for Dokploy to redeploy (both backend and frontend)
 
 ### **Step 2: Create Product Again (CORRECTLY)**
 
-Go to: `https://sbali.in/admin/products`
+Go to: `<https://sbali.in/admin/products`>
 
 Click "Add Product" and **fill in ALL required fields**:
 
-#### ✅ Required Fields (MUST fill):
+#### ✅ Required Fields (MUST fill)`r`n`r`n1. **Product Name** - e.g., "Oxford Formal Shoes"`r`n`r`n2. **Slug** - e.g., "oxford-formal-shoes"`r`n`r`n3. **Description** - ⚠️ **DON'T LEAVE THIS EMPTY!** Write at least a sentence`r`n`r`n4. **Category** - e.g., "oxford"`r`n`r`n5. **Price** - e.g., "2999"`r`n`r`n6. **Images** - Upload at least 1 image
 
-1. **Product Name** - e.g., "Oxford Formal Shoes"
-2. **Slug** - e.g., "oxford-formal-shoes"
-3. **Description** - ⚠️ **DON'T LEAVE THIS EMPTY!** Write at least a sentence
-4. **Category** - e.g., "oxford"
-5. **Price** - e.g., "2999"
-6. **Images** - Upload at least 1 image
-
-#### Optional Fields (can skip):
-
-- Compare Price
-- Brand
-- SKU
-- Stock
-- Sizes
-- Colors
-- Tags
-- Specifications
-- Material & Care
-- Shipping & Returns
+#### Optional Fields (can skip)`r`n`r`n- Compare Price`r`n`r`n- Brand`r`n`r`n- SKU`r`n`r`n- Stock`r`n`r`n- Sizes`r`n`r`n- Colors`r`n`r`n- Tags`r`n`r`n- Specifications`r`n`r`n- Material & Care`r`n`r`n- Shipping & Returns
 
 **IMPORTANT:** Make sure to fill in the **Description** field with actual text!
 
@@ -159,7 +141,7 @@ After clicking "Create Product", check:
 
 ### **Step 4: Check Public Products Page**
 
-Go to: `https://sbali.in/products`
+Go to: `<https://sbali.in/products`>
 
 You should now see your product!
 
@@ -174,8 +156,7 @@ Browser console should show:
 
 ## 🔍 If Products Still Don't Show
 
-### Run Database Check (on VPS):
-
+### Run Database Check (on VPS)
 ```bash
 # SSH into your VPS
 ssh user@your-vps-ip
@@ -198,8 +179,7 @@ This will show:
 
 ## 📊 Expected Behavior After Fix
 
-### When Creating Product:
-
+### When Creating Product
 **Frontend sends:**
 
 ```javascript
@@ -240,8 +220,7 @@ Creating product with data: {...}
 }
 ```
 
-### When Fetching Products:
-
+### When Fetching Products
 **Backend logs:**
 
 ```
@@ -363,3 +342,4 @@ After following this guide, you should have:
 ---
 
 **Next step:** Deploy changes and create a product with ALL required fields filled in!
+

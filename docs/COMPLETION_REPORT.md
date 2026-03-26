@@ -268,14 +268,14 @@ cp .env.traefik.example .env
 deploy.bat   # Windows
 
 # 3. Verify
-curl https://api.sbali.in/health
+curl <https://api.sbali.in/health>
 ```
 
 ### Verify CORS Fixed
 
 ```bash
-curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
-  -H 'Origin: https://sbali.in' \
+curl -X OPTIONS <https://api.sbali.in/api/v1/auth/login> \
+  -H 'Origin: <https://sbali.in'> \
   -H 'Access-Control-Request-Method: POST' \
   -i
 
@@ -313,7 +313,7 @@ curl -X OPTIONS https://api.sbali.in/api/v1/auth/login \
 - ✅ All secrets in .env.traefik.example only
 - ✅ Non-root user execution in containers
 - ✅ HTTPS only (websecure entrypoint)
-- ✅ CORS restricted to https://sbali.in
+- ✅ CORS restricted to <https://sbali.in>
 - ✅ SSL via Let's Encrypt (auto-renew)
 - ✅ Security headers included
 - ✅ .dockerignore excludes sensitive files
@@ -420,11 +420,11 @@ Before deploying to production:
 
 ## 🎓 Learning Resources
 
-- **Traefik Docs**: https://doc.traefik.io/
-- **Docker Compose**: https://docs.docker.com/compose/
-- **CORS Policy**: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-- **Let's Encrypt**: https://letsencrypt.org/
-- **Express CORS**: https://expressjs.com/en/resources/middleware/cors.html
+- **Traefik Docs**: <https://doc.traefik.io/>
+- **Docker Compose**: <https://docs.docker.com/compose/>
+- **CORS Policy**: <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>
+- **Let's Encrypt**: <https://letsencrypt.org/>
+- **Express CORS**: <https://expressjs.com/en/resources/middleware/cors.html>
 
 ---
 
@@ -521,3 +521,4 @@ You now have everything needed to:
 **Backward Compatible**: ✅ YES
 
 🎉 **Enjoy your fixed CORS implementation!** 🚀
+

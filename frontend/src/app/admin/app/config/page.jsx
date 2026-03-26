@@ -10,6 +10,22 @@ import {
   FiSmartphone, FiShield, FiFlag, FiMessageSquare,
 } from 'react-icons/fi';
 
+const BLOCKED_PATH_SEGMENTS = new Set(['__proto__', 'prototype', 'constructor']);
+
+const isSafeConfigPath = (path) => {
+  const keys = String(path).split('.').filter(Boolean);
+  if (keys.length === 0) return { safe: false, keys };
+  if (keys.some((key) => BLOCKED_PATH_SEGMENTS.has(key))) return { safe: false, keys };
+  return { safe: true, keys };
+};
+
+const toMutableObject = (value) => {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return { ...value };
+  }
+  return {};
+};
+
 export default function AppConfigPage() {
   const qc = useQueryClient();
   const [config, setConfig] = useState(null);
@@ -57,11 +73,17 @@ export default function AppConfigPage() {
 
   const update = (path, value) => {
     setConfig((prev) => {
+      const { safe, keys } = isSafeConfigPath(path);
+      if (!safe) {
+        console.error('Blocked unsafe config path update attempt:', path);
+        toast.error('Invalid config field path');
+        return prev;
+      }
+
       const next = { ...prev };
-      const keys = path.split('.');
       let obj = next;
       for (let i = 0; i < keys.length - 1; i++) {
-        obj[keys[i]] = { ...obj[keys[i]] };
+        obj[keys[i]] = toMutableObject(obj[keys[i]]);
         obj = obj[keys[i]];
       }
       obj[keys[keys.length - 1]] = value;

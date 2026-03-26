@@ -6,7 +6,7 @@ Add the following environment variables to your backend `.env` file:
 
 ```env
 # Shiprocket API Credentials
-SHIPROCKET_EMAIL=your_api_user_email@example.com
+SHIPROCKET_EMAIL=<your_api_user_email@example.com>
 SHIPROCKET_PASSWORD=your_api_user_password
 ```
 
@@ -14,7 +14,7 @@ SHIPROCKET_PASSWORD=your_api_user_password
 
 ### Step 1: Create Shiprocket Account
 
-1. Go to https://app.shiprocket.in/register
+1. Go to <https://app.shiprocket.in/register>
 2. Complete the sign-up process
 3. Verify your account
 
@@ -40,7 +40,7 @@ SHIPROCKET_PASSWORD=your_api_user_password
 1. Open `backend/.env` file
 2. Add the credentials:
    ```env
-   SHIPROCKET_EMAIL=api_user_email@example.com
+   SHIPROCKET_EMAIL=<api_user_email@example.com>
    SHIPROCKET_PASSWORD=password_from_email
    ```
 
@@ -52,7 +52,7 @@ To receive real-time tracking updates:
 2. Go to **Settings** → **API** → **Webhooks**
 3. Add your webhook URL:
    ```
-   https://yourdomain.com/api/v1/admin/shiprocket/webhook
+   <https://yourdomain.com/api/v1/admin/shiprocket/webhook>
    ```
 4. Enable the toggle
 5. Add a security token (optional but recommended):
@@ -96,7 +96,7 @@ SHIPROCKET_WEBHOOK_SECRET=your_generated_token
 ### 1. Test Authentication
 
 ```bash
-# Backend should log on startup:
+# Backend should log on startup
 ✅ Shiprocket authenticated successfully
 ```
 
@@ -120,23 +120,9 @@ SHIPROCKET_WEBHOOK_SECRET=your_generated_token
 
 ## 🎯 API Features Available
 
-### Admin Panel Features:
+### Admin Panel Features`r`n`r`n- ✅ Create Shipment`r`n`r`n- ✅ Get Shipping Rates`r`n`r`n- ✅ Schedule Pickup`r`n`r`n- ✅ Generate Label`r`n`r`n- ✅ Track Shipment`r`n`r`n- ✅ Cancel Shipment`r`n`r`n- ✅ Generate Manifest`r`n`r`n- ✅ View Pickup Addresses
 
-- ✅ Create Shipment
-- ✅ Get Shipping Rates
-- ✅ Schedule Pickup
-- ✅ Generate Label
-- ✅ Track Shipment
-- ✅ Cancel Shipment
-- ✅ Generate Manifest
-- ✅ View Pickup Addresses
-
-### Automatic Features:
-
-- ✅ Auto-select recommended courier
-- ✅ Auto-schedule pickup for next day
-- ✅ Auto-generate shipping label
-- ✅ Webhook tracking updates
+### Automatic Features`r`n`r`n- ✅ Auto-select recommended courier`r`n`r`n- ✅ Auto-schedule pickup for next day`r`n`r`n- ✅ Auto-generate shipping label`r`n`r`n- ✅ Webhook tracking updates
 
 ## 📊 Order Flow with Shiprocket
 
@@ -202,8 +188,8 @@ SHIPROCKET_WEBHOOK_SECRET=your_generated_token
 
 For Shiprocket API issues:
 
-- Email: integration@shiprocket.com
-- Documentation: https://apidocs.shiprocket.in
+- Email: <integration@shiprocket.com>
+- Documentation: <https://apidocs.shiprocket.in>
 
 For integration issues:
 
@@ -270,3 +256,4 @@ Your Shiprocket integration is complete. You can now:
 - Manage deliveries efficiently
 
 Happy Shipping! 🚀📦
+

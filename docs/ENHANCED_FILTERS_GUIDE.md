@@ -283,20 +283,9 @@ Filters are stored in URL parameters for:
 
 ## Benefits
 
-### For Users:
+### For Users`r`n`r`n- **Intuitive**: Drag slider instead of clicking preset ranges`r`n`r`n- **Precise**: Set exact price range needed`r`n`r`n- **Visual**: See price range and selected values clearly`r`n`r`n- **Flexible**: Multiple brands/materials can be selected`r`n`r`n- **Dynamic**: Filters update based on available products
 
-- **Intuitive**: Drag slider instead of clicking preset ranges
-- **Precise**: Set exact price range needed
-- **Visual**: See price range and selected values clearly
-- **Flexible**: Multiple brands/materials can be selected
-- **Dynamic**: Filters update based on available products
-
-### For Admins:
-
-- **Automatic**: No manual filter creation needed
-- **Maintenance-free**: Filters update when products are added/edited
-- **Accurate**: Always shows current available options
-- **Scalable**: Handles any number of brands/materials
+### For Admins`r`n`r`n- **Automatic**: No manual filter creation needed`r`n`r`n- **Maintenance-free**: Filters update when products are added/edited`r`n`r`n- **Accurate**: Always shows current available options`r`n`r`n- **Scalable**: Handles any number of brands/materials
 
 ## Troubleshooting
 
@@ -357,3 +346,4 @@ Filters are stored in URL parameters for:
 ✅ **URL State** - Shareable, bookmark-able filter states
 
 All filters work together seamlessly and update automatically as products are managed through the admin panel!
+

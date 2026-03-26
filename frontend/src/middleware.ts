@@ -28,28 +28,102 @@ export function middleware(request: NextRequest) {
   // ── Generate per-request CSP nonce (base64-encoded UUID) ───────────────────
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
 
+  const toOrigin = (value?: string) => {
+    if (!value) return null;
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+    try {
+      return new URL(withProtocol).origin;
+    } catch {
+      return null;
+    }
+  };
+
+  const apiOrigin = toOrigin(process.env.NEXT_PUBLIC_API_URL) ?? 'https://api.sbali.in';
+
+  const dynamicAssetOrigins = [
+    toOrigin(process.env.NEXT_PUBLIC_CDN_URL),
+    toOrigin(process.env.NEXT_PUBLIC_MINIO_URL),
+    toOrigin(process.env.NEXT_PUBLIC_MINIO_API_URL),
+    toOrigin(process.env.NEXT_PUBLIC_MINIO_ENDPOINT),
+    toOrigin(process.env.NEXT_PUBLIC_UPLOAD_URL),
+    toOrigin(process.env.MINIO_PUBLIC_URL),
+    toOrigin(process.env.MINIO_CDN_URL),
+    toOrigin(process.env.MINIO_API_URL),
+    toOrigin(process.env.MINIO_ENDPOINT),
+    toOrigin(process.env.UPLOAD_URL),
+  ].filter((origin): origin is string => Boolean(origin));
+
+  const connectSrc = [
+    "'self'",
+    apiOrigin,
+    'https://cdn.sbali.in',
+    'https://minio.sbali.in',
+    ...dynamicAssetOrigins,
+    'https://*.firebaseio.com',
+    'https://*.googleapis.com',
+    'https://checkout.razorpay.com',
+    'https://lumberjack.razorpay.com',
+    'https://*.razorpay.com',
+    'wss://*.sbali.in',
+    'https://api.honeybadger.io',
+    'https://challenges.cloudflare.com',
+    'https://www.google-analytics.com',
+    'https://www.googletagmanager.com',
+  ];
+
+  const mediaOrigins = [
+    "'self'",
+    'data:',
+    'blob:',
+    'https://cdn.sbali.in',
+    'https://cdn.radeo.in',
+    'https://minio.sbali.in',
+    ...dynamicAssetOrigins,
+  ];
+
+  const imgOrigins = [
+    ...mediaOrigins,
+    'https://images.unsplash.com',
+    'https://*.googleusercontent.com',
+  ];
+
   const cspDirectives = [
     "default-src 'self'",
     // strict-dynamic + nonce: trusted scripts can load other scripts dynamically.
     // 'unsafe-inline' kept as fallback for browsers without strict-dynamic support.
     // 'unsafe-eval' removed — Firebase 12+ and React 18 do not require it.
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com`,
     // script-src-elem is set explicitly so parser-inserted third-party scripts
     // (e.g. Cloudflare email-decode) are still allowed when strict-dynamic is active.
-    `script-src-elem 'self' 'nonce-${nonce}' 'unsafe-inline' https://sbali.in https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com`,
+    `script-src-elem 'self' 'nonce-${nonce}' 'unsafe-inline' https://sbali.in https://checkout.razorpay.com https://apis.google.com https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "img-src 'self' data: blob: https://cdn.sbali.in https://minio.sbali.in https://images.unsplash.com https://*.googleusercontent.com",
+    `img-src ${Array.from(new Set(imgOrigins)).join(' ')}`,
+    `media-src ${Array.from(new Set(mediaOrigins)).join(' ')}`,
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.sbali.in https://cdn.sbali.in https://minio.sbali.in https://*.firebaseio.com https://*.googleapis.com https://checkout.razorpay.com https://lumberjack.razorpay.com https://*.razorpay.com wss://*.sbali.in https://api.honeybadger.io https://challenges.cloudflare.com",
+    `connect-src ${Array.from(new Set(connectSrc)).join(' ')}`,
     "frame-src https://checkout.razorpay.com https://api.razorpay.com https://*.razorpay.com https://*.firebaseapp.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    // Trusted Types: mitigate DOM-based XSS by enforcing typed DOM APIs.
-    // 'allow-duplicates' lets third-party scripts (Firebase, Razorpay) register their own policies.
-    "trusted-types nextjs nextjs#bundler goog#html firebase default 'allow-duplicates'",
-    "require-trusted-types-for 'script'",
   ].join('; ');
+
+  const enforceTrustedTypes = process.env.ENFORCE_TRUSTED_TYPES === 'true';
+
+  const trustedTypesDirectives = enforceTrustedTypes
+    ? [
+        // Trusted Types: mitigate DOM-based XSS by enforcing typed DOM APIs.
+        // 'allow-duplicates' lets third-party scripts (Firebase, Razorpay) register their own policies.
+        "trusted-types nextjs nextjs#bundler goog#html gapi#gapi firebase firebase-js-sdk-policy default 'allow-duplicates'",
+        "require-trusted-types-for 'script'",
+      ].join('; ')
+    : '';
+
+  const finalCsp = trustedTypesDirectives
+    ? `${cspDirectives}; ${trustedTypesDirectives}`
+    : cspDirectives;
 
   // Pass nonce to server components via request header
   const requestHeaders = new Headers(request.headers);
@@ -101,7 +175,7 @@ export function middleware(request: NextRequest) {
   });
 
   // Content Security Policy (nonce-based, replaces next.config.mjs static CSP)
-  response.headers.set('Content-Security-Policy', cspDirectives);
+  response.headers.set('Content-Security-Policy', finalCsp);
 
   // Cross-Origin-Opener-Policy: same-origin-allow-popups allows Razorpay/Firebase
   // popup windows while preventing cross-origin window.opener access.

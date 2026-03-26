@@ -21,8 +21,28 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "minio.sbali.in",
+        pathname: "/sbali-products/**",
+      },
+      {
+        protocol: "https",
         hostname: "cdn.sbali.in",
         pathname: "/product-media/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.sbali.in",
+        pathname: "/sbali-products/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.radeo.in",
+        pathname: "/product-media/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.radeo.in",
+        pathname: "/sbali-products/**",
       },
       {
         protocol: "http",
@@ -99,7 +119,7 @@ const nextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
+            value: "camera=(), microphone=(), geolocation=(self)",
           },
           {
             // Cross-Origin-Opener-Policy: prevents cross-origin windows from retaining

@@ -1,4 +1,5 @@
 const Minio = require("minio");
+const https = require("https");
 const { log } = require("./logger");
 
 /**
@@ -11,7 +12,7 @@ const { log } = require("./logger");
  *   sbali-products  — product images (public read, versioned)
  *   sbali-media     — CMS media uploads (public read, versioned)
  *   sbali-reviews   — customer review photos (private)
- *   sbali-temp      — pre-signed upload staging (auto-deleted after 24h)
+ *   sbali-temp      — temporary uploads (auto-deleted after 24h)
  */
 const {
   MINIO_ENDPOINT,
@@ -23,6 +24,7 @@ const {
   MINIO_REGION,
   MINIO_PUBLIC_URL,
   MINIO_CDN_URL,
+  MINIO_INSECURE_SKIP_TLS_VERIFY,
 } = process.env;
 
 if (
@@ -47,10 +49,31 @@ const BUCKETS = {
   DEFAULT: MINIO_BUCKET,
 };
 
-/** CDN base URL — serves images via Cloudflare edge cache (e.g. https://cdn.sbali.in) */
-const CDN_BASE_URL = (MINIO_CDN_URL || MINIO_PUBLIC_URL || "").replace(/\/$/, "");
+/** Public base URL for assets (typically CDN domain) */
+const PUBLIC_BASE_URL = (MINIO_PUBLIC_URL || MINIO_CDN_URL || "").replace(/\/$/, "");
 
 const REGION = MINIO_REGION || "us-east-1";
+
+function parseBooleanEnv(value, defaultValue = false) {
+  if (value === undefined || value === null || String(value).trim() === "") {
+    return defaultValue;
+  }
+
+  const normalized = String(value).trim().toLowerCase();
+  return ["true", "1", "yes", "y", "on"].includes(normalized);
+}
+
+function normalizeObjectKey(fileName) {
+  return String(fileName || "").replace(/^\/+/, "");
+}
+
+function buildInternalObjectBaseUrl() {
+  const useSSL = parseBooleanEnv(MINIO_USE_SSL, false);
+  const protocol = useSSL ? "https" : "http";
+  const hasPort = MINIO_PORT !== undefined && MINIO_PORT !== null && String(MINIO_PORT).trim() !== "";
+  const portPart = hasPort ? `:${String(MINIO_PORT).trim()}` : "";
+  return `${protocol}://${MINIO_ENDPOINT}${portPart}`;
+}
 
 // Internal state
 let minioClient = null;
@@ -71,7 +94,20 @@ async function initializeBucket() {
       ssl: MINIO_USE_SSL,
     });
 
-    const useSSL = String(MINIO_USE_SSL).toLowerCase() === "true";
+    const useSSL = parseBooleanEnv(MINIO_USE_SSL, false);
+    const skipTlsVerify = parseBooleanEnv(MINIO_INSECURE_SKIP_TLS_VERIFY, false);
+
+    log.info("S3 TLS configuration", {
+      useSSL,
+      skipTlsVerify,
+      skipTlsVerifyRaw: MINIO_INSECURE_SKIP_TLS_VERIFY,
+    });
+
+    if (useSSL && skipTlsVerify) {
+      log.warn("MINIO_INSECURE_SKIP_TLS_VERIFY is enabled. TLS certificate verification is disabled for storage client.");
+    } else if (useSSL && !skipTlsVerify) {
+      log.info("TLS certificate verification is enabled for storage client. If your MinIO uses a self-signed certificate, set MINIO_INSECURE_SKIP_TLS_VERIFY=true.");
+    }
 
     minioClient = new Minio.Client({
       endPoint: MINIO_ENDPOINT,
@@ -79,6 +115,9 @@ async function initializeBucket() {
       useSSL: useSSL,
       accessKey: MINIO_ACCESS_KEY,
       secretKey: MINIO_SECRET_KEY,
+      ...(useSSL && skipTlsVerify
+        ? { transportAgent: new https.Agent({ rejectUnauthorized: false }) }
+        : {}),
     });
 
     log.info(
@@ -134,33 +173,13 @@ function requireInitialized() {
   }
 }
 
-/**
- * Generate signed upload URL
- */
-async function generateSignedUploadUrl(key, contentType) {
+async function ensureBucketExists(bucket = MINIO_BUCKET) {
   requireInitialized();
-
-  const allowedTypes = [
-    "image/jpeg", "image/jpg", "image/png", "image/webp",
-    "video/mp4", "video/webm",
-  ];
-
-  if (!allowedTypes.includes(contentType.toLowerCase())) {
-    throw new Error("Invalid file type. Allowed: JPEG, PNG, WebP, MP4, WebM");
+  const exists = await minioClient.bucketExists(bucket);
+  if (!exists) {
+    await minioClient.makeBucket(bucket, REGION);
+    log.warn(`Bucket '${bucket}' was missing and has been created on demand.`);
   }
-
-  const signedUrl = await minioClient.presignedPutObject(
-    MINIO_BUCKET,
-    key,
-    5 * 60,
-    { "Content-Type": contentType },
-  );
-
-  return {
-    signedUrl,
-    publicUrl: getPublicUrl(key),
-    key,
-  };
 }
 
 /**
@@ -168,6 +187,7 @@ async function generateSignedUploadUrl(key, contentType) {
  */
 async function deleteObject(key) {
   requireInitialized();
+  await ensureBucketExists(MINIO_BUCKET);
   await minioClient.removeObject(MINIO_BUCKET, key);
 }
 
@@ -176,24 +196,25 @@ async function deleteObject(key) {
  */
 async function deleteObjects(keys) {
   requireInitialized();
+  await ensureBucketExists(MINIO_BUCKET);
   await minioClient.removeObjects(MINIO_BUCKET, keys);
 }
 
 /**
- * Public URL
- * Prefers MINIO_CDN_URL (Cloudflare-fronted), then MINIO_PUBLIC_URL, then direct
+ * Public file URL for client responses
+ * Prefers MINIO_PUBLIC_URL, then MINIO_CDN_URL, then internal endpoint fallback.
  */
+function getPublicFileUrl(fileName, bucket = MINIO_BUCKET) {
+  const key = normalizeObjectKey(fileName);
+  if (PUBLIC_BASE_URL) {
+    // Required format: https://cdn.sbali.in/<bucket>/<fileName>
+    return `${PUBLIC_BASE_URL}/${bucket}/${key}`;
+  }
+  return `${buildInternalObjectBaseUrl()}/${bucket}/${key}`;
+}
+
 function getPublicUrl(key, bucket = MINIO_BUCKET) {
-  if (CDN_BASE_URL) {
-    return `${CDN_BASE_URL}/${bucket}/${key}`;
-  }
-  if (MINIO_PUBLIC_URL) {
-    const baseUrl = MINIO_PUBLIC_URL.replace(/\/$/, "");
-    return `${baseUrl}/${bucket}/${key}`;
-  }
-  const useSSL = String(MINIO_USE_SSL).toLowerCase() === "true";
-  const protocol = useSSL ? "https" : "http";
-  return `${protocol}://${MINIO_ENDPOINT}/${bucket}/${key}`;
+  return getPublicFileUrl(key, bucket);
 }
 
 /**
@@ -201,9 +222,10 @@ function getPublicUrl(key, bucket = MINIO_BUCKET) {
  * @param {Buffer} buffer - File buffer
  * @param {string} key - Object key/path
  * @param {string} contentType - MIME type
+ * @param {string} [bucket=MINIO_BUCKET] - Bucket name
  * @returns {Promise<string>} - Public URL
  */
-async function uploadBuffer(buffer, key, contentType) {
+async function uploadBuffer(buffer, key, contentType, bucket = MINIO_BUCKET) {
   requireInitialized();
 
   const allowedTypes = [
@@ -228,14 +250,10 @@ async function uploadBuffer(buffer, key, contentType) {
     "Content-Type": contentType,
   };
 
-  await minioClient.putObject(
-    MINIO_BUCKET,
-    key,
-    buffer,
-    buffer.length,
-    metadata,
-  );
-  return getPublicUrl(key);
+  await ensureBucketExists(bucket);
+
+  await minioClient.putObject(bucket, key, buffer, buffer.length, metadata);
+  return getPublicFileUrl(key, bucket);
 }
 
 /**
@@ -277,9 +295,10 @@ async function getStorageHealth() {
 
 module.exports = {
   initializeBucket,
-  generateSignedUploadUrl,
   deleteObject,
   deleteObjects,
+  ensureBucketExists,
+  getPublicFileUrl,
   getPublicUrl,
   uploadBuffer,
   getStorageHealth,

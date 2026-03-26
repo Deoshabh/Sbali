@@ -1,0 +1,96 @@
+diff --git a/docs/FIREBASE_AUTHENTICATION_GUIDE.md b/docs/FIREBASE_AUTHENTICATION_GUIDE.md
+--- a/docs/FIREBASE_AUTHENTICATION_GUIDE.md
++++ b/docs/FIREBASE_AUTHENTICATION_GUIDE.md
+@@ -401,1 +401,1 @@
+-   - Email: test@example.com
++   - Email: <test@example.com>
+diff --git a/docs/QUICK_REFERENCE.md b/docs/QUICK_REFERENCE.md
+--- a/docs/QUICK_REFERENCE.md
++++ b/docs/QUICK_REFERENCE.md
+@@ -350,1 +350,1 @@
+-**Server**: Running on http://localhost:3000
++**Server**: Running on <http://localhost:3000>
+diff --git a/docs/FIREBASE_GOOGLE_SIGNIN_SECURITY_GUIDE.md b/docs/FIREBASE_GOOGLE_SIGNIN_SECURITY_GUIDE.md
+--- a/docs/FIREBASE_GOOGLE_SIGNIN_SECURITY_GUIDE.md
++++ b/docs/FIREBASE_GOOGLE_SIGNIN_SECURITY_GUIDE.md
+@@ -193,1 +193,1 @@
+-4. **Expected:** Signed in as Account B (Gagan211105@akgec.ac.in)
++4. **Expected:** Signed in as Account B (<Gagan211105@akgec.ac.in>)
+diff --git a/docs/COMPREHENSIVE_WEBSITE_REVIEW.md b/docs/COMPREHENSIVE_WEBSITE_REVIEW.md
+--- a/docs/COMPREHENSIVE_WEBSITE_REVIEW.md
++++ b/docs/COMPREHENSIVE_WEBSITE_REVIEW.md
+@@ -6,1 +6,1 @@
+-**Repository**: https://github.com/Deoshabh/Sbali-2026
++**Repository**: <https://github.com/Deoshabh/Sbali-2026>
+@@ -1011,1 +1011,1 @@
+-### Estimated Time to Fix:
++### Estimated Time to Fix
+@@ -1084,1 +1084,1 @@
+-### ð Standout Features:
++### ð Standout Features
+@@ -1092,1 +1092,1 @@
+-### ð§ Main Gaps:
++### ð§ Main Gaps
+diff --git a/docs/PRODUCT_AVAILABILITY_FIX.md b/docs/PRODUCT_AVAILABILITY_FIX.md
+--- a/docs/PRODUCT_AVAILABILITY_FIX.md
++++ b/docs/PRODUCT_AVAILABILITY_FIX.md
+@@ -108,1 +108,1 @@
+-### To Fix This Product:
++### To Fix This Product
+diff --git a/docs/COMPLETE_BUG_FIX_REPORT.md b/docs/COMPLETE_BUG_FIX_REPORT.md
+--- a/docs/COMPLETE_BUG_FIX_REPORT.md
++++ b/docs/COMPLETE_BUG_FIX_REPORT.md
+@@ -150,1 +150,1 @@
+-### Returns **Direct Array**:
++### Returns **Direct Array**
+@@ -156,1 +156,1 @@
+-### Returns **Wrapped Object**:
++### Returns **Wrapped Object**
+@@ -200,1 +200,1 @@
+-### Frontend Context Files:
++### Frontend Context Files
+@@ -205,1 +205,1 @@
+-### Frontend Page Files:
++### Frontend Page Files
+@@ -221,1 +221,1 @@
+-### Frontend Component Files:
++### Frontend Component Files
+@@ -229,1 +229,1 @@
+-### Before:
++### Before
+diff --git a/docs/DEBUGGING_STEPS.md b/docs/DEBUGGING_STEPS.md
+--- a/docs/DEBUGGING_STEPS.md
++++ b/docs/DEBUGGING_STEPS.md
+@@ -82,1 +82,1 @@
+-### If you see the â creation message BUT products still don't appear:
++### If you see the â creation message BUT products still don't appear
+@@ -93,1 +93,1 @@
+-### If you DON'T see the â creation message:
++### If you DON'T see the â creation message
+@@ -104,1 +104,1 @@
+-### If fetch logs show "Found 0 products" but you created some:
++### If fetch logs show "Found 0 products" but you created some
+diff --git a/docs/RAZORPAY_SETUP_AND_DEPLOYMENT.md b/docs/RAZORPAY_SETUP_AND_DEPLOYMENT.md
+--- a/docs/RAZORPAY_SETUP_AND_DEPLOYMENT.md
++++ b/docs/RAZORPAY_SETUP_AND_DEPLOYMENT.md
+@@ -229,1 +229,1 @@
+-**Dashboard**: https://dashboard.razorpay.com/
++**Dashboard**: <https://dashboard.razorpay.com/>
+diff --git a/docs/FIREBASE_LOGIN_400_DEBUGGING.md b/docs/FIREBASE_LOGIN_400_DEBUGGING.md
+--- a/docs/FIREBASE_LOGIN_400_DEBUGGING.md
++++ b/docs/FIREBASE_LOGIN_400_DEBUGGING.md
+@@ -16,1 +16,1 @@
+-### Possible Causes:
++### Possible Causes
+@@ -171,1 +171,1 @@
+-### For Immediate Testing:
++### For Immediate Testing
+@@ -179,1 +179,1 @@
+-### For Verification:
++### For Verification
+diff --git a/frontend/README.md b/frontend/README.md
+--- a/frontend/README.md
++++ b/frontend/README.md
+@@ -219,1 +219,1 @@
+-For issues or questions, please contact: info@sbali.com
++For issues or questions, please contact: <info@sbali.com>

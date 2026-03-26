@@ -8,6 +8,7 @@ import {
   FiMaximize, FiCornerDownLeft,
   FiCornerDownRight,
 } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 const ImageEditor = ({ image, onSave, onCancel }) => {
   const canvasRef = useRef(null);
@@ -36,6 +37,33 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [saving, setSaving] = useState(false);
+  const triedCdnFallbackRef = useRef(false);
+
+  const normalizeCdnImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    // Preserve original URL and rely on fallback only when load fails.
+    return url;
+  };
+
+  const getAlternateCdnUrl = (url) => {
+    if (!url || typeof url !== 'string') return null;
+    if (url.includes('https://cdn.sbali.in/product-media/')) {
+      return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+    }
+    if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+      return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+    }
+    return null;
+  };
+
+  const toEditorSafeImageUrl = (url) => {
+    if (!url || typeof url !== 'string') return url;
+    if (url.startsWith('data:') || url.startsWith('blob:')) return url;
+    if (url.startsWith('/api/v1/admin/media/image-proxy')) return url;
+
+    const proxyUrl = `/api/v1/admin/media/image-proxy?url=${encodeURIComponent(url)}`;
+    return proxyUrl;
+  };
 
   // Aspect ratio presets for shoe product images
   const aspectRatios = [
@@ -49,6 +77,7 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
   // ── Load image (handle both data URLs and remote URLs) ──
   useEffect(() => {
     if (!image) return;
+    triedCdnFallbackRef.current = false;
 
     // Data URLs work directly — no CORS issue
     if (image.startsWith('data:')) {
@@ -56,24 +85,8 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
       return;
     }
 
-    // For remote URLs (MinIO), fetch as blob to avoid tainted canvas
-    const fetchImage = async () => {
-      try {
-        const res = await fetch(image);
-        const blob = await res.blob();
-        const dataUrl = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(blob);
-        });
-        setImageSrc(dataUrl);
-      } catch (err) {
-        console.error('Failed to fetch image, trying direct load:', err);
-        setImageSrc(image);
-      }
-    };
-
-    fetchImage();
+    // Use direct URL load to avoid CORS-blocked fetch for CDN assets.
+    setImageSrc(toEditorSafeImageUrl(normalizeCdnImageUrl(image)));
   }, [image]);
 
   // ── Draw the main canvas ──
@@ -144,11 +157,23 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
   useEffect(() => {
     if (!imageSrc) return;
     const img = new window.Image();
+    img.crossOrigin = 'anonymous';
     img.onload = () => {
       imgRef.current = img;
       setImageLoaded(true);
     };
-    img.onerror = () => console.error('Failed to load image for editor');
+    img.onerror = () => {
+      if (!triedCdnFallbackRef.current) {
+        const fallback = getAlternateCdnUrl(imageSrc);
+        if (fallback && fallback !== imageSrc) {
+          triedCdnFallbackRef.current = true;
+          setImageSrc(toEditorSafeImageUrl(fallback));
+          return;
+        }
+      }
+      console.error('Failed to load image for editor');
+      toast.error('Could not load image into editor');
+    };
     img.src = imageSrc;
   }, [imageSrc]);
 
@@ -399,28 +424,33 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
   const applyCrop = () => {
     if (!cropRect || !canvasRef.current) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    try {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
 
-    const imageData = ctx.getImageData(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
+      const imageData = ctx.getImageData(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
 
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = cropRect.w;
-    tempCanvas.height = cropRect.h;
-    tempCanvas.getContext('2d').putImageData(imageData, 0, 0);
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = cropRect.w;
+      tempCanvas.height = cropRect.h;
+      tempCanvas.getContext('2d').putImageData(imageData, 0, 0);
 
-    const croppedDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
-    setImageSrc(croppedDataUrl);
+      const croppedDataUrl = tempCanvas.toDataURL('image/jpeg', 0.95);
+      setImageSrc(croppedDataUrl);
 
-    // Reset transformations after crop
-    setRotation(0);
-    setZoom(1);
-    setBrightness(100);
-    setContrast(100);
-    setFlipH(false);
-    setFlipV(false);
-    setCropRect(null);
-    setCropMode(false);
+      // Reset transformations after crop
+      setRotation(0);
+      setZoom(1);
+      setBrightness(100);
+      setContrast(100);
+      setFlipH(false);
+      setFlipV(false);
+      setCropRect(null);
+      setCropMode(false);
+    } catch (error) {
+      console.error('Crop failed:', error);
+      toast.error('Cannot crop this image due to browser security restrictions');
+    }
   };
 
   // ── Aspect ratio change ──
@@ -461,7 +491,15 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
       // If in crop mode with active crop, apply crop first
       if (cropMode && cropRect) {
         const ctx = canvas.getContext('2d');
-        const imageData = ctx.getImageData(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
+        let imageData;
+        try {
+          imageData = ctx.getImageData(cropRect.x, cropRect.y, cropRect.w, cropRect.h);
+        } catch (securityError) {
+          toast.error('Cannot save cropped image due to browser security restrictions');
+          setSaving(false);
+          return;
+        }
+
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = cropRect.w;
         tempCanvas.height = cropRect.h;
@@ -494,6 +532,7 @@ const ImageEditor = ({ image, onSave, onCancel }) => {
       );
     } catch (error) {
       console.error('Error saving image:', error);
+      toast.error('Failed to save edited image');
       setSaving(false);
     }
   };

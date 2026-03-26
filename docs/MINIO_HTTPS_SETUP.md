@@ -8,8 +8,7 @@ MinIO was generating HTTP URLs, but the website is HTTPS, causing "Mixed Content
 
 Configure MinIO to be accessible via HTTPS through Traefik.
 
-## Step-by-Step Setup in Dokploy:
-
+## Step-by-Step Setup in Dokploy
 ### 1. Update MinIO Service in Dokploy
 
 Go to your MinIO service in Dokploy and update the **docker-compose.yml**:
@@ -24,8 +23,8 @@ services:
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      - MINIO_BROWSER_REDIRECT_URL=https://minio-console.sbali.in
-      - MINIO_SERVER_URL=https://minio.sbali.in
+      - MINIO_BROWSER_REDIRECT_URL=<https://minio-console.sbali.in>
+      - MINIO_SERVER_URL=<https://minio.sbali.in>
     command: server /data --console-address ":9001"
 
     # Remove the ports section - let Traefik handle external access
@@ -57,7 +56,7 @@ services:
       - "traefik.http.services.minio-console.loadbalancer.server.port=9001"
 
       # CORS Headers for MinIO API
-      - "traefik.http.middlewares.minio-cors.headers.accesscontrolalloworiginlist=https://sbali.in,https://www.sbali.in"
+      - "traefik.http.middlewares.minio-cors.headers.accesscontrolalloworiginlist=<https://sbali.in,<https://www.sbali.in>">
       - "traefik.http.middlewares.minio-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS,HEAD"
       - "traefik.http.middlewares.minio-cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.minio-cors.headers.accesscontrolallowcredentials=true"
@@ -75,8 +74,8 @@ In the MinIO service environment variables:
 ```env
 MINIO_ROOT_USER=minioadmin
 MINIO_ROOT_PASSWORD=ylpop1kdbsskkyei
-MINIO_BROWSER_REDIRECT_URL=https://minio-console.sbali.in
-MINIO_SERVER_URL=https://minio.sbali.in
+MINIO_BROWSER_REDIRECT_URL=<https://minio-console.sbali.in>
+MINIO_SERVER_URL=<https://minio.sbali.in>
 ```
 
 ### 3. Add DNS Records
@@ -120,11 +119,11 @@ MINIO_REGION=us-east-1
 1. **Test MinIO API (should redirect to HTTPS):**
 
    ```bash
-   curl -I https://minio.sbali.in/minio/health/live
+   curl -I <https://minio.sbali.in/minio/health/live>
    ```
 
 2. **Test MinIO Console:**
-   - Visit https://minio-console.sbali.in
+   - Visit <https://minio-console.sbali.in>
    - Login with: minioadmin / ylpop1kdbsskkyei
 
 3. **Test Image Upload:**
@@ -133,28 +132,18 @@ MINIO_REGION=us-east-1
 
 ### 7. Expected URLs After Fix
 
-- **MinIO API:** https://minio.sbali.in
-- **MinIO Console:** https://minio-console.sbali.in
-- **Signed Upload URLs:** https://minio.sbali.in/product-media/products/...
-- **Public Image URLs:** https://minio.sbali.in/product-media/products/...
+- **MinIO API:** <https://minio.sbali.in>
+- **MinIO Console:** <https://minio-console.sbali.in>
+- **Signed Upload URLs:** <https://minio.sbali.in/product-media/products/...>
+- **Public Image URLs:** <https://minio.sbali.in/product-media/products/...>
 
 ## Troubleshooting
 
-### If you see SSL errors:
+### If you see SSL errors`r`n`r`n- Wait 2-3 minutes for Let's Encrypt certificate generation`r`n`r`n- Check Traefik logs in Dokploy
 
-- Wait 2-3 minutes for Let's Encrypt certificate generation
-- Check Traefik logs in Dokploy
+### If MinIO is not accessible`r`n`r`n- Verify DNS records are propagated: `nslookup minio.sbali.in``r`n`r`n- Check Traefik dashboard for router status
 
-### If MinIO is not accessible:
-
-- Verify DNS records are propagated: `nslookup minio.sbali.in`
-- Check Traefik dashboard for router status
-
-### If images still don't upload:
-
-- Clear browser cache
-- Check browser console for the new HTTPS URLs
-- Verify backend logs show correct MinIO endpoint
+### If images still don't upload`r`n`r`n- Clear browser cache`r`n`r`n- Check browser console for the new HTTPS URLs`r`n`r`n- Verify backend logs show correct MinIO endpoint
 
 ## Rollback (if needed)
 
@@ -175,3 +164,5 @@ If something goes wrong, you can temporarily rollback by:
    ```
 
 Note: This rollback will only work for local development, not for production HTTPS site.
+
+

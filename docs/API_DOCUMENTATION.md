@@ -3,8 +3,8 @@
 ## Base URL
 
 ```
-Production: https://api.sbali.in
-Development: http://localhost:5000
+Production: <https://api.sbali.in>
+Development: <http://localhost:5000>
 ```
 
 ## Authentication
@@ -85,7 +85,7 @@ Authorization: Bearer <your_access_token>
 ```json
 {
   "name": "John Doe",
-  "email": "john@example.com",
+  "email": "<john@example.com>",
   "password": "SecurePass123",
   "phone": "9876543210"
 }
@@ -106,7 +106,7 @@ Authorization: Bearer <your_access_token>
   "user": {
     "_id": "65f...",
     "name": "John Doe",
-    "email": "john@example.com",
+    "email": "<john@example.com>",
     "role": "customer"
   },
   "accessToken": "eyJhbG...",
@@ -122,7 +122,7 @@ Authorization: Bearer <your_access_token>
 
 ```json
 {
-  "email": "john@example.com",
+  "email": "<john@example.com>",
   "password": "SecurePass123"
 }
 ```
@@ -135,7 +135,7 @@ Authorization: Bearer <your_access_token>
   "user": {
     "_id": "65f...",
     "name": "John Doe",
-    "email": "john@example.com",
+    "email": "<john@example.com>",
     "role": "customer"
   },
   "accessToken": "eyJhbG...",
@@ -207,7 +207,7 @@ Authorization: Bearer <your_access_token>
   "slug": "nike-air-max",
   "description": "...",
   "price": 5999,
-  "images": ["https://..."],
+  "images": ["<https://..."],>
   "category": {...},
   "sizes": ["8", "9", "10"],
   "colors": [...],
@@ -430,7 +430,7 @@ Authorization: Bearer <your_access_token>
       "_id": "65f...",
       "name": "Running Shoes",
       "slug": "running-shoes",
-      "image": "https://...",
+      "image": "<https://...",>
       "isActive": true
     }
   ]
@@ -490,7 +490,7 @@ Authorization: Bearer <your_access_token>
 {
   "name": "John Updated",
   "phone": "9876543210",
-  "avatar": "https://..."
+  "avatar": "<https://...">
 }
 ```
 
@@ -675,7 +675,7 @@ Upload media file (images)
 
 ```json
 {
-  "url": "https://cdn.sbali.in/products/..."
+  "url": "<https://cdn.sbali.in/products/...">
 }
 ```
 
@@ -737,4 +737,5 @@ All endpoints return errors in this format:
 
 **Last Updated:** February 3, 2026  
 **API Version:** v1  
-**Support:** support@sbali.in
+**Support:** <support@sbali.in>
+

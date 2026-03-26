@@ -40,7 +40,7 @@ export const SITE_SETTINGS_DEFAULTS = {
       titleLine1: 'The Art of',
       titleLine2: 'Shoemaking',
       images: [
-        { id: 'craft-1', url: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1200&h=800&fit=crop&q=80', alt: 'Artisan hand-stitching leather' },
+        { id: 'craft-1', url: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1200&h=800&fit=crop&q=80', alt: 'Artisan hand-stitching leather' },
         { id: 'craft-2', url: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=1200&h=800&fit=crop&q=80', alt: 'Workshop overview' },
         { id: 'craft-3', url: 'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=1200&h=800&fit=crop&q=80', alt: 'Shoe lasting process' },
         { id: 'craft-4', url: 'https://images.unsplash.com/photo-1449505278894-297fdb3edbc1?w=1200&h=800&fit=crop&q=80', alt: 'Hand burnishing finish' },

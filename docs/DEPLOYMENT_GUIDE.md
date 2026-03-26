@@ -4,8 +4,7 @@
 
 ## 1. SUBDOMAIN SETUP (Recommended Architecture)
 
-### DNS Configuration:
-
+### DNS Configuration
 Add these records in your domain registrar (sbali.in):
 
 ```
@@ -18,8 +17,7 @@ CNAME   minio   api.sbali.in        300
 
 ## 2. DOKPLOY PROJECT STRUCTURE
 
-### Create 3 Services in Dokploy:
-
+### Create 3 Services in Dokploy
 #### Service 1: Backend API
 
 - **Name**: sbali-backend
@@ -80,14 +78,13 @@ MONGO_URI=mongodb://sbali_admin:SECURE_PASSWORD@localhost:27017/sbali_production
 
 ## 4. MINIO SETUP
 
-### If using Docker Compose:
-
+### If using Docker Compose
 ```bash
 # In Dokploy, add Docker Compose service
 docker-compose -f docker-compose.minio.yml up -d
 
 # Access MinIO Console
-http://YOUR_VPS_IP:9001
+<http://YOUR_VPS_IP:9001>
 Username: minioadmin
 Password: minioadmin
 ```
@@ -103,7 +100,7 @@ server {
     server_name sbali.in www.sbali.in;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass <http://localhost:3000;>
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -118,7 +115,7 @@ server {
     server_name api.sbali.in;
 
     location / {
-        proxy_pass http://localhost:5000;
+        proxy_pass <http://localhost:5000;>
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -130,12 +127,10 @@ server {
 
 ## 6. SSL CERTIFICATES (HTTPS)
 
-### If Dokploy has built-in SSL:
-
+### If Dokploy has built-in SSL
 Just enable it in the dashboard for each service.
 
-### If manual setup needed:
-
+### If manual setup needed
 ```bash
 # Install Certbot
 sudo apt install certbot python3-certbot-nginx -y
@@ -196,23 +191,21 @@ sudo certbot --nginx -d api.sbali.in
 
 ## 9. POST-DEPLOYMENT
 
-### Test your deployment:
-
+### Test your deployment
 ```bash
 # Check if services are running
-curl https://api.sbali.in/health
-curl https://sbali.in
+curl <https://api.sbali.in/health>
+curl <https://sbali.in>
 
 # Test backend API
-curl https://api.sbali.in/api/v1/products
+curl <https://api.sbali.in/api/v1/products>
 
 # Monitor logs
 dokploy logs sbali-backend
 dokploy logs sbali-frontend
 ```
 
-### Create admin user:
-
+### Create admin user
 ```bash
 # SSH into your VPS
 ssh user@YOUR_VPS_IP
@@ -221,20 +214,14 @@ ssh user@YOUR_VPS_IP
 docker exec -it sbali-backend sh
 
 # Run admin creation script
-node utils/makeAdmin.js your-email@example.com
+node utils/makeAdmin.js <your-email@example.com>
 ```
 
 ## 10. MONITORING & MAINTENANCE
 
-### Set up monitoring:
+### Set up monitoring`r`n`r`n- Enable Dokploy health checks`r`n`r`n- Set up uptime monitoring (UptimeRobot, Pingdom)`r`n`r`n- Configure log aggregation`r`n`r`n- Set up backup automation for MongoDB
 
-- Enable Dokploy health checks
-- Set up uptime monitoring (UptimeRobot, Pingdom)
-- Configure log aggregation
-- Set up backup automation for MongoDB
-
-### Regular maintenance:
-
+### Regular maintenance
 ```bash
 # Update containers
 dokploy update sbali-backend
@@ -249,13 +236,14 @@ docker system prune -a
 
 ## QUICK REFERENCE
 
-**Frontend**: https://sbali.in
-**Backend API**: https://api.sbali.in
-**Admin Panel**: https://sbali.in/admin
-**MinIO Console**: http://YOUR_VPS_IP:9001 (internal only)
+**Frontend**: <https://sbali.in>
+**Backend API**: <https://api.sbali.in>
+**Admin Panel**: <https://sbali.in/admin>
+**MinIO Console**: <http://YOUR_VPS_IP:9001> (internal only)
 
 **Support**:
 
-- Dokploy Docs: https://docs.dokploy.com
-- MongoDB Atlas: https://www.mongodb.com/docs/atlas/
-- Next.js Deploy: https://nextjs.org/docs/deployment
+- Dokploy Docs: <https://docs.dokploy.com>
+- MongoDB Atlas: <https://www.mongodb.com/docs/atlas/>
+- Next.js Deploy: <https://nextjs.org/docs/deployment>
+

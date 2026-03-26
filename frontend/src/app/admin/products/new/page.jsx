@@ -15,6 +15,26 @@ import toast from 'react-hot-toast';
 import { formatPrice } from '@/utils/helpers';
 import { FiPlus, FiX, FiVideo, FiTrash2 } from 'react-icons/fi';
 
+const normalizeCdnImageUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  // Canonicalize legacy product-media paths to current sbali-products path.
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+  return url;
+};
+
+const getAlternateCdnMediaUrl = (url) => {
+  if (!url || typeof url !== 'string') return null;
+  if (url.includes('https://cdn.sbali.in/product-media/')) {
+    return url.replace('https://cdn.sbali.in/product-media/', 'https://cdn.sbali.in/sbali-products/');
+  }
+  if (url.includes('https://cdn.sbali.in/sbali-products/')) {
+    return url.replace('https://cdn.sbali.in/sbali-products/', 'https://cdn.sbali.in/product-media/');
+  }
+  return null;
+};
+
 function ProductFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,6 +54,7 @@ function ProductFormContent() {
   const [existingVideo, setExistingVideo] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [sizeInput, setSizeInput] = useState('');
   const isDirty = useRef(false);
 
   // Categories via React Query
@@ -139,7 +160,7 @@ function ProductFormContent() {
       // Set existing images
       if (product.images && product.images.length > 0) {
         setExistingImages(product.images);
-        const previews = product.images.map(img => img.url || img);
+        const previews = product.images.map(img => normalizeCdnImageUrl(img.url || img));
         setImagePreviews(previews);
       }
 
@@ -154,7 +175,10 @@ function ProductFormContent() {
 
       // Set existing video
       if (product.video?.url) {
-        setExistingVideo(product.video);
+        setExistingVideo({
+          ...product.video,
+          url: normalizeCdnImageUrl(product.video.url),
+        });
       }
     } catch (error) {
       console.error('Failed to fetch product:', error);
@@ -217,15 +241,16 @@ function ProductFormContent() {
   const handleVideoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    const allowedVideoMimeTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
 
     // Validate file type
     if (!file.type.startsWith('video/')) {
-      toast.error('Please select a valid video file (MP4 or WebM)');
+      toast.error('Please select a valid video file (MP4, WebM, or MOV)');
       return;
     }
 
-    if (!['video/mp4', 'video/webm'].includes(file.type)) {
-      toast.error('Only MP4 and WebM video formats are supported');
+    if (!allowedVideoMimeTypes.includes(file.type)) {
+      toast.error('Only MP4, WebM, and MOV video formats are supported');
       return;
     }
 
@@ -266,32 +291,53 @@ function ProductFormContent() {
     }
     setExistingVideo(null);
   };
-  const handleSizeChange = (e) => {
-    const value = e.target.value;
-    const newSizes = value.split(',').map(s => s.trim()).filter(Boolean);
+  const handleAddSizes = () => {
+    const candidates = sizeInput
+      .split(/[\n,]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
 
-    // Preserve existing stock values for sizes that remain
-    const newSizeStocks = { ...formData.sizeStocks };
+    if (candidates.length === 0) {
+      return;
+    }
 
-    // Remove stocks for deleted sizes
-    Object.keys(newSizeStocks).forEach(size => {
-      if (!newSizes.includes(size)) {
-        delete newSizeStocks[size];
+    const uniqueCandidates = Array.from(new Set(candidates));
+    const existing = new Set(formData.sizes);
+    const sizesToAdd = uniqueCandidates.filter((size) => !existing.has(size));
+
+    if (sizesToAdd.length === 0) {
+      toast.error('All entered sizes are already added');
+      return;
+    }
+
+    const nextSizeStocks = { ...formData.sizeStocks };
+    sizesToAdd.forEach((size) => {
+      if (nextSizeStocks[size] === undefined) {
+        nextSizeStocks[size] = 0;
       }
     });
 
-    // Initialize stock for new sizes
-    newSizes.forEach(size => {
-      if (newSizeStocks[size] === undefined) {
-        newSizeStocks[size] = 0;
-      }
-    });
+    setFormData((prev) => ({
+      ...prev,
+      sizes: [...prev.sizes, ...sizesToAdd],
+      sizeStocks: nextSizeStocks,
+    }));
+    setSizeInput('');
+    setIsFormDirty(true);
+    isDirty.current = true;
+  };
 
-    setFormData({
-      ...formData,
-      sizes: newSizes,
-      sizeStocks: newSizeStocks
-    });
+  const handleRemoveSize = (sizeToRemove) => {
+    const nextSizeStocks = { ...formData.sizeStocks };
+    delete nextSizeStocks[sizeToRemove];
+
+    setFormData((prev) => ({
+      ...prev,
+      sizes: prev.sizes.filter((size) => size !== sizeToRemove),
+      sizeStocks: nextSizeStocks,
+    }));
+    setIsFormDirty(true);
+    isDirty.current = true;
   };
 
   const handleSizeStockChange = (size, value) => {
@@ -377,18 +423,13 @@ function ProductFormContent() {
               throw new Error(`Invalid upload URL response for ${file.name}`);
             }
 
-            // Upload image to MinIO
-            const uploadResponse = await fetch(uploadUrlData.signedUrl, {
-              method: 'PUT',
-              body: file,
-              headers: {
-                'Content-Type': file.type,
-              },
-            });
+            // Upload via backend to avoid CSP issues with external MinIO presigned URLs.
+            const uploadForm = new FormData();
+            uploadForm.append('file', file);
+            uploadForm.append('key', uploadUrlData.key);
+            uploadForm.append('contentType', file.type);
 
-            if (!uploadResponse.ok) {
-              throw new Error(`Failed to upload ${file.name}: ${uploadResponse.statusText}`);
-            }
+            await adminAPI.uploadDirect(uploadForm);
 
             // Add image metadata
             uploadedImages.push({
@@ -425,11 +466,12 @@ function ProductFormContent() {
 
             const uploadUrlData = responseData?.data || responseData;
 
-            await fetch(uploadUrlData.signedUrl, {
-              method: 'PUT',
-              body: file,
-              headers: { 'Content-Type': file.type },
-            });
+            const uploadForm = new FormData();
+            uploadForm.append('file', file);
+            uploadForm.append('key', uploadUrlData.key);
+            uploadForm.append('contentType', file.type);
+
+            await adminAPI.uploadDirect(uploadForm);
 
             uploaded360Images.push({
               url: uploadUrlData.publicUrl,
@@ -455,8 +497,12 @@ function ProductFormContent() {
       // For now, let's just save them.
       const allImages360 = [...existingImages360, ...uploaded360Images];
 
-      // Combine existing and new images
-      const allImages = [...existingImages, ...uploadedImages];
+      // Combine existing and new images and enforce deterministic primary image
+      const allImages = [...existingImages, ...uploadedImages].map((img, index) => ({
+        ...img,
+        isPrimary: index === 0,
+        order: index,
+      }));
 
       // Step 1.75: Upload video (if any)
       let videoData = existingVideo || null;
@@ -472,12 +518,12 @@ function ProductFormContent() {
           const uploadUrlData = responseData?.data || responseData;
           if (!uploadUrlData?.signedUrl) throw new Error('Invalid video upload URL response');
 
-          const uploadRes = await fetch(uploadUrlData.signedUrl, {
-            method: 'PUT',
-            body: videoFile,
-            headers: { 'Content-Type': videoFile.type },
-          });
-          if (!uploadRes.ok) throw new Error(`Video upload failed: ${uploadRes.statusText}`);
+          const uploadForm = new FormData();
+          uploadForm.append('file', videoFile);
+          uploadForm.append('key', uploadUrlData.key);
+          uploadForm.append('contentType', videoFile.type);
+
+          await adminAPI.uploadDirect(uploadForm);
 
           // Get duration from the preview element
           let duration = 0;
@@ -512,12 +558,33 @@ function ProductFormContent() {
         ? formData.sizes.reduce((sum, size) => sum + (formData.sizeStocks[size] || 0), 0)
         : Number(formData.stock) || 0;
 
+      const numericPrice = Number(formData.price);
+      if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+        toast.error('Price must be a valid number greater than 0');
+        return;
+      }
+
+      if (!formData.category) {
+        toast.error('Category is required');
+        return;
+      }
+
+      if (!allImages || allImages.length === 0) {
+        toast.error('At least one image is required');
+        return;
+      }
+
+      const parsedTags = String(formData.tags || '')
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean);
+
       const productData = {
         name: formData.name,
         slug: formData.slug,
         description: formData.description,
         category: formData.category,
-        price: Number(formData.price),
+        price: numericPrice,
         gstPercentage: Number(formData.gstPercentage) || 0,
         averageDeliveryCost: Number(formData.averageDeliveryCost) || 0,
         images: allImages,
@@ -552,8 +619,8 @@ function ProductFormContent() {
         productData.colors = formData.colors;
       }
 
-      if (formData.tags) {
-        productData.tags = formData.tags; // Already array from state
+      if (parsedTags.length > 0) {
+        productData.tags = parsedTags;
       }
 
       // Add specifications
@@ -567,6 +634,11 @@ function ProductFormContent() {
       }
 
       productData.isActive = formData.isActive;
+
+      if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
+        console.log('Product payload:', productData);
+      }
 
       // Step 3: Create or Update product
       if (isEditMode) {
@@ -583,8 +655,19 @@ function ProductFormContent() {
       router.push('/admin/products');
     } catch (error) {
       console.error('Failed to save product:', error);
-      console.error('Error details:', error.response?.data);
-      toast.error(error.response?.data?.message || 'Failed to save product');
+      const responseData = error.response?.data;
+      console.error('Error details:', responseData);
+
+      const fieldErrors = responseData?.errors || responseData?.details || [];
+      if (Array.isArray(fieldErrors) && fieldErrors.length > 0) {
+        console.error('Validation errors:', fieldErrors);
+      }
+
+      const firstFieldError = Array.isArray(fieldErrors) && fieldErrors.length > 0
+        ? (fieldErrors[0]?.message || fieldErrors[0]?.msg)
+        : null;
+
+      toast.error(firstFieldError || responseData?.message || 'Failed to save product');
     } finally {
       setLoading(false);
     }
@@ -647,7 +730,7 @@ function ProductFormContent() {
                 <FiVideo className="w-5 h-5" /> Product Video
               </h2>
               <p className="text-sm text-primary-600 mb-4">
-                Optional short video (max 30 seconds, MP4 or WebM, up to 50MB). Shown after product images.
+                Optional short video (max 30 seconds, MP4/WebM/MOV, up to 50MB). Shown after product images.
               </p>
 
               {/* Show existing or new video preview */}
@@ -658,6 +741,16 @@ function ProductFormContent() {
                     controls
                     className="w-full rounded-lg border border-primary-200"
                     style={{ maxHeight: '280px' }}
+                    onError={(e) => {
+                      const video = e.currentTarget;
+                      if (video.dataset.fallbackApplied === '1') return;
+                      const fallback = getAlternateCdnMediaUrl(video.currentSrc || video.src);
+                      if (fallback) {
+                        video.dataset.fallbackApplied = '1';
+                        video.src = fallback;
+                        video.load();
+                      }
+                    }}
                   >
                     Your browser does not support video playback.
                   </video>
@@ -679,10 +772,10 @@ function ProductFormContent() {
                 <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-primary-300 rounded-lg cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-colors">
                   <FiVideo className="w-8 h-8 text-primary-400 mb-2" />
                   <span className="text-sm text-primary-500 font-medium">Click to upload video</span>
-                  <span className="text-xs text-primary-400 mt-1">MP4 or WebM • Max 30 seconds • Max 50MB</span>
+                  <span className="text-xs text-primary-400 mt-1">MP4, WebM, or MOV • Max 30 seconds • Max 50MB</span>
                   <input
                     type="file"
-                    accept="video/mp4,video/webm"
+                    accept="video/mp4,video/webm,video/quicktime,.mov"
                     onChange={handleVideoChange}
                     className="hidden"
                   />
@@ -951,16 +1044,52 @@ function ProductFormContent() {
                   <label className="block text-sm font-medium text-primary-900 mb-2">
                     Sizes (UK)
                   </label>
-                  <input
-                    type="text"
-                    value={formData.sizes.join(', ')}
-                    onChange={handleSizeChange}
-                    className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-900"
-                    placeholder="e.g., 6, 7, 8, 9, 10"
-                  />
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="text"
+                      value={sizeInput}
+                      onChange={(e) => setSizeInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          handleAddSizes();
+                        }
+                      }}
+                      className="flex-1 px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-primary-900"
+                      placeholder="Type a size and click Add (e.g., 6)"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddSizes}
+                      className="px-4 py-2 bg-primary-900 text-white rounded-lg hover:bg-primary-800 transition-colors"
+                    >
+                      Add Size
+                    </button>
+                  </div>
                   <p className="text-xs text-primary-500 mt-1">
-                    Separate sizes with commas
+                    You can add one or many sizes together separated by commas.
                   </p>
+
+                  {formData.sizes.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {formData.sizes.map((size) => (
+                        <span
+                          key={size}
+                          className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium bg-primary-100 text-primary-800 rounded-full"
+                        >
+                          {size}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSize(size)}
+                            className="text-primary-700 hover:text-primary-900"
+                            aria-label={`Remove size ${size}`}
+                          >
+                            <FiX className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Stock Per Size Section */}
@@ -1179,6 +1308,23 @@ function ProductFormContent() {
 }
 
 export default function NewProductPage() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-brown mx-auto mb-4"></div>
+          <p className="text-primary-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
       <Suspense fallback={
         <div className="flex items-center justify-center min-h-screen">

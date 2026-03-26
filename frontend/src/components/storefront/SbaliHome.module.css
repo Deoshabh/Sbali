@@ -95,7 +95,7 @@
 }
 .heroTitleLine { display: block; overflow: hidden; }
 .heroTitleLine span { display: inline-block; }
-.heroTitleItalic { font-style: italic; color: #B8973A; }
+.heroTitleItalic { font-style: italic; color: #8F6423; }
 .heroDesc {
   font-family: var(--r-ff-ui);
   font-size: 16px; color: #5A5047;
@@ -111,9 +111,9 @@
   color: var(--r-espresso); text-decoration: none;
   display: inline-flex; align-items: center; gap: 0.5rem;
   height: 56px; cursor: pointer;
-  transition: color 0.3s;
+  transition: opacity 0.25s var(--r-ease-out), transform 0.25s var(--r-ease-out);
 }
-.heroTextCta:hover { color: var(--r-bronze); }
+.heroTextCta:hover { opacity: 0.82; transform: translateX(2px); }
 .heroCtaArrow {
   display: inline-block;
   transition: transform 0.3s var(--r-ease-out);
@@ -130,9 +130,9 @@
   height: 56px; display: inline-flex; align-items: center;
   background: #1A1714; color: #F0EBE1;
   border: none; cursor: pointer; text-decoration: none;
-  transition: background 0.4s var(--r-ease-out), transform 0.3s;
+  transition: transform 0.3s var(--r-ease-out), opacity 0.3s var(--r-ease-out);
 }
-.btnPrimary:hover { background: var(--r-brown); }
+.btnPrimary:hover { transform: translateY(-1px); opacity: 0.9; }
 
 .btnGhost {
   font-family: var(--r-ff-ui); text-transform: uppercase;
@@ -140,9 +140,9 @@
   padding: 1rem 2.4rem;
   background: transparent; color: var(--r-espresso);
   border: 1px solid var(--r-line); cursor: pointer; text-decoration: none;
-  transition: border-color 0.4s, color 0.4s;
+  transition: transform 0.3s var(--r-ease-out), opacity 0.3s var(--r-ease-out);
 }
-.btnGhost:hover { border-color: var(--r-bronze); color: var(--r-bronze); }
+.btnGhost:hover { transform: translateY(-1px); opacity: 0.78; }
 
 .btnLight {
   font-family: var(--r-ff-ui); text-transform: uppercase;
@@ -150,9 +150,9 @@
   padding: 1rem 2.4rem;
   background: var(--r-beige); color: var(--r-espresso);
   border: none; cursor: pointer; text-decoration: none;
-  transition: background 0.4s;
+  transition: transform 0.3s var(--r-ease-out), opacity 0.3s var(--r-ease-out);
 }
-.btnLight:hover { background: var(--r-white); }
+.btnLight:hover { transform: translateY(-1px); opacity: 0.88; }
 
 .btnGhostLight {
   font-family: var(--r-ff-ui); text-transform: uppercase;
@@ -160,16 +160,16 @@
   padding: 1rem 2.4rem;
   background: transparent; color: var(--r-beige);
   border: 1px solid rgba(242,237,228,0.25); cursor: pointer; text-decoration: none;
-  transition: border-color 0.4s;
+  transition: transform 0.3s var(--r-ease-out), opacity 0.3s var(--r-ease-out);
 }
-.btnGhostLight:hover { border-color: var(--r-tan); color: var(--r-tan); }
+.btnGhostLight:hover { transform: translateY(-1px); opacity: 0.82; }
 
 /* Hero Stats */
 .heroStats {
   display: flex; gap: 2.5rem;
   font-family: var(--r-ff-ui); font-size: 0.7rem;
   letter-spacing: 0.15em; text-transform: uppercase;
-  color: var(--r-mid);
+  color: #5A4B3E;
 }
 .heroStat { display: flex; align-items: baseline; gap: 0.3em; }
 .heroStatNum {
@@ -194,7 +194,7 @@
 .marqueeText {
   font-family: var(--r-ff-ui); font-size: 0.65rem;
   letter-spacing: 0.35em; text-transform: uppercase;
-  color: var(--r-mid); padding-right: 4rem;
+  color: #594A3D; padding-right: 4rem;
 }
 @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
@@ -303,7 +303,7 @@
 .emptyMsg {
   grid-column: 1 / -1; text-align: center;
   font-family: var(--r-ff-body); font-size: 1.1rem;
-  color: var(--r-mid); padding: 3rem 0;
+  color: #5A4B3E; padding: 3rem 0;
 }
 
 /* ── Craft ── */
@@ -396,9 +396,9 @@
   color: var(--r-espresso); text-decoration: none;
   border-bottom: 1px solid var(--r-espresso);
   padding-bottom: 0.3rem;
-  transition: color 0.3s, border-color 0.3s;
+  transition: transform 0.25s var(--r-ease-out), opacity 0.25s var(--r-ease-out);
 }
-.storyCta:hover { color: var(--r-bronze); border-color: var(--r-bronze); }
+.storyCta:hover { transform: translateX(2px); opacity: 0.85; }
 
 /* ── Testimonials ── */
 .testimonialWrap {
@@ -428,8 +428,9 @@
   width: 8px; height: 8px; border-radius: 50%;
   border: 1px solid var(--r-mid); background: transparent;
   cursor: pointer; padding: 0;
-  transition: background 0.3s, border-color 0.3s;
+  transition: transform 0.25s var(--r-ease-out), opacity 0.25s var(--r-ease-out);
 }
+.testimonialDot:hover { transform: scale(1.15); opacity: 0.9; }
 .testimonialDotActive {
   background: var(--r-tan); border-color: var(--r-tan);
 }

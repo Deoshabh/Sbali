@@ -347,4 +347,5 @@ API Call → State Update → Filter/Sort → UI Render
 
 **Status**: ✅ Production Ready
 **Quality**: ✅ Enterprise Level
-**Server**: Running on http://localhost:3000
+**Server**: Running on <http://localhost:3000>
+

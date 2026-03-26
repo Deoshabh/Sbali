@@ -4,7 +4,7 @@
 
 ### 1. **React Error #31 - Objects Rendered as Children**
 
-**Error**: `Error: Minified React error #31; visit https://react.dev/errors/31?args[]=object%20with%20keys%20%7Bsize%2C%20stock%2C%20_id%7D`
+**Error**: `Error: Minified React error #31; visit <https://react.dev/errors/31?args[]=object%20with%20keys%20%7Bsize%2C%20stock%2C%20_id%7D`>
 
 **Root Cause**: Product sizes are stored as objects `{size, stock, _id}` in the database but were being rendered directly in JSX, which React doesn't allow.
 
@@ -12,7 +12,7 @@
 
 ### 2. **[object Object] Image URLs**
 
-**Error**: `GET https://sbali.in/[object%20Object] 404 (Not Found)`
+**Error**: `GET <https://sbali.in/[object%20Object]> 404 (Not Found)`
 
 **Root Cause**: Product images are stored as objects `{url, key, isPrimary, order}` in MongoDB but code was treating them as strings.
 
@@ -124,8 +124,8 @@
 
 This handles both:
 
-- **Object format**: `{url: "https://...", key: "products/...", isPrimary: true}`
-- **String format** (legacy): `"https://..."`
+- **Object format**: `{url: "<https://...",> key: "products/...", isPrimary: true}`
+- **String format** (legacy): `"<https://..."`>
 
 ### Edit Mode Implementation
 
@@ -208,7 +208,7 @@ Shows stock availability for each size:
 {
   images: [
     {
-      url: String,      // Public URL (https://minio-api.sbali.in/...)
+      url: String,      // Public URL (<https://minio-api.sbali.in/...>)
       key: String,      // MinIO key (products/slug/filename.jpg)
       isPrimary: Boolean,
       order: Number
@@ -255,9 +255,9 @@ Shows stock availability for each size:
 2. **Wait for Dokploy auto-deployment** (both frontend and backend containers)
 
 3. **Test on production:**
-   - Visit https://sbali.in/products
+   - Visit <https://sbali.in/products>
    - Click on a product → verify images and sizes load
-   - Go to https://sbali.in/admin/products
+   - Go to <https://sbali.in/admin/products>
    - Click "Edit" on a product → verify data loads
    - Update product → verify changes save
 
@@ -314,3 +314,4 @@ All critical React errors and UI bugs have been resolved:
 5. ✅ Product detail page enhanced - better UX
 
 The application is now ready for deployment and production use!
+

@@ -18,6 +18,9 @@ const generateAccessToken = (user) => {
   });
 };
 
+const getRefreshSecret = () =>
+  process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET;
+
 const setRefreshCookie = (res, token) => {
   return res.cookie("refreshToken", token, {
     httpOnly: true,
@@ -38,11 +41,18 @@ const clearRefreshCookie = (res) => {
 };
 
 const generateRefreshToken = async (user, ip, family = null) => {
+  const refreshSecret = getRefreshSecret();
+  if (!refreshSecret) {
+    const err = new Error("Refresh token secret is not configured");
+    err.code = "REFRESH_SECRET_MISSING";
+    throw err;
+  }
+
   const tokenId = crypto.randomUUID();
   const tokenFamily = family || crypto.randomUUID();
   const token = jwt.sign(
     { id: user._id, jti: tokenId, fam: tokenFamily },
-    process.env.JWT_REFRESH_SECRET,
+    refreshSecret,
     { expiresIn: process.env.JWT_REFRESH_EXPIRATION || "7d" },
   );
 
@@ -240,7 +250,15 @@ exports.refresh = async (req, res, next) => {
     const token = req.cookies.refreshToken;
     if (!token) return res.status(401).json({ message: "No refresh token" });
 
-    const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    const refreshSecret = getRefreshSecret();
+    if (!refreshSecret) {
+      return res.status(500).json({
+        message: "Authentication service misconfigured",
+        error: "REFRESH_SECRET_MISSING",
+      });
+    }
+
+    const payload = jwt.verify(token, refreshSecret);
 
     let validToken = null;
     let isMatch = false;
@@ -599,6 +617,7 @@ exports.resetPassword = async (req, res, next) => {
 exports.firebaseLogin = async (req, res, next) => {
   try {
     const { firebaseToken, email, phoneNumber, displayName, photoURL } = req.body;
+    const providerId = req.body?.providerId;
 
     log.debug("Firebase login request received", {
       hasToken: Boolean(firebaseToken),
@@ -679,11 +698,24 @@ exports.firebaseLogin = async (req, res, next) => {
       }
     }
 
+    const normalizedEmail = (decodedToken.email || email || "").toLowerCase();
+
     if (!user) {
+      if (!normalizedEmail) {
+        log.warn("Firebase login rejected: missing email for new user", {
+          uid: decodedToken.uid,
+          providerId: providerId || decodedToken?.firebase?.sign_in_provider || null,
+        });
+        return res.status(400).json({
+          message: "Email is required to create an account",
+          error: "EMAIL_REQUIRED",
+        });
+      }
+
       log.debug("Creating new Firebase user");
       user = await User.create({
         name: displayName || decodedToken.name || "User",
-        email: decodedToken.email || email,
+        email: normalizedEmail,
         phone: decodedToken.phone_number || phoneNumber,
         firebaseUid: decodedToken.uid,
         profilePicture: photoURL || decodedToken.picture,
@@ -691,7 +723,7 @@ exports.firebaseLogin = async (req, res, next) => {
         emailVerified: decodedToken.email_verified || false,
         phoneVerified: !!decodedToken.phone_number,
         authProvider: normalizeAuthProvider(
-          decodedToken.firebase.sign_in_provider,
+          providerId || decodedToken?.firebase?.sign_in_provider,
         ),
       });
     } else {
@@ -714,11 +746,11 @@ exports.firebaseLogin = async (req, res, next) => {
       }
 
       if (
-        decodedToken.firebase.sign_in_provider &&
-        decodedToken.firebase.sign_in_provider !== "password"
+        (providerId || decodedToken?.firebase?.sign_in_provider) &&
+        (providerId || decodedToken?.firebase?.sign_in_provider) !== "password"
       ) {
         user.authProvider = normalizeAuthProvider(
-          decodedToken.firebase.sign_in_provider,
+          providerId || decodedToken?.firebase?.sign_in_provider,
         );
       }
       await user.save();

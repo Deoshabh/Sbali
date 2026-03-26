@@ -147,22 +147,33 @@ export default function CategoriesPage() {
       
       // Validate response structure
       const uploadUrlData = responseData?.data || responseData;
-      if (!uploadUrlData?.signedUrl || !uploadUrlData?.publicUrl || !uploadUrlData?.key) {
+      if (!uploadUrlData?.publicUrl || !uploadUrlData?.key) {
         console.error('Invalid response structure:', uploadUrlData);
         throw new Error('Invalid upload URL response');
       }
-      
-      // Step 2: Upload image to MinIO
-      const uploadResponse = await fetch(uploadUrlData.signedUrl, {
-        method: 'PUT',
-        body: imageFile,
-        headers: {
-          'Content-Type': imageFile.type,
-        },
-      });
-      
-      if (!uploadResponse.ok) {
-        throw new Error(`Failed to upload: ${uploadResponse.statusText}`);
+
+      // Step 2: Prefer backend direct upload to avoid CSP/connect-src issues with internal hosts.
+      if (typeof uploadUrlData.key === 'string' && uploadUrlData.key.length > 0) {
+        const uploadForm = new FormData();
+        uploadForm.append('file', imageFile);
+        uploadForm.append('key', uploadUrlData.key);
+        uploadForm.append('contentType', imageFile.type);
+        await adminAPI.uploadDirect(uploadForm);
+      } else if (uploadUrlData.signedUrl) {
+        // Fallback for older backend responses
+        const uploadResponse = await fetch(uploadUrlData.signedUrl, {
+          method: 'PUT',
+          body: imageFile,
+          headers: {
+            'Content-Type': imageFile.type,
+          },
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error(`Failed to upload: ${uploadResponse.statusText}`);
+        }
+      } else {
+        throw new Error('Upload URL missing key and signedUrl');
       }
       
       // Return image data
@@ -191,7 +202,7 @@ export default function CategoriesPage() {
         if (uploadedImage) {
           imageData = {
             url: uploadedImage.url,
-            publicId: uploadedImage.key
+            publicId: uploadedImage.publicId
           };
         } else {
           // If user selected a new image but upload failed, abort submission

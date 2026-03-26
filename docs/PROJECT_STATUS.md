@@ -147,7 +147,7 @@ backend/
 ### 1. Quick PIN Check (Public)
 
 ```bash
-curl https://api.sbali.in/api/v1/addresses/check-pincode/201301
+curl <https://api.sbali.in/api/v1/addresses/check-pincode/201301>
 ```
 
 **Response:**
@@ -164,7 +164,7 @@ curl https://api.sbali.in/api/v1/addresses/check-pincode/201301
 ### 2. Full Validation (Protected)
 
 ```bash
-curl -X POST https://api.sbali.in/api/v1/addresses/validate \
+curl -X POST <https://api.sbali.in/api/v1/addresses/validate> \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -218,7 +218,7 @@ TEST_TOKEN="your_token_here" node test-address-validation.js
 ### Manual Testing
 
 1. **PIN Code Check:**
-   - Open browser: `https://api.sbali.in/api/v1/addresses/check-pincode/201301`
+   - Open browser: `<https://api.sbali.in/api/v1/addresses/check-pincode/201301`>
    - Should show: `{"success":true,"serviceable":true,...}`
 
 2. **Validation API:**
@@ -520,10 +520,10 @@ node test-address-validation.js
 TEST_TOKEN="your_token" node test-address-validation.js
 
 # Check backend is running
-curl https://api.sbali.in/api/v1/health
+curl <https://api.sbali.in/api/v1/health>
 
 # Test PIN check (public)
-curl https://api.sbali.in/api/v1/addresses/check-pincode/201301
+curl <https://api.sbali.in/api/v1/addresses/check-pincode/201301>
 
 # Rebuild frontend
 cd frontend
@@ -559,13 +559,13 @@ The system is fully functional and ready to use.
 1. **Check backend is running:**
 
    ```bash
-   curl https://api.sbali.in/api/v1/health
+   curl <https://api.sbali.in/api/v1/health>
    ```
 
 2. **Check API endpoints:**
 
    ```bash
-   curl https://api.sbali.in/api/v1/addresses/check-pincode/201301
+   curl <https://api.sbali.in/api/v1/addresses/check-pincode/201301>
    ```
 
 3. **Check browser console:**
@@ -581,21 +581,14 @@ The system is fully functional and ready to use.
 
 ## 🎉 Summary
 
-### What You Have Now:
-
+### What You Have Now
 ✅ **Complete Backend** - Validation service, API endpoints, database schema  
 ✅ **Complete Frontend** - 3 reusable components  
 ✅ **Complete Documentation** - 4 comprehensive guides  
 ✅ **Testing Tools** - Automated test script  
 ✅ **Integration Guides** - Step-by-step instructions
 
-### What You Need to Do:
-
-1. ⚙️ Configure Shiprocket pickup location (5 min)
-2. 🔌 Choose integration point (checkout/profile/standalone)
-3. 📝 Follow integration guide (10-15 min)
-4. 🧪 Test the complete flow (5 min)
-5. 🚀 Deploy and enjoy!
+### What You Need to Do`r`n`r`n1. ⚙️ Configure Shiprocket pickup location (5 min)`r`n`r`n2. 🔌 Choose integration point (checkout/profile/standalone)`r`n`r`n3. 📝 Follow integration guide (10-15 min)`r`n`r`n4. 🧪 Test the complete flow (5 min)`r`n`r`n5. 🚀 Deploy and enjoy!
 
 **Total Time:** 25-30 minutes
 
@@ -627,3 +620,4 @@ All components are complete, tested, and documented.
 **Last Updated:** January 22, 2025  
 **Status:** ✅ PRODUCTION READY  
 **Version:** 1.0.0
+

@@ -1,5 +1,6 @@
 import { Plus_Jakarta_Sans, Lora, Libre_Baskerville, Space_Mono, Cormorant_Garamond, DM_Sans } from 'next/font/google';
 import { headers } from 'next/headers';
+import Script from 'next/script';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from '@/context/AuthContext';
@@ -12,7 +13,7 @@ import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AnnouncementBar from '@/components/AnnouncementBar';
 import MaintenanceModeGate from '@/components/MaintenanceModeGate';
-import { generateMetadata as generateSEOMetadata } from '@/utils/seo';
+import { generateMetadata as generateSEOMetadata, generateOrganizationJsonLd } from '@/utils/seo';
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -60,11 +61,20 @@ export const viewport = {
   themeColor: '#8B4513',
 };
 
-export const metadata = generateSEOMetadata({
-  title: 'Sbali - Handcrafted Genuine Leather Shoes and Goods',
-  description: 'Discover handcrafted genuine leather shoes, bags, wallets, belts, and sandals by Sbali from Agra, India.',
-  keywords: ['genuine leather', 'handcrafted leather shoes', 'leather goods india', 'Agra leather', 'leather bags', 'leather wallets', 'leather belts'],
-});
+export const metadata = {
+  ...generateSEOMetadata({
+    title: 'Sbali - Handcrafted Genuine Leather Shoes and Goods',
+    description: 'Discover handcrafted genuine leather shoes, bags, wallets, belts, and sandals by Sbali from Agra, India.',
+    keywords: ['sbali', 'sbali shoes', 'leather shoes', 'agra leather shoes', 'oxford shoes', 'handmade shoes agra'],
+    url: 'https://sbali.in',
+    image: 'https://sbali.in/og-image.jpg',
+    type: 'website',
+  }),
+  metadataBase: new URL('https://sbali.in'),
+  alternates: {
+    canonical: 'https://sbali.in',
+  },
+};
 
 import QueryProvider from '@/providers/QueryProvider';
 
@@ -74,16 +84,20 @@ export default async function RootLayout({ children }) {
   // Read the nonce injected by middleware (used for nonce-based CSP).
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') ?? '';
+  const hasTurnstileSiteKey = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+  const organizationJsonLd = JSON.stringify(generateOrganizationJsonLd())
+    .replace(/</g, '\\u003c')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 
   return (
     <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${jakarta.variable} ${lora.variable} ${baskerville.variable} ${spaceMono.variable}`}>
       <head>
         {/* Critical preconnects: resolved early so TLS handshakes don't delay LCP images */}
-        <link rel="preconnect" href="https://api.sbali.in" />
         <link rel="preconnect" href="https://cdn.sbali.in" />
-        <link rel="preconnect" href="https://minio.sbali.in" />
+        <link rel="preconnect" href="https://www.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://securetoken.googleapis.com" crossOrigin="anonymous" />
         {/* Unsplash is used for demo hero images — preconnect reduces TTFB during dev/staging */}
-        <link rel="preconnect" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         {/*
           Trusted Types default passthrough policy.
@@ -98,24 +112,44 @@ export default async function RootLayout({ children }) {
           dangerouslySetInnerHTML={{
             __html: `
 if(window.trustedTypes&&window.trustedTypes.createPolicy){
-  try{window.trustedTypes.createPolicy('default',{
+  var tt=window.trustedTypes;
+  var nativeCreate=tt.createPolicy.bind(tt);
+  try{nativeCreate('default',{
     createHTML:function(s){return s},
     createScriptURL:function(s){return s},
     createScript:function(s){return s}
   });}catch(e){}
+  try{
+    tt.createPolicy=function(name,rules){
+      if(name==='firebase-js-sdk-policy'||name==='gapi#gapi'){
+        try{return nativeCreate(name,rules);}catch(_e){
+          try{return nativeCreate('default',rules);}catch(_e2){
+            try{return nativeCreate('firebase',rules);}catch(_e3){return null;}
+          }
+        }
+      }
+      return nativeCreate(name,rules);
+    }
+  }catch(e){}
 }`,
           }}
         />
-        {/* nonce attribute allows this script to execute under the strict nonce-based CSP */}
+        {hasTurnstileSiteKey && (
+          <Script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            strategy="lazyOnload"
+            nonce={nonce}
+          />
+        )}
         <script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-          async
-          defer
           nonce={nonce}
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
         />
       </head>
       <body className="antialiased">
-        <div id="turnstile-container" style={{ display: 'none' }} />
+        {hasTurnstileSiteKey && <div id="turnstile-container" style={{ display: 'none' }} />}
         <ErrorBoundary>
           <QueryProvider>
             <AuthProvider>
@@ -138,7 +172,10 @@ if(window.trustedTypes&&window.trustedTypes.createPolicy){
                           color: '#fff',
                         },
                         success: {
-                          duration: 3000,
+                          duration: 1,
+                          style: {
+                            display: 'none',
+                          },
                           iconTheme: {
                             primary: '#10b981',
                             secondary: '#fff',
