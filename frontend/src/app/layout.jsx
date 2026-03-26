@@ -172,7 +172,10 @@ if(window.trustedTypes&&window.trustedTypes.createPolicy){
                           color: '#fff',
                         },
                         success: {
-                          duration: 3000,
+                          duration: 1,
+                          style: {
+                            display: 'none',
+                          },
                           iconTheme: {
                             primary: '#10b981',
                             secondary: '#fff',

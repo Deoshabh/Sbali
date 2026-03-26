@@ -56,12 +56,14 @@ export default function ProductClient({ product }) {
 
     const [selectedImage, setSelectedImage] = useState(0);
     const [activeTab, setActiveTab] = useState('description');
-    const [showSizeChart, setShowSizeChart] = useState(false);
+    const [showSizeChart, setShowSizeChart] = useState(true);
     const [loadedImages, setLoadedImages] = useState({});
     const preloadedRef = useRef(new Set());
 
     const sizeChartRows = useMemo(() => {
-        if (!product?.sizes?.length) return [];
+        const sourceSizes = Array.isArray(product?.sizes) && product.sizes.length > 0
+            ? product.sizes
+            : [6, 7, 8, 9, 10];
 
         const toUkLabel = (sizeItem) => (typeof sizeItem === 'object' ? sizeItem.size : sizeItem);
         const toFootLengthCm = (ukSize) => {
@@ -71,11 +73,25 @@ export default function ProductClient({ product }) {
             return Number((19.1 + (value * 0.9)).toFixed(1));
         };
 
-        return product.sizes
+        const toUsSize = (ukSize) => {
+            const value = Number(ukSize);
+            if (!Number.isFinite(value)) return null;
+            return Number((value + 1).toFixed(1));
+        };
+
+        const toEuSize = (ukSize) => {
+            const value = Number(ukSize);
+            if (!Number.isFinite(value)) return null;
+            return Number((value + 34).toFixed(0));
+        };
+
+        return sourceSizes
             .map((sizeItem) => {
                 const uk = toUkLabel(sizeItem);
                 return {
                     uk,
+                    us: toUsSize(uk),
+                    eu: toEuSize(uk),
                     footLengthCm: toFootLengthCm(uk),
                 };
             })
@@ -525,11 +541,11 @@ export default function ProductClient({ product }) {
                                         </label>
                                         <button
                                             type="button"
-                                            onClick={() => setShowSizeChart(true)}
+                                            onClick={() => setShowSizeChart((prev) => !prev)}
                                             className="text-[10px] uppercase tracking-[0.14em] text-[#8a7460] hover:text-[#2a1a0a] underline underline-offset-2"
                                             style={{ fontFamily: "var(--font-dm-mono, monospace)" }}
                                         >
-                                            Size Chart
+                                            {showSizeChart ? 'Hide Size Chart' : 'View Size Chart'}
                                         </button>
                                     </div>
                                     <div className="flex flex-wrap gap-3">
@@ -555,6 +571,49 @@ export default function ProductClient({ product }) {
                                             );
                                         })}
                                     </div>
+
+                                    {showSizeChart && (
+                                        <div className="mt-5 border border-[#e8e0d0] bg-[#fffdf9]">
+                                            <div className="px-4 py-3 border-b border-[#e8e0d0] bg-[#f8f4ee]">
+                                                <p className="text-[11px] uppercase tracking-[0.14em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
+                                                    Size Chart (Standard Fit Guide)
+                                                </p>
+                                                <p className="text-xs text-[#8a7460] mt-1" style={{ fontFamily: "var(--font-cormorant, 'Libre Baskerville', serif)" }}>
+                                                    Size chart means foot length converted to size number.
+                                                </p>
+                                            </div>
+
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full min-w-[520px] border-collapse">
+                                                    <thead>
+                                                        <tr className="border-b border-[#e8e0d0]">
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>UK</th>
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>US</th>
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>EU</th>
+                                                            <th className="px-4 py-2 text-left text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>Foot Length (cm)</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {sizeChartRows.map((row, idx) => {
+                                                            const isSelected = String(selectedSize) === String(row.uk);
+                                                            return (
+                                                                <tr key={`${row.uk}-${idx}`} className={`border-b border-[#f0e8dd] ${isSelected ? 'bg-[#f5efe4]' : ''}`}>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.uk}</td>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#5c3d1e]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.us ?? '—'}</td>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#5c3d1e]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.eu ?? '—'}</td>
+                                                                    <td className="px-4 py-2.5 text-sm text-[#5c3d1e]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>{row.footLengthCm ? `${row.footLengthCm} cm` : '—'}</td>
+                                                                </tr>
+                                                            );
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <p className="px-4 py-3 text-xs text-[#8a7460]" style={{ fontFamily: "var(--font-cormorant, 'Libre Baskerville', serif)" }}>
+                                                If your foot length is between two sizes, choose the larger size for comfort.
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 
@@ -650,62 +709,6 @@ export default function ProductClient({ product }) {
                             </div>
                         </div>
                     </div>
-
-                    {showSizeChart && (
-                        <div
-                            className="fixed inset-0 z-50 bg-black/45 flex items-end sm:items-center justify-center"
-                            onClick={() => setShowSizeChart(false)}
-                        >
-                            <div
-                                className="w-full sm:max-w-md bg-white border border-[#e8e0d0] p-5 sm:p-6"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <div className="flex items-start justify-between gap-4 mb-4">
-                                    <div>
-                                        <h3 className="text-lg text-[#2a1a0a]" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>
-                                            Size Chart
-                                        </h3>
-                                        <p className="text-[11px] uppercase tracking-[0.12em] text-[#8a7460]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
-                                            Foot length conversion
-                                        </p>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowSizeChart(false)}
-                                        className="text-sm uppercase tracking-[0.12em] text-[#8a7460] hover:text-[#2a1a0a]"
-                                        style={{ fontFamily: "var(--font-dm-mono, monospace)" }}
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-
-                                <div className="border border-[#e8e0d0]">
-                                    <div className="grid grid-cols-2 bg-[#f8f4ee] border-b border-[#e8e0d0]">
-                                        <div className="px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
-                                            UK Size
-                                        </div>
-                                        <div className="px-3 py-2 text-[11px] uppercase tracking-[0.12em] text-[#2a1a0a] border-l border-[#e8e0d0]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
-                                            Foot Length (cm)
-                                        </div>
-                                    </div>
-                                    {sizeChartRows.map((row, idx) => (
-                                        <div key={`${row.uk}-${idx}`} className="grid grid-cols-2 border-b last:border-b-0 border-[#f0e8dd]">
-                                            <div className="px-3 py-2 text-sm text-[#2a1a0a]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
-                                                {row.uk}
-                                            </div>
-                                            <div className="px-3 py-2 text-sm text-[#5c3d1e] border-l border-[#f0e8dd]" style={{ fontFamily: "var(--font-dm-mono, monospace)" }}>
-                                                {row.footLengthCm ? `${row.footLengthCm} cm` : '—'}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <p className="mt-3 text-xs text-[#8a7460]" style={{ fontFamily: "var(--font-cormorant, 'Libre Baskerville', serif)" }}>
-                                    Sizes are approximate. If your foot length is between two values, choose the larger size for a more comfortable fit.
-                                </p>
-                            </div>
-                        </div>
-                    )}
 
                     {/* Product Details Tabs */}
                     <div className="mt-16">

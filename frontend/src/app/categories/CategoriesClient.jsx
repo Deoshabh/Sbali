@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { productAPI } from '@/utils/api';
 
 const normalizeCategoryImageUrl = (url) => {
@@ -38,7 +38,6 @@ const getCategoryName = (category) => {
 const getCategoryKey = (category, index) => category?._id || category?.slug || `category-${index}`;
 
 export default function CategoriesClient({ categories: initialCategories = [] }) {
-  const router = useRouter();
   const [categories] = useState(initialCategories);
   const [categoryStats, setCategoryStats] = useState({});
   const [statsLoading, setStatsLoading] = useState(true);
@@ -106,14 +105,12 @@ export default function CategoriesClient({ categories: initialCategories = [] })
           const categoryImage = normalizeCategoryImageUrl(category?.image?.url);
           const statsKey = getCategoryKey(category, index);
           return (
-            <button
+            <Link
               key={getCategoryKey(category, index)}
-              onClick={() => router.push(`/products?category=${category.slug}`)}
-              className="group text-left overflow-hidden transition-shadow duration-300"
+              href={`/products?category=${encodeURIComponent(category.slug || '')}`}
+              className="group block text-left overflow-hidden transition-shadow duration-300"
               style={{
                 background: '#FFFFFF',
-                border: 'none',
-                cursor: 'pointer',
                 ...(isFirstFeatured && !isFeatured ? { gridColumn: 'span 2' } : {}),
                 ...(isFeatured ? { maxWidth: '800px' } : {}),
               }}
@@ -223,7 +220,7 @@ export default function CategoriesClient({ categories: initialCategories = [] })
                   </div>
                 </div>
               </div>
-            </button>
+            </Link>
           );
         })}
       </div>
