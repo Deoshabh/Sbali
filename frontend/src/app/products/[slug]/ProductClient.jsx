@@ -204,8 +204,8 @@ export default function ProductClient({ product }) {
         <>
             <ProductMetadata product={product} />
             <div className="min-h-screen bg-[#faf8f4] pt-6">
-                <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 lg:py-12">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+                <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 lg:py-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16">
                         {/* Image Gallery */}
                         <div className="space-y-4">
                             {/* Main Image / Video — all items stacked, opacity-swap cross-fade */}
@@ -421,13 +421,13 @@ export default function ProductClient({ product }) {
                         </div>
 
                         {/* Product Info */}
-                        <div className="space-y-6">
+                        <div className="space-y-6 min-w-0">
                             {/* Category & Name */}
                             <div>
                                 <p className="text-[11px] uppercase tracking-[0.2em] text-[#c9a96e] mb-3 font-medium" style={{ fontFamily: "var(--font-dm-mono, 'Space Mono', monospace)" }}>
                                     {product.category?.name}
                                 </p>
-                                <h1 className="text-3xl lg:text-4xl font-bold text-[#2a1a0a] mb-4" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>
+                                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#2a1a0a] mb-4 break-words" style={{ fontFamily: "var(--font-playfair, 'Lora', serif)" }}>
                                     {product.name}
                                 </h1>
 
@@ -533,11 +533,11 @@ export default function ProductClient({ product }) {
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex gap-3">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                 <button
                                     onClick={handleBuyNow}
                                     disabled={!product.inStock}
-                                    className={`flex-1 py-4 text-[12px] uppercase tracking-[0.2em] font-medium transition-all ${product.inStock
+                                    className={`col-span-2 sm:col-span-1 py-4 text-[12px] uppercase tracking-[0.18em] font-medium transition-all ${product.inStock
                                         ? 'bg-[#2a1a0a] text-[#f2ede4] hover:bg-[#5c3d1e]'
                                         : 'bg-[#e8e0d0] text-[#8a7460] cursor-not-allowed'
                                         }`}
@@ -548,7 +548,7 @@ export default function ProductClient({ product }) {
                                 <button
                                     onClick={handleAddToCart}
                                     disabled={!product.inStock}
-                                    className={`flex-1 py-4 text-[12px] uppercase tracking-[0.2em] font-medium flex items-center justify-center gap-2 transition-all ${product.inStock
+                                    className={`col-span-2 sm:col-span-1 py-4 text-[12px] uppercase tracking-[0.18em] font-medium flex items-center justify-center gap-2 transition-all ${product.inStock
                                         ? 'border border-[#2a1a0a] text-[#2a1a0a] hover:bg-[#2a1a0a] hover:text-[#f2ede4]'
                                         : 'border border-[#e8e0d0] text-[#8a7460] cursor-not-allowed'
                                         }`}
@@ -559,7 +559,7 @@ export default function ProductClient({ product }) {
                                 </button>
                                 <button
                                     onClick={handleToggleWishlist}
-                                    className={`px-5 py-4 border transition-all ${inWishlist ? 'bg-[#2a1a0a] text-[#f2ede4] border-[#2a1a0a]' : 'border-[#e8e0d0] text-[#8a7460] hover:border-[#2a1a0a] hover:text-[#2a1a0a]'}`}
+                                    className={`py-4 border transition-all flex items-center justify-center ${inWishlist ? 'bg-[#2a1a0a] text-[#f2ede4] border-[#2a1a0a]' : 'border-[#e8e0d0] text-[#8a7460] hover:border-[#2a1a0a] hover:text-[#2a1a0a]'}`}
                                 >
                                     <FiHeart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
                                 </button>
@@ -616,12 +616,12 @@ export default function ProductClient({ product }) {
                     {/* Product Details Tabs */}
                     <div className="mt-16">
                         <div className="border-b border-[#e8e0d0] mb-8">
-                            <div className="flex gap-8">
+                            <div className="flex gap-5 sm:gap-8 overflow-x-auto pb-1">
                                 {['description', 'specifications', 'care', 'reviews'].map(tab => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
-                                        className={`pb-4 text-[11px] uppercase tracking-[0.2em] font-medium transition-colors ${activeTab === tab
+                                        className={`pb-4 text-[11px] uppercase tracking-[0.2em] font-medium transition-colors whitespace-nowrap flex-shrink-0 ${activeTab === tab
                                             ? 'border-b-2 border-[#2a1a0a] text-[#2a1a0a]'
                                             : 'text-[#8a7460] hover:text-[#2a1a0a]'
                                             }`}
