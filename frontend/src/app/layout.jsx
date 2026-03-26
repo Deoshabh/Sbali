@@ -12,7 +12,7 @@ import Footer from '@/components/Footer';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AnnouncementBar from '@/components/AnnouncementBar';
 import MaintenanceModeGate from '@/components/MaintenanceModeGate';
-import { generateMetadata as generateSEOMetadata } from '@/utils/seo';
+import { generateMetadata as generateSEOMetadata, generateOrganizationJsonLd } from '@/utils/seo';
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -60,11 +60,20 @@ export const viewport = {
   themeColor: '#8B4513',
 };
 
-export const metadata = generateSEOMetadata({
-  title: 'Sbali - Handcrafted Genuine Leather Shoes and Goods',
-  description: 'Discover handcrafted genuine leather shoes, bags, wallets, belts, and sandals by Sbali from Agra, India.',
-  keywords: ['genuine leather', 'handcrafted leather shoes', 'leather goods india', 'Agra leather', 'leather bags', 'leather wallets', 'leather belts'],
-});
+export const metadata = {
+  ...generateSEOMetadata({
+    title: 'Sbali - Handcrafted Genuine Leather Shoes and Goods',
+    description: 'Discover handcrafted genuine leather shoes, bags, wallets, belts, and sandals by Sbali from Agra, India.',
+    keywords: ['sbali', 'sbali shoes', 'leather shoes', 'agra leather shoes', 'oxford shoes', 'handmade shoes agra'],
+    url: 'https://sbali.in',
+    image: 'https://sbali.in/og-image.jpg',
+    type: 'website',
+  }),
+  metadataBase: new URL('https://sbali.in'),
+  alternates: {
+    canonical: 'https://sbali.in',
+  },
+};
 
 import QueryProvider from '@/providers/QueryProvider';
 
@@ -75,6 +84,10 @@ export default async function RootLayout({ children }) {
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') ?? '';
   const hasTurnstileSiteKey = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
+  const organizationJsonLd = JSON.stringify(generateOrganizationJsonLd())
+    .replace(/</g, '\\u003c')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
 
   return (
     <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${jakarta.variable} ${lora.variable} ${baskerville.variable} ${spaceMono.variable}`}>
@@ -127,6 +140,12 @@ if(window.trustedTypes&&window.trustedTypes.createPolicy){
             nonce={nonce}
           />
         )}
+        <script
+          nonce={nonce}
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: organizationJsonLd }}
+        />
       </head>
       <body className="antialiased">
         {hasTurnstileSiteKey && <div id="turnstile-container" style={{ display: 'none' }} />}

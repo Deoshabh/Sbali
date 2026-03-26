@@ -2,40 +2,10 @@ import { SITE_URL } from '@/lib/constants';
 
 export default function robots() {
   return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-        disallow: [
-          "/admin/",
-          "/api/",
-          "/auth/",
-          "/checkout/",
-          "/cart/",
-          "/orders/",
-          "/profile/",
-          "/wishlist/",
-          "/reset-password/",
-          "/forgot-password/",
-          "/search",
-        ],
-      },
-      {
-        userAgent: "Googlebot",
-        allow: "/",
-        disallow: [
-          "/admin/",
-          "/api/",
-          "/auth/",
-          "/checkout/",
-          "/cart/",
-          "/orders/",
-          "/profile/",
-          "/wishlist/",
-          "/search",
-        ],
-      },
-    ],
+    rules: {
+      userAgent: '*',
+      allow: '/'
+    },
     sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

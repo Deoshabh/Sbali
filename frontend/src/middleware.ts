@@ -46,8 +46,14 @@ export function middleware(request: NextRequest) {
   const dynamicAssetOrigins = [
     toOrigin(process.env.NEXT_PUBLIC_CDN_URL),
     toOrigin(process.env.NEXT_PUBLIC_MINIO_URL),
+    toOrigin(process.env.NEXT_PUBLIC_MINIO_API_URL),
+    toOrigin(process.env.NEXT_PUBLIC_MINIO_ENDPOINT),
+    toOrigin(process.env.NEXT_PUBLIC_UPLOAD_URL),
     toOrigin(process.env.MINIO_PUBLIC_URL),
     toOrigin(process.env.MINIO_CDN_URL),
+    toOrigin(process.env.MINIO_API_URL),
+    toOrigin(process.env.MINIO_ENDPOINT),
+    toOrigin(process.env.UPLOAD_URL),
   ].filter((origin): origin is string => Boolean(origin));
 
   const connectSrc = [

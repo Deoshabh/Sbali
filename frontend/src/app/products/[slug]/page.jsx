@@ -7,7 +7,7 @@ import { getApiUrl } from '@/utils/getApiUrl';
 const getProduct = cache(async function getProduct(slug) {
   try {
     const res = await fetch(`${getApiUrl()}/products/${slug}`, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds (SSG/ISR)
+      next: { revalidate: 3600 }, // Revalidate every 1 hour
     });
 
     if (res.status === 404) {
@@ -49,7 +49,7 @@ export async function generateMetadata({ params }) {
   return generateProductMetadata(product);
 }
 
-import { JsonLd, generateProductJsonLd } from '@/utils/seo';
+import { JsonLd, generateProductJsonLd, generateBreadcrumbJsonLd } from '@/utils/seo';
 
 export default async function ProductPage({ params }) {
   const { product, notFound } = await getProduct(params.slug);
@@ -60,6 +60,13 @@ export default async function ProductPage({ params }) {
 
   return (
     <>
+      <JsonLd
+        data={generateBreadcrumbJsonLd([
+          { name: 'Home', path: '/' },
+          { name: 'Products', path: '/products' },
+          { name: product.name, path: `/products/${product.slug}` },
+        ])}
+      />
       <JsonLd data={generateProductJsonLd(product)} />
       <ProductClient product={product} />
     </>

@@ -66,6 +66,12 @@ export const generateMetadata = ({
     title: fullTitle,
     description,
     keywords: [
+      "sbali",
+      "sbali shoes",
+      "leather shoes",
+      "agra leather shoes",
+      "oxford shoes",
+      "handmade shoes agra",
       "shoes",
       "footwear",
       "genuine leather",

@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import ProductMetadata from '@/components/ProductMetadata';
 import ReviewSection from '@/components/ReviewSection';
 import Product360Viewer from '@/components/products/Product360Viewer';
+import ProductShareButton from '@/components/ProductShareButton';
 import { formatPrice } from '@/utils/helpers';
 
 const normalizeCdnMediaUrl = (url) => {
@@ -170,6 +171,11 @@ export default function ProductClient({ product }) {
     };
 
     const inWishlist = isInWishlist(product._id);
+    const shareImage = normalizeCdnMediaUrl(
+        (typeof filteredImages?.[0] === 'string'
+            ? filteredImages[0]
+            : filteredImages?.[0]?.url) || ''
+    );
 
     const nextImage = () => {
         setSelectedImage((prev) => (prev + 1) % galleryItems.length);
@@ -557,6 +563,13 @@ export default function ProductClient({ product }) {
                                 >
                                     <FiHeart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
                                 </button>
+                                <ProductShareButton
+                                    productName={product.name}
+                                    productPrice={product.price}
+                                    productImage={shareImage}
+                                    variant="icon"
+                                    className="shrink-0"
+                                />
                             </div>
 
                             {/* Trust Badges */}

@@ -224,8 +224,21 @@ function OgImageUploader({ value, onChange }) {
       });
       if (!data.success) throw new Error(data.message || 'Failed to get upload URL');
 
-      const { signedUrl, publicUrl } = data.data;
-      await axios.put(signedUrl, file, { headers: { 'Content-Type': file.type } });
+      const { signedUrl, publicUrl, key } = data.data || {};
+      if (!publicUrl) throw new Error('Upload response missing publicUrl');
+
+      // Prefer server-side direct upload to avoid CSP/connect-src issues with external presigned hosts.
+      if (key) {
+        const uploadForm = new FormData();
+        uploadForm.append('file', file);
+        uploadForm.append('key', key);
+        uploadForm.append('contentType', file.type);
+        await adminAPI.uploadDirect(uploadForm);
+      } else if (signedUrl) {
+        await axios.put(signedUrl, file, { headers: { 'Content-Type': file.type } });
+      } else {
+        throw new Error('Upload response missing key/signedUrl');
+      }
 
       onChange(publicUrl);
       toast.success('OG image uploaded successfully');
